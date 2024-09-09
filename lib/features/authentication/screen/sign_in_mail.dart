@@ -13,6 +13,7 @@ import 'package:telemedicine_hub_doctor/common/button/custom_button.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/images/app_images.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
+import 'package:telemedicine_hub_doctor/features/navigation/bottom_nav_bar.dart';
 
 class SignInEmail extends StatefulWidget {
   const SignInEmail({super.key});
@@ -117,7 +118,7 @@ class _SignInEmailState extends State<SignInEmail> {
                             controller: password,
                             title: "Password",
                             prefix: SvgPicture.asset(
-                              'assets/icons/lock_icon.svg',
+                              AppImages.lock_icon,
                               height: 16.h,
                               width: 16.w,
                             ),
@@ -127,32 +128,39 @@ class _SignInEmailState extends State<SignInEmail> {
                       height: 16.h,
                     ),
                     CustomButton(
-                        name: 'Sign in',
-                        onPressed: () async {
-                          if (password.text.isNotEmpty) {
-                            if (email.text.isNotEmpty &&
-                                email.text.contains('@')) {
-                              var res = await authProvider.login(
-                                  email: email.text.trim(),
-                                  password: password.text.trim());
-                              log("Success Values : ${res.success}");
-                              if (res.success) {
-                                log("Code : ${res.code}\nMessage : ${res.msg}");
-                                Fluttertoast.showToast(
-                                    msg: "Login Successfully ");
-                              } else {
-                                log("2. ${res.msg} getting ");
-                                Fluttertoast.showToast(
-                                    msg: "2. ${res.msg} getting ");
-                              }
+                      name: 'Sign in',
+                      onPressed: () async {
+                        if (password.text.isNotEmpty) {
+                          if (email.text.isNotEmpty &&
+                              email.text.contains('@')) {
+                            var res = await authProvider.login(
+                                email: email.text.trim(),
+                                password: password.text.trim());
+                            log("Success Values : ${res.success}");
+                            if (res.success) {
+                              log("Code : ${res.code}\nMessage : ${res.msg}");
+                              Fluttertoast.showToast(
+                                  msg: "Login Successfully ");
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const BottomNavBar()),
+                                (route) => false,
+                              );
                             } else {
-                              Fluttertoast.showToast(msg: "Please enter email");
+                              log(" ${res.msg} getting ");
+                              Fluttertoast.showToast(
+                                  msg: " ${res.msg} getting ");
                             }
                           } else {
-                            Fluttertoast.showToast(
-                                msg: "Please enter password");
+                            Fluttertoast.showToast(msg: "Please enter email");
                           }
-                        }),
+                        } else {
+                          Fluttertoast.showToast(msg: "Please enter password");
+                        }
+                      },
+                      isLoading: authProvider.isLoading,
+                    ),
                     SizedBox(
                       height: 16.h,
                     ),

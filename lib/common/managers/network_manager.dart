@@ -84,7 +84,7 @@ class NetworkDataManger {
 
       var r =
           await NetworkDataManger(client: http.Client()).postResponseFromUrl(
-        "${baseAuthUrl}auth/refresh-access-token",
+        "${baseAuthUrl}refresh-access-token",
         data: {"refresh": refreshToken},
         headers: {
           "Content-Type": "application/json",

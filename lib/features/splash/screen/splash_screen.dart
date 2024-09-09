@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import 'package:telemedicine_hub_doctor/common/images/app_images.dart';
 import 'package:telemedicine_hub_doctor/common/managers/local_manager.dart';
+import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/screen/sign_in_mail.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -33,12 +35,12 @@ class _SplashScreenState extends State<SplashScreen> {
               ));
         }
       } else {
-        // Provider.of<AuthProvider>(context, listen: false).authToken = token;
-        // Navigator.pushReplacement(
-        //     context,
-        //     MaterialPageRoute(
-        //       builder: (context) => (),
-        //     ));
+        Provider.of<AuthProvider>(context, listen: false).authToken = token;
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const BottomAppBar(),
+            ));
       }
     }
   }
