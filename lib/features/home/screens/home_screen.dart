@@ -7,6 +7,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
+import 'package:telemedicine_hub_doctor/features/home/screens/notification_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/ticket_view_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
 
@@ -117,7 +118,7 @@ class HomeAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var authProvider = Provider.of<AuthProvider>(context);
+  
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Column(
@@ -147,12 +148,11 @@ class HomeAppBar extends StatelessWidget {
               const Spacer(),
               GestureDetector(
                 onTap: () async {
-                  var res = await authProvider.logOut(context);
-                  if (res.success) {
-                    Fluttertoast.showToast(msg: "Logged out succeddfully! ");
-                  } else {
-                    Fluttertoast.showToast(msg: "Log out failed");
-                  }
+                  Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => const NotificationScreen()));
+              
                 },
                 child: Container(
                   padding: EdgeInsets.all(12.w),

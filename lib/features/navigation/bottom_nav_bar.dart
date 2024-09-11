@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/features/appointment/appointment_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
+import 'package:telemedicine_hub_doctor/features/profile/profile_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -15,10 +17,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
   int selectedIndex = 0;
 
   var pages = [
-
     const HomeScreen(),
-    const HomeScreen(),
-    const HomeScreen(),
+    const AppointmentScreen(),
+    const ProfileScreen(),
   ];
 
   @override
