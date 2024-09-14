@@ -83,7 +83,7 @@ class _TicketCardState extends State<TicketCard> {
                           ),
                           SizedBox(height: 8.h),
                           Text(
-                            "Ticket No : 001",
+                            "Ticket No : 001 ",
                             style: TextStyle(
                               fontSize: 20.sp,
                               fontWeight: FontWeight.bold,

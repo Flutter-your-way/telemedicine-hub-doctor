@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "43677072442",
+    "project_id": "telemedicine-hub-afa78",
+    "storage_bucket": "telemedicine-hub-afa78.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43677072442:android:80e679cf1edb3cbd648903",
+        "android_client_info": {
+          "package_name": "com.example.telemedicine_hub_doctor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACpFTCOqRONSvyrPe_KleDRj4ygyqoRXk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43677072442:android:f605ab5742ea8cba648903",
+        "android_client_info": {
+          "package_name": "com.example.telemedicinehub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACpFTCOqRONSvyrPe_KleDRj4ygyqoRXk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
