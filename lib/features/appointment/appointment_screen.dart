@@ -34,6 +34,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
               child: CustomScrollView(
                 slivers: [
                   SliverAppBar(
+                    backgroundColor: Colors.transparent,
                     snap: true,
                     expandedHeight: 0.0,
                     floating: true,

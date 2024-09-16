@@ -79,26 +79,32 @@ Widget _buildOptionBar(
     required String name,
     required VoidCallback onPressed}) {
   return InkWell(
+    borderRadius: BorderRadius.circular(12.h),
     onTap: onPressed,
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 12.h),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-          ),
-          SizedBox(
-            width: 18.h,
-          ),
-          Text(
-            name,
-            style: GoogleFonts.openSans(
-                textStyle:
-                    TextStyle(fontSize: 14.h, fontWeight: FontWeight.w600)),
-          ),
-          const Spacer(),
-          const Icon(Iconsax.arrow_right_34)
-        ],
+    child: Container(
+      height: 56.h,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.h), color: Colors.white),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 12.h),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+            ),
+            SizedBox(
+              width: 18.h,
+            ),
+            Text(
+              name,
+              style: GoogleFonts.openSans(
+                  textStyle:
+                      TextStyle(fontSize: 14.h, fontWeight: FontWeight.w600)),
+            ),
+            const Spacer(),
+            const Icon(Iconsax.arrow_right_34)
+          ],
+        ),
       ),
     ),
   );
@@ -163,7 +169,7 @@ Widget _buildContactInfo(IconData icon, String title, String value) {
           color: Colors.green[100],
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: Colors.green, size: 24),
+        child: Icon(icon, color: Colors.black, size: 24),
       ),
       SizedBox(width: 16.h),
       Column(

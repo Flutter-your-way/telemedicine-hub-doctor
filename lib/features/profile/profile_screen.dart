@@ -37,6 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Container(
                     height: 84.h,
                     decoration: BoxDecoration(
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(12.h)),
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -212,8 +213,13 @@ Widget _buildOptionBar(
     required String name,
     required VoidCallback onPressed}) {
   return InkWell(
+    borderRadius: BorderRadius.circular(12.h),
     onTap: onPressed,
-    child: Padding(
+    child: Container(
+      height: 56.h,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(12.h))),
       padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 12.h),
       child: Row(
         children: [

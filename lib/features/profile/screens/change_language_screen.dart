@@ -45,45 +45,49 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                     String data = languageList[index];
                     bool isSelected = index ==
                         selectedIndex; // Check if this item is selected
-                    return ListTile(
-                      dense: true,
-                      contentPadding: const EdgeInsets.all(16),
-                      onTap: () {
-                        setState(() {
-                          selectedIndex = index; // Update the selected index
-                        });
-                      },
-                      horizontalTitleGap: 30.h,
-                      leading: Container(
-                        height: 24,
-                        width: 24,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: isSelected
-                                ? AppColors.blue
-                                : const Color(0xFFD9D9D9),
-                            width: 2,
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 20.h),
+                      child: ListTile(
+                        dense: true,
+                        tileColor: Colors.white,
+                        contentPadding: const EdgeInsets.all(16),
+                        onTap: () {
+                          setState(() {
+                            selectedIndex = index; // Update the selected index
+                          });
+                        },
+                        horizontalTitleGap: 30.h,
+                        leading: Container(
+                          height: 24,
+                          width: 24,
+                          decoration: BoxDecoration(
+                            border: Border.all(
                               color: isSelected
                                   ? AppColors.blue
-                                  : Colors.transparent,
+                                  : const Color(0xFFD9D9D9),
+                              width: 2,
+                            ),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isSelected
+                                    ? AppColors.blue
+                                    : Colors.transparent,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      title: Text(
-                        data,
-                        style: GoogleFonts.openSans(
-                          textStyle: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
+                        title: Text(
+                          data,
+                          style: GoogleFonts.openSans(
+                            textStyle: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),

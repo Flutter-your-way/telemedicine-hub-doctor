@@ -94,6 +94,7 @@ class SearchField extends StatelessWidget {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       decoration: InputDecoration(
+        fillColor: Colors.white,
         contentPadding: EdgeInsets.symmetric(horizontal: 25.h, vertical: 15.w),
         hintText: "Search for tickets",
         prefixIcon: const Icon(Iconsax.search_normal),
@@ -106,6 +107,7 @@ class SearchField extends StatelessWidget {
               showSortBottomSheet(context, sortList);
             },
             icon: const Icon(Icons.filter_list_rounded)),
+        filled: true,
         border: OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.captionColor),
           borderRadius: BorderRadius.circular(12),
@@ -172,47 +174,56 @@ void showSortBottomSheet(BuildContext context, List<String> sortList) {
                           controller: scrollController,
                           itemCount: sortList.length,
                           itemBuilder: (context, index) {
-                            return ListTile(
-                              contentPadding: const EdgeInsets.all(16),
-                              onTap: () {
-                                setState(() {
-                                  selectedList.contains(sortList[index])
-                                      ? selectedList.remove(sortList[index])
-                                      : selectedList.add(sortList[index]);
-                                });
-                              },
-                              horizontalTitleGap: 24.h,
-                              leading: Container(
-                                height: 24,
-                                width: 24,
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: Container(
                                 decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color:
-                                        selectedList.contains(sortList[index])
+                                    borderRadius: BorderRadius.circular(8.h),
+                                    border: Border.all(
+                                        color: Colors.grey.shade300)),
+                                child: ListTile(
+                                  contentPadding: EdgeInsets.all(8.h),
+                                  onTap: () {
+                                    setState(() {
+                                      selectedList.contains(sortList[index])
+                                          ? selectedList.remove(sortList[index])
+                                          : selectedList.add(sortList[index]);
+                                    });
+                                  },
+                                  horizontalTitleGap: 24.h,
+                                  leading: Container(
+                                    height: 24,
+                                    width: 24,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: selectedList
+                                                .contains(sortList[index])
                                             ? AppColors.blue
                                             : const Color(0xFFD9D9D9),
-                                    width: 2,
-                                  ),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  child: Container(
-                                    decoration: BoxDecoration(
+                                        width: 2,
+                                      ),
                                       shape: BoxShape.circle,
-                                      color:
-                                          selectedList.contains(sortList[index])
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: selectedList
+                                                  .contains(sortList[index])
                                               ? AppColors.blue
                                               : Colors.transparent,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                              title: Text(
-                                sortList[index],
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
+                                  title: Text(
+                                    sortList[index],
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
                               ),
                             );

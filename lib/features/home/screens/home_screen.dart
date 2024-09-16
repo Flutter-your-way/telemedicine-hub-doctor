@@ -1,12 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:provider/provider.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
-import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/notification_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/ticket_view_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
@@ -46,6 +43,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context: context,
                                 ));
                           },
+                        ),
+                        SizedBox(
+                          width: 16.h,
                         ),
                         _buildTopViewCards(
                           "6",
@@ -118,7 +118,6 @@ class HomeAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Column(
@@ -152,7 +151,6 @@ class HomeAppBar extends StatelessWidget {
                       context,
                       CupertinoPageRoute(
                           builder: (context) => const NotificationScreen()));
-              
                 },
                 child: Container(
                   padding: EdgeInsets.all(12.w),
@@ -182,7 +180,11 @@ Widget _buildTopViewCards(
   final VoidCallback onPressed,
 ) {
   return Expanded(
-      child: SizedBox(
+      child: Container(
+    decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade200, width: 1),
+        borderRadius: BorderRadius.circular(12.h),
+        color: Colors.white),
     child: Padding(
       padding: EdgeInsets.all(16.h),
       child: Column(
@@ -196,7 +198,12 @@ Widget _buildTopViewCards(
               style: GoogleFonts.openSans(
                   textStyle:
                       TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400))),
+          SizedBox(height: 16.h),
           CupertinoButton(
+              color: Colors.grey.shade300,
+              alignment: Alignment.center,
+              borderRadius: BorderRadius.circular(12.h),
+              padding: EdgeInsets.symmetric(horizontal: 35.h),
               onPressed: onPressed,
               child: Text("View All",
                   style: GoogleFonts.openSans(
@@ -204,6 +211,17 @@ Widget _buildTopViewCards(
                           color: Colors.black,
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w600)))),
+          // Container(
+          //   height: 32.h,
+          //   decoration: BoxDecoration(
+          //       borderRadius: BorderRadius.circular(8.h),
+          //       color: Colors.grey.shade300),
+          //   child: const Row(
+          //     crossAxisAlignment: CrossAxisAlignment.center,
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [Text("View")],
+          //   ),
+          // ),
         ],
       ),
     ),

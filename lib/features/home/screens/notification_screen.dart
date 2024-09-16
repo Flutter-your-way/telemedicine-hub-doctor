@@ -33,6 +33,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
             Expanded(
               child: Column(
                 children: [
+                  SizedBox(
+                    height: 20.h,
+                  ),
                   _buildNotification(
                       time: '12:00',
                       title: 'New Ticket',
@@ -80,7 +83,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
             ),
             SizedBox(
-              height: MediaQuery.paddingOf(context).bottom,
+              height: MediaQuery.paddingOf(context).bottom + 20.h,
             ),
           ],
         ),
@@ -94,7 +97,7 @@ Widget _buildNotification(
   return Container(
     height: 88.h,
     decoration: BoxDecoration(
-      color: const Color(0xFFF4F4F6),
+      color: Colors.white,
       borderRadius: BorderRadius.circular(12.h),
     ),
     child: Padding(

@@ -39,7 +39,6 @@ dependencies:
   flutter_screenutil: ^5.9.3
   svg_flutter: ^0.0.1
   device_preview: ^1.2.0
-  intl: any
   iconsax: ^0.0.8
   # flutter_gen: ^5.6.0
   flutter_localized_locales: ^2.0.5

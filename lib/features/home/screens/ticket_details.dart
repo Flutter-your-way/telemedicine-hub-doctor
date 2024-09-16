@@ -225,7 +225,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
             SizedBox(height: 16.h),
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFFF1FAFF),
+                color: AppColors.bluishWhite,
                 borderRadius: BorderRadius.circular(8.h),
               ),
               child: Padding(
@@ -256,7 +256,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
             SizedBox(height: 16.h),
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFFF1FAFF),
+                color: AppColors.bluishWhite,
                 borderRadius: BorderRadius.circular(8.h),
               ),
               child: Padding(
@@ -287,7 +287,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
             SizedBox(height: 16.h),
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFFF1FAFF),
+                color: AppColors.bluishWhite,
                 borderRadius: BorderRadius.circular(8.h),
               ),
               child: Padding(
@@ -565,12 +565,12 @@ void _buildPatientProfile(BuildContext context) {
     ),
     builder: (BuildContext context) {
       return DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.7,
+        initialChildSize: 0.85,
+        minChildSize: 0.85,
         maxChildSize: 0.95,
         expand: false,
         snap: true,
-        snapSizes: const [0.7, 0.95],
+        snapSizes: const [0.85, 0.95],
         builder: (BuildContext context, ScrollController scrollController) {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
@@ -665,24 +665,36 @@ void _buildPatientProfile(BuildContext context) {
 }
 
 Widget infoRow({required String key, required String value}) {
-  return Row(children: [
-    Text(
-      key,
-      style: GoogleFonts.openSans(
-          textStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600)),
+  return Container(
+    // height: 42.h,
+    padding: EdgeInsets.all(12.h),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8.h),
+      color: AppColors.bluishWhite,
     ),
-    Text(
-      "  $value",
-      style: GoogleFonts.openSans(
-          fontSize: 14.sp,
-          textStyle: const TextStyle(fontWeight: FontWeight.w400)),
-    ),
-  ]);
+    child: Row(children: [
+      Text(
+        key,
+        style: GoogleFonts.openSans(
+            textStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600)),
+      ),
+      Text(
+        "  $value",
+        style: GoogleFonts.openSans(
+            fontSize: 14.sp,
+            textStyle: const TextStyle(fontWeight: FontWeight.w400)),
+      ),
+    ]),
+  );
 }
 
 Widget infoBox({required String key, required String value}) {
   return Expanded(
-    child: SizedBox(
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.h),
+        color: AppColors.bluishWhite,
+      ),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 10.h),
         child: Column(

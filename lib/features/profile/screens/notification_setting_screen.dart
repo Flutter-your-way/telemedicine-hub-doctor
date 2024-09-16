@@ -72,7 +72,9 @@ Widget _buildSwitchView(
     required bool switchValue,
     required Function(bool) onPress}) {
   return Container(
+    height: 88.h,
     decoration: BoxDecoration(
+      color: Colors.white,
       borderRadius: BorderRadius.circular(12.h),
     ),
     child: Padding(
