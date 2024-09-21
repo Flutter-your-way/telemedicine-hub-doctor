@@ -1,13 +1,21 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
+
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/ticket_details.dart';
 
 class TicketCard extends StatefulWidget {
-  const TicketCard({super.key});
+  TicketModel ticket;
+  TicketCard({
+    super.key,
+    required this.ticket,
+  });
 
   @override
   State<TicketCard> createState() => _TicketCardState();
@@ -16,12 +24,33 @@ class TicketCard extends StatefulWidget {
 class _TicketCardState extends State<TicketCard> {
   @override
   Widget build(BuildContext context) {
+    String getTimeUntilAppointment(DateTime scheduledDate) {
+      final now = DateTime.now();
+      final difference = scheduledDate.difference(now);
+
+      if (difference.inDays > 0) {
+        return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''}';
+      } else if (difference.inHours > 0) {
+        return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''}';
+      } else if (difference.inMinutes > 0) {
+        return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''}';
+      } else {
+        return 'Just now';
+      }
+    }
+
+    DateTime dateTime = DateTime.parse(
+        widget.ticket.scheduleDate.toString() ?? DateTime.now().toString());
+    String formattedDate = DateFormat('d MMM yyyy').format(dateTime);
+
+    String formattedTime = DateFormat('h:mm a').format(dateTime);
+    String timeUntilAppointment = getTimeUntilAppointment(dateTime);
     return GestureDetector(
       onTap: () {
         Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (context) => const TicketDetailsScreen(),
+              builder: (context) => TicketDetailsScreen(ticket: widget.ticket),
             ));
       },
       child: SizedBox(
@@ -37,7 +66,7 @@ class _TicketCardState extends State<TicketCard> {
                 width: MediaQuery.sizeOf(context).width - 56,
                 decoration: BoxDecoration(
                   color: const Color(0xFFFAFAFC),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.h),
                   border: Border.all(
                     color: const Color(0xFFF4F4F6),
                     width: 2,
@@ -63,13 +92,13 @@ class _TicketCardState extends State<TicketCard> {
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(6),
+                                padding: EdgeInsets.all(6.h),
                                 decoration: BoxDecoration(
                                   color: Colors.green,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
-                                  "Confirmed",
+                                  widget.ticket.status.toString(),
                                   style: TextStyle(
                                     color: AppColors.greenishWhite,
                                     fontSize: 12.sp,
@@ -83,7 +112,7 @@ class _TicketCardState extends State<TicketCard> {
                           ),
                           SizedBox(height: 8.h),
                           Text(
-                            "Ticket No : 001 ",
+                            widget.ticket.name.toString(),
                             style: TextStyle(
                               fontSize: 20.sp,
                               fontWeight: FontWeight.bold,
@@ -92,13 +121,13 @@ class _TicketCardState extends State<TicketCard> {
                           SizedBox(height: 12.h),
                           Row(
                             children: [
-                              Text("ETA - 4 hours  • ",
+                              Text("ETA - $timeUntilAppointment  • ",
                                   style: GoogleFonts.openSans(
                                       textStyle: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w400))),
                               Text(
-                                "Vaginal Yeast Infection",
+                                widget.ticket.disease!.name.toString(),
                                 style: GoogleFonts.openSans(
                                     textStyle: TextStyle(
                                         fontSize: 12.sp,
@@ -122,8 +151,8 @@ class _TicketCardState extends State<TicketCard> {
                   padding: EdgeInsets.all(12.w),
                   decoration: BoxDecoration(
                       color: AppColors.bluishWhite,
-                      borderRadius: const BorderRadius.vertical(
-                        bottom: Radius.circular(12),
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(12.h),
                       )),
                   child: Row(
                     children: [
@@ -135,7 +164,7 @@ class _TicketCardState extends State<TicketCard> {
                           ),
                           SizedBox(width: 4.w),
                           Text(
-                            '1 Aug, 2024',
+                            formattedDate,
                             style: TextStyle(
                               color: AppColors.grey,
                             ),
@@ -151,7 +180,7 @@ class _TicketCardState extends State<TicketCard> {
                           ),
                           SizedBox(width: 4.w),
                           Text(
-                            '2:00 PM',
+                            formattedTime,
                             style: TextStyle(
                               color: AppColors.grey,
                             ),

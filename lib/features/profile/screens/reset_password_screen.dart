@@ -2,9 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
+import 'package:telemedicine_hub_doctor/features/profile/provider/profile_provider.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -14,13 +18,26 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+  bool oldPass = true;
+  bool newPass = true;
+  TextEditingController email = TextEditingController();
+  TextEditingController oldPassword = TextEditingController();
+  TextEditingController newPassword = TextEditingController();
+  clearcontroller() {
+    setState(() {
+      oldPassword.text = '';
+      newPassword.text = '';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    var profileProvider = Provider.of<ProfileProvider>(context);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: Text(
-          "Notification Settings",
+          "Reset Password",
           style: GoogleFonts.openSans(
               textStyle:
                   TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -34,18 +51,40 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             SizedBox(
               height: 20.h,
             ),
-            const CustomTextFormField(
-              title: "New Password",
-              prefix: Icon(Iconsax.lock),
-              suffix: Icon(Iconsax.eye),
+            CustomTextFormField(
+              obscureText: oldPass,
+              controller: oldPassword,
+              title: "old Password",
+              prefix: const Icon(Iconsax.lock),
+              suffix: IconButton(
+                icon: Icon(
+                  oldPass ? Iconsax.eye : Iconsax.eye_slash,
+                ),
+                onPressed: () {
+                  setState(() {
+                    oldPass = !oldPass;
+                  });
+                },
+              ),
             ),
             SizedBox(
               height: 20.h,
             ),
-            const CustomTextFormField(
-              title: "Confirm Password",
-              prefix: Icon(Iconsax.lock),
-              suffix: Icon(Iconsax.eye),
+            CustomTextFormField(
+              obscureText: newPass,
+              controller: newPassword,
+              title: "New Password",
+              prefix: const Icon(Iconsax.lock),
+              suffix: IconButton(
+                icon: Icon(
+                  newPass ? Iconsax.eye : Iconsax.eye_slash,
+                ),
+                onPressed: () {
+                  setState(() {
+                    newPass = !newPass;
+                  });
+                },
+              ),
             ),
             SizedBox(
               height: 20.h,
@@ -61,9 +100,30 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: () {
-                  // Handle sort action
-                  Navigator.pop(context);
+                onPressed: () async {
+                  if (oldPassword.text.isNotEmpty || oldPassword.text != null) {
+                    if (newPassword.text.isNotEmpty ||
+                        newPassword.text != null) {
+                      var res = await profileProvider.resetPassword(
+                          email:
+                              Provider.of<AuthProvider>(context, listen: false)
+                                  .usermodel!
+                                  .email
+                                  .toString(),
+                          oldPassword: oldPassword.text,
+                          newPassword: newPassword.text);
+                      if (res.success) {
+                        Fluttertoast.showToast(msg: res.msg);
+                        clearcontroller();
+                      } else {
+                        Fluttertoast.showToast(msg: res.msg);
+                      }
+                    } else {
+                      Fluttertoast.showToast(msg: "Please enter new password");
+                    }
+                  } else {
+                    Fluttertoast.showToast(msg: "Please enter old password");
+                  }
                 },
                 child: Text("Set Password",
                     style: GoogleFonts.openSans(

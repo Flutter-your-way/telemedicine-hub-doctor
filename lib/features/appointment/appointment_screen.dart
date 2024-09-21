@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
+import 'package:telemedicine_hub_doctor/features/appointment/provider/appointment_provider.dart';
+import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
 
@@ -95,22 +99,55 @@ class RecentTapView extends StatefulWidget {
 }
 
 class _RecentTapViewState extends State<RecentTapView> {
+  List<TicketModel> ticketList = [];
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        getTickets();
+      },
+    );
+    super.initState();
+  }
+
+  void getTickets() async {
+    try {
+      var res = await Provider.of<AppointmentProvider>(context, listen: false)
+          .getTickets(
+              doctorId: Provider.of<AuthProvider>(context, listen: false)
+                  .usermodel!
+                  .id
+                  .toString());
+      if (res.success) {
+        if (mounted) {
+          setState(() {
+            ticketList = res.data;
+          });
+        }
+      } else {}
+    } catch (e) {}
+  }
+
   @override
   Widget build(BuildContext context) {
+    var appointmentProvider = Provider.of<AppointmentProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: [
           SizedBox(
             height: 20.h,
           ),
-          ListView.builder(
-            padding: EdgeInsets.zero,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: 5,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return const TicketCard();
-            },
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: ticketList.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                var data = ticketList[index];
+                return TicketCard(ticket: data);
+              },
+            ),
           ),
           SizedBox(height: MediaQuery.paddingOf(context).bottom),
         ],
@@ -141,7 +178,7 @@ class _ForwardedCasesViewState extends State<ForwardedCasesView> {
             itemCount: 5,
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return const TicketCard();
+              return TicketCard(ticket: TicketModel());
             },
           ),
           SizedBox(

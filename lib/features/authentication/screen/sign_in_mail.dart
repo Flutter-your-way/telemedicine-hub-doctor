@@ -13,6 +13,7 @@ import 'package:telemedicine_hub_doctor/common/button/custom_button.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/images/app_images.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
+import 'package:telemedicine_hub_doctor/features/authentication/screen/forget_password.dart';
 import 'package:telemedicine_hub_doctor/features/navigation/bottom_nav_bar.dart';
 
 class SignInEmail extends StatefulWidget {
@@ -166,16 +167,27 @@ class _SignInEmailState extends State<SignInEmail> {
                     ),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: Text(
-                        "Forgot Password ?",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primaryBlue, // Change color to blue
-                          decoration: TextDecoration.underline,
-                          // Underline the text
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                builder: (context) =>
+                                    const ForgetPasswordScreen(),
+                              ));
+                        },
+                        child: Text(
+                          "Forgot Password ?",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color:
+                                AppColors.primaryBlue, // Change color to blue
+                            decoration: TextDecoration.underline,
+                            // Underline the text
+                          ),
+                          textAlign: TextAlign.end,
                         ),
-                        textAlign: TextAlign.end,
                       ),
                     ),
                     SizedBox(

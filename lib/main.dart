@@ -10,8 +10,11 @@ import 'package:provider/provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/features/appointment/provider/appointment_provider.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/screen/sign_in_mail.dart';
+import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
+import 'package:telemedicine_hub_doctor/features/profile/provider/profile_provider.dart';
 import 'package:telemedicine_hub_doctor/features/splash/screen/splash_screen.dart';
 import 'package:telemedicine_hub_doctor/firebase_options.dart';
 import 'package:telemedicine_hub_doctor/routes/app_routes.dart';
@@ -25,6 +28,9 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => AppointmentProvider()),
       ],
       child: DevicePreview(
         // enabled: !kReleaseMode,

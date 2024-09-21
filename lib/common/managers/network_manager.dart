@@ -1,7 +1,8 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:telemedicine_hub_doctor/common/constants/app_constants.dart';
 import 'package:telemedicine_hub_doctor/common/managers/local_manager.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
@@ -26,6 +27,22 @@ class NetworkDataManger {
       headers = headers ?? {};
       headers!['Content-Type'] = 'application/json';
       return await client.post(
+        Uri.parse(url),
+        body: jsonEncode(data),
+        headers: headers,
+      );
+    });
+  }
+
+  Future<http.Response> putResponseFromUrl(
+    String url, {
+    Map<String, dynamic>? data,
+    Map<String, String>? headers,
+  }) async {
+    return await _handleRequest(() async {
+      headers = headers ?? {};
+      headers!['Content-Type'] = 'application/json';
+      return await client.put(
         Uri.parse(url),
         body: jsonEncode(data),
         headers: headers,
@@ -84,7 +101,7 @@ class NetworkDataManger {
 
       var r =
           await NetworkDataManger(client: http.Client()).postResponseFromUrl(
-        "${baseAuthUrl}refresh-access-token",
+        "${baseAuthUrl}doctor/refresh-access-token",
         data: {"refresh": refreshToken},
         headers: {
           "Content-Type": "application/json",

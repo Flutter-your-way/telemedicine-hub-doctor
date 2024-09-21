@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
 
 class TicketViewScreen extends StatefulWidget {
@@ -67,7 +68,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
                     itemCount: 5,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return const TicketCard();
+                      return TicketCard(ticket: TicketModel());
                     },
                   ),
                 )

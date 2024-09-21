@@ -1,370 +1,442 @@
-import 'dart:ui';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
+import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
+import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 
 class TicketDetailsScreen extends StatefulWidget {
-  const TicketDetailsScreen({super.key});
+  TicketModel ticket;
+  TicketDetailsScreen({
+    super.key,
+    required this.ticket,
+  });
 
   @override
   State<TicketDetailsScreen> createState() => _TicketDetailsScreenState();
 }
 
 class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
+  String getTimeUntilAppointment(DateTime scheduledDate) {
+    final now = DateTime.now();
+    final difference = scheduledDate.difference(now);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''}';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''}';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''}';
+    } else {
+      return 'Just now';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    DateTime dateTime = DateTime.parse(widget.ticket.scheduleDate.toString());
+    String formattedDate = DateFormat('d MMM yyyy').format(dateTime);
+
+    String formattedTime = DateFormat('h:mm a').format(dateTime);
+    String timeUntilAppointment = getTimeUntilAppointment(dateTime);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: Text(
-          "Ticket No. 23145",
+          widget.ticket.name.toString(),
           style: GoogleFonts.openSans(
               textStyle:
                   TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
         ),
         centerTitle: false,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.h),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 200.h,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 8.w,
-                  vertical: 16.h,
-                ),
-                child: Stack(
-                  children: [
-                    Container(
-                      width: MediaQuery.sizeOf(context).width - 56,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFAFAFC),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: const Color(0xFFF4F4F6),
-                          width: 2,
-                          strokeAlign: BorderSide.strokeAlignInside,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(.15),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16.w, vertical: 20.h),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(6),
-                                      decoration: BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Text(
-                                        "Confirmed",
-                                        style: TextStyle(
-                                          color: AppColors.greenishWhite,
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    GestureDetector(
-                                      onTap: () {
-                                        _buildPatientProfile(context);
-                                      },
-                                      child: Text(
-                                        "Patient Profile",
-                                        style: GoogleFonts.openSans(
-                                            textStyle: TextStyle(
-                                                fontSize: 14.sp,
-                                                color: AppColors.primaryBlue,
-                                                fontWeight: FontWeight.w600,
-                                                decoration:
-                                                    TextDecoration.underline)),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(height: 8.h),
-                                Text(
-                                  "Ticket No : 001",
-                                  style: TextStyle(
-                                    fontSize: 20.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 12.h),
-                                Row(
-                                  children: [
-                                    Text("ETA - 4 hours  • ",
-                                        style: GoogleFonts.openSans(
-                                            textStyle: TextStyle(
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.w400))),
-                                    Text(
-                                      "Vaginal Yeast Infection",
-                                      style: GoogleFonts.openSans(
-                                          textStyle: TextStyle(
-                                              fontSize: 12.sp,
-                                              color: const Color(0xFF015988),
-                                              fontWeight: FontWeight.w600)),
-                                    )
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                          const Spacer(),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        padding: EdgeInsets.all(12.w),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.h),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 200.h,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 8.w,
+                    vertical: 16.h,
+                  ),
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: MediaQuery.sizeOf(context).width - 56,
                         decoration: BoxDecoration(
-                            color: AppColors.bluishWhite,
-                            borderRadius: const BorderRadius.vertical(
-                              bottom: Radius.circular(12),
-                            )),
-                        child: Row(
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Iconsax.calendar,
-                                  color: AppColors.grey,
-                                ),
-                                SizedBox(width: 4.w),
-                                Text(
-                                  '1 Aug, 2024',
-                                  style: TextStyle(
-                                    color: AppColors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            Row(
-                              children: [
-                                Icon(
-                                  Iconsax.clock,
-                                  color: AppColors.grey,
-                                ),
-                                SizedBox(width: 4.w),
-                                Text(
-                                  '2:00 PM',
-                                  style: TextStyle(
-                                    color: AppColors.grey,
-                                  ),
-                                ),
-                              ],
+                          color: const Color(0xFFFAFAFC),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(0xFFF4F4F6),
+                            width: 2,
+                            strokeAlign: BorderSide.strokeAlignInside,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(.15),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                    Positioned(
-                      left: 0,
-                      top: 12.h,
-                      child: Container(
-                        height: 129.h,
-                        width: 1.5.h,
-                        decoration: const BoxDecoration(
-                          color: Colors.green,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w, vertical: 20.h),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(6),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green,
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                        ),
+                                        child: Text(
+                                          widget.ticket.status.toString(),
+                                          style: TextStyle(
+                                            color: AppColors.greenishWhite,
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      GestureDetector(
+                                        onTap: () {
+                                          _buildPatientProfile(
+                                              context: context,
+                                              patient: widget.ticket.patient,
+                                              disease: widget
+                                                  .ticket.disease!.name
+                                                  .toString());
+                                        },
+                                        child: Text(
+                                          "Patient Profile",
+                                          style: GoogleFonts.openSans(
+                                              textStyle: TextStyle(
+                                                  fontSize: 14.sp,
+                                                  color: AppColors.primaryBlue,
+                                                  fontWeight: FontWeight.w600,
+                                                  decoration: TextDecoration
+                                                      .underline)),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  Text(
+                                    widget.ticket.name.toString(),
+                                    style: TextStyle(
+                                      fontSize: 20.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 12.h),
+                                  Row(
+                                    children: [
+                                      Text("ETA - $timeUntilAppointment  • ",
+                                          style: GoogleFonts.openSans(
+                                              textStyle: TextStyle(
+                                                  fontSize: 14.sp,
+                                                  fontWeight:
+                                                      FontWeight.w400))),
+                                      Text(
+                                        widget.ticket.disease!.name.toString(),
+                                        style: GoogleFonts.openSans(
+                                            textStyle: TextStyle(
+                                                fontSize: 12.sp,
+                                                color: const Color(0xFF015988),
+                                                fontWeight: FontWeight.w600)),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                            const Spacer(),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(12.w),
+                          decoration: BoxDecoration(
+                              color: AppColors.bluishWhite,
+                              borderRadius: const BorderRadius.vertical(
+                                bottom: Radius.circular(12),
+                              )),
+                          child: Row(
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Iconsax.calendar,
+                                    color: AppColors.grey,
+                                  ),
+                                  SizedBox(width: 4.w),
+                                  Text(
+                                    formattedDate,
+                                    style: TextStyle(
+                                      color: AppColors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Iconsax.clock,
+                                    color: AppColors.grey,
+                                  ),
+                                  SizedBox(width: 4.w),
+                                  Text(
+                                    formattedTime,
+                                    style: TextStyle(
+                                      color: AppColors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 0,
+                        top: 12.h,
+                        child: Container(
+                          height: 129.h,
+                          width: 1.5.h,
+                          decoration: const BoxDecoration(
+                            color: Colors.green,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 16.h),
-            Expanded(
-                child: ListView.builder(
-              itemCount: 4,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.h),
-                  child: GestureDetector(
-                    onTap: () {
-                      showImageDialog(
-                          context, 'assets/images/desease_image.png');
+              SizedBox(height: 16.h),
+              SizedBox(
+                  height: 100.h,
+                  child: ListView.builder(
+                    itemCount: 4,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.h),
+                        child: GestureDetector(
+                          onTap: () {
+                            showImageDialog(
+                                context, 'assets/images/desease_image.png');
+                          },
+                          child: Image.asset(
+                            'assets/images/desease_image.png',
+                            height: 90.h,
+                            width: 115.w,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      );
                     },
-                    child: Image.asset(
-                      'assets/images/desease_image.png',
-                      height: 90.h,
-                      width: 115.w,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                );
-              },
-            )),
-            SizedBox(height: 16.h),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.bluishWhite,
-                borderRadius: BorderRadius.circular(8.h),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.h, vertical: 8.h),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                        child: Text(
-                      "Add the following information to proceed for the medical checkup ",
-                      textAlign: TextAlign.start,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.openSans(
-                          textStyle: TextStyle(
-                              fontSize: 12.sp, fontWeight: FontWeight.w400)),
-                    )),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.h),
-                      child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.arrow_circle_down_rounded)),
-                    )
-                  ],
+                  )),
+              SizedBox(height: 16.h),
+              Column(
+                children: List.generate(
+                  widget.ticket.questionsAndAnswers!.length,
+                  (index) {
+                    var data = widget.ticket.questionsAndAnswers![index];
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 8.h),
+                      child: QuestionAnswerWidget(questionAnswer: data),
+                    );
+                  },
                 ),
               ),
-            ),
-            SizedBox(height: 16.h),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.bluishWhite,
-                borderRadius: BorderRadius.circular(8.h),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.h, vertical: 8.h),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                child: Column(
                   children: [
-                    Expanded(
+                    SizedBox(height: 16.h),
+                    FractionallySizedBox(
+                      widthFactor: 1,
+                      child: FilledButton(
+                        style: FilledButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            backgroundColor: const Color(0xFFEDEDF4),
+                            foregroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            )),
+                        onPressed: () {},
                         child: Text(
-                      "Add the following information to proceed for the medical checkup ",
-                      textAlign: TextAlign.start,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.openSans(
-                          textStyle: TextStyle(
-                              fontSize: 12.sp, fontWeight: FontWeight.w400)),
-                    )),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.h),
-                      child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.arrow_circle_down_rounded)),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 16.h),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.bluishWhite,
-                borderRadius: BorderRadius.circular(8.h),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.h, vertical: 8.h),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                        child: Text(
-                      "Add the following information to proceed for the medical checkup ",
-                      textAlign: TextAlign.start,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.openSans(
-                          textStyle: TextStyle(
-                              fontSize: 12.sp, fontWeight: FontWeight.w400)),
-                    )),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.h),
-                      child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.arrow_circle_down_rounded)),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 16.h),
-            const Spacer(),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
-              child: Column(
-                children: [
-                  SizedBox(height: 16.h),
-                  FractionallySizedBox(
-                    widthFactor: 1,
-                    child: FilledButton(
-                      style: FilledButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          backgroundColor: const Color(0xFFEDEDF4),
-                          foregroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          )),
-                      onPressed: () {},
-                      child: Text(
-                        "Forward Case",
-                        style: TextStyle(
-                          fontSize: 16.sp,
+                          "Forward Case",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 16.h),
-                  FractionallySizedBox(
-                    widthFactor: 1,
-                    child: FilledButton(
-                      style: FilledButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          )),
-                      onPressed: () {
-                        _buildPrescribeFeild(context);
-                      },
-                      child: Text(
-                        "Prescribe",
-                        style: TextStyle(
-                          fontSize: 16.sp,
+                    SizedBox(height: 16.h),
+                    FractionallySizedBox(
+                      widthFactor: 1,
+                      child: FilledButton(
+                        style: FilledButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            backgroundColor: AppColors.primaryBlue,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            )),
+                        onPressed: () {
+                          _buildPrescribeFeild(
+                              context: context,
+                              id: widget.ticket.id.toString());
+                        },
+                        child: Text(
+                          "Prescribe",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                          ),
                         ),
                       ),
                     ),
+                    SizedBox(height: MediaQuery.paddingOf(context).bottom + 10),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class QuestionAnswerWidget extends StatefulWidget {
+  final QuestionsAndAnswers questionAnswer;
+
+  const QuestionAnswerWidget({super.key, required this.questionAnswer});
+
+  @override
+  _QuestionAnswerWidgetState createState() => _QuestionAnswerWidgetState();
+}
+
+class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _toggleExpand() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+      _isExpanded ? _controller.forward() : _controller.reverse();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.bluishWhite,
+        borderRadius: BorderRadius.circular(8.h),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    widget.questionAnswer.question ?? '',
+                    textAlign: TextAlign.start,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.openSans(
+                      textStyle: TextStyle(
+                          fontSize: 12.sp, fontWeight: FontWeight.w600),
+                    ),
                   ),
-                  SizedBox(height: MediaQuery.paddingOf(context).bottom + 10),
-                ],
+                ),
+                IconButton(
+                  onPressed: _toggleExpand,
+                  icon: Icon(
+                    _isExpanded
+                        ? Icons.arrow_circle_up_rounded
+                        : Icons.arrow_circle_down_rounded,
+                  ),
+                ),
+              ],
+            ),
+            SizeTransition(
+              sizeFactor: _animation,
+              axis: Axis.vertical,
+              child: Container(
+                height: 44.h,
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 12.h),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.h)),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    widget.questionAnswer.answer ?? '',
+                    textAlign: TextAlign.start,
+                    maxLines: 2,
+                    style: GoogleFonts.openSans(
+                      textStyle: TextStyle(
+                          fontSize: 12.sp, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
@@ -374,7 +446,10 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
   }
 }
 
-void _buildPrescribeFeild(BuildContext context) {
+void _buildPrescribeFeild({required BuildContext context, required String id}) {
+  var homeProvider = Provider.of<HomeProvider>(context, listen: false);
+  TextEditingController controller = TextEditingController();
+  XFile? selectedImage;
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -426,7 +501,7 @@ void _buildPrescribeFeild(BuildContext context) {
                     SizedBox(height: 16.h),
                     TextFormField(
                       maxLines: 9,
-                      controller: null,
+                      controller: controller,
                       onChanged: (value) {
                         setState(() {});
                       },
@@ -459,25 +534,41 @@ void _buildPrescribeFeild(BuildContext context) {
                       child: Column(
                         children: [
                           SizedBox(height: 16.h),
-                          FractionallySizedBox(
-                            widthFactor: 1,
-                            child: FilledButton(
-                              style: FilledButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(vertical: 12.h),
-                                  backgroundColor: const Color(0xFFEDEDF4),
-                                  foregroundColor: Colors.black,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  )),
-                              onPressed: () {},
-                              child: Text(
-                                "Attach File",
-                                style: TextStyle(
-                                  fontSize: 16.sp,
+                          selectedImage == null
+                              ? FractionallySizedBox(
+                                  widthFactor: 1,
+                                  child: FilledButton(
+                                    style: FilledButton.styleFrom(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 12.h),
+                                        backgroundColor:
+                                            const Color(0xFFEDEDF4),
+                                        foregroundColor: Colors.black,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        )),
+                                    onPressed: () async {
+                                      final XFile? pickedImage =
+                                          await ImagePickerHelper.pickImage(
+                                              context);
+                                      if (pickedImage != null) {
+                                        setState(() {
+                                          selectedImage = pickedImage;
+                                        });
+                                      }
+                                    },
+                                    child: Text(
+                                      "Attach File",
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Text(
+                                  selectedImage!.name.toString(),
                                 ),
-                              ),
-                            ),
-                          ),
                           SizedBox(height: 16.h),
                           FractionallySizedBox(
                             widthFactor: 1,
@@ -489,8 +580,39 @@ void _buildPrescribeFeild(BuildContext context) {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   )),
-                              onPressed: () {
-                                _buildPrescribeFeild(context);
+                              onPressed: () async {
+                                late CustomResponse res;
+
+                                if (selectedImage != null &&
+                                    selectedImage!.path.isNotEmpty) {
+                                  res = await homeProvider.uploadPrescriptions(
+                                      file: File(selectedImage!.path),
+                                      context: context,
+                                      ticketID: id);
+
+                                  if (res.success) {
+                                    var r = await homeProvider.completedTicket(
+                                        id: id, note: controller.text);
+                                    if (r.success) {
+                                      Fluttertoast.showToast(msg: r.msg);
+                                      Navigator.of(context).pop();
+                                    } else {
+                                      Fluttertoast.showToast(msg: r.msg);
+                                    }
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: "Profile picture upload failed!");
+                                  }
+                                } else {
+                                  var r = await homeProvider.completedTicket(
+                                      id: id, note: controller.text);
+                                  if (r.success) {
+                                    Fluttertoast.showToast(msg: r.msg);
+                                    Navigator.of(context).pop();
+                                  } else {
+                                    Fluttertoast.showToast(msg: r.msg);
+                                  }
+                                }
                               },
                               child: Text(
                                 "Continue",
@@ -554,7 +676,14 @@ void showImageDialog(BuildContext context, String imagePath) {
   );
 }
 
-void _buildPatientProfile(BuildContext context) {
+void _buildPatientProfile(
+    {required BuildContext context,
+    required Patient? patient,
+    required String disease}) {
+  String formattedDate = DateTime.parse(patient!.age.toString())
+      .toIso8601String()
+      .substring(0, 10);
+
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -565,12 +694,12 @@ void _buildPatientProfile(BuildContext context) {
     ),
     builder: (BuildContext context) {
       return DraggableScrollableSheet(
-        initialChildSize: 0.85,
-        minChildSize: 0.85,
+        initialChildSize: 0.90,
+        minChildSize: 0.90,
         maxChildSize: 0.95,
         expand: false,
         snap: true,
-        snapSizes: const [0.85, 0.95],
+        snapSizes: const [0.90, 0.95],
         builder: (BuildContext context, ScrollController scrollController) {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
@@ -613,40 +742,55 @@ void _buildPatientProfile(BuildContext context) {
                         ),
                         SizedBox(height: 20.h),
                         infoRow(
-                            key: 'Patient Name:', value: 'Sheikh Akram Ali'),
+                            key: 'Patient Name:',
+                            value: patient.name.toString()),
                         SizedBox(height: 20.h),
                         Row(
                           children: [
-                            infoBox(key: "Gender", value: "Male"),
+                            infoBox(
+                                key: "Gender",
+                                value: patient.gender.toString()),
                             SizedBox(
                               width: 10.w,
                             ),
-                            infoBox(key: "Blood Group", value: "B+"),
+                            infoBox(
+                                key: "Blood Group",
+                                value: patient.bloodGroup.toString()),
                           ],
                         ),
                         SizedBox(height: 20.h),
                         Row(
                           children: [
-                            infoBox(key: "Height", value: "5.8"),
+                            infoBox(
+                                key: "Height",
+                                value: patient.height.toString()),
                             SizedBox(
                               width: 10.w,
                             ),
-                            infoBox(key: "Weight", value: "75kg"),
+                            infoBox(
+                                key: "Weight",
+                                value: "${patient.weight.toString()}kg"),
                             SizedBox(
                               width: 10.w,
                             ),
-                            infoBox(key: "Age", value: "2024-01-28"),
+                            infoBox(key: "Age", value: formattedDate),
                           ],
                         ),
-                        SizedBox(height: 20.h),
-                        infoRow(key: "Father's Name:", value: 'Junnaid Ali'),
-                        SizedBox(height: 20.h),
-                        infoRow(key: "Grandfather’s Name:", value: 'Abdul Ali'),
                         SizedBox(height: 20.h),
                         infoRow(
-                            key: 'Chronic Disease:', value: ' Hypertension'),
+                            key: "Father's Name:",
+                            value: patient.fatherName.toString()),
                         SizedBox(height: 20.h),
-                        infoRow(key: 'Address:', value: 'Street name, city'),
+                        infoRow(
+                            key: "Grandfather’s Name:",
+                            value: patient.grandFatherName.toString()),
+                        SizedBox(height: 20.h),
+                        infoRow(key: 'Chronic Disease:', value: disease),
+                        SizedBox(height: 20.h),
+                        infoRow(
+                            key: 'Address:',
+                            value:
+                                "Mollit mollit id quis adipisicing minim amet tempor enim. Cillum nisi enim ea nisi aute. Sunt veniam quis eu fugiat ipsum."),
                         SizedBox(height: 20.h),
                         SizedBox(
                           height: MediaQuery.paddingOf(context).bottom,
@@ -678,11 +822,19 @@ Widget infoRow({required String key, required String value}) {
         style: GoogleFonts.openSans(
             textStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600)),
       ),
-      Text(
-        "  $value",
-        style: GoogleFonts.openSans(
-            fontSize: 14.sp,
-            textStyle: const TextStyle(fontWeight: FontWeight.w400)),
+      SizedBox(
+        width: 4.w,
+      ),
+      Expanded(
+        child: Text(
+          "  $value",
+          maxLines: 2,
+          textAlign: TextAlign.start,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.openSans(
+              fontSize: 14.sp,
+              textStyle: const TextStyle(fontWeight: FontWeight.w400)),
+        ),
       ),
     ]),
   );
@@ -721,4 +873,42 @@ Widget infoBox({required String key, required String value}) {
       ),
     ),
   );
+}
+
+class ImagePickerHelper {
+  static Future<XFile?> pickImage(BuildContext context) async {
+    final ImagePicker picker = ImagePicker();
+    try {
+      final XFile? pickedFile =
+          await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        print('Selected image: ${pickedFile.name} at ${pickedFile.path}');
+        return pickedFile;
+      } else {
+        print('No image selected');
+        return null;
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+      // Show an error dialog
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: const Text('Failed to pick image. Please try again.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      return null;
+    }
+  }
 }

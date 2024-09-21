@@ -1,16 +1,24 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:svg_flutter/svg.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/common/images/app_images.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/screen/sign_in_mail.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/notification_screen.dart';
+import 'package:telemedicine_hub_doctor/features/home/screens/ticket_details.dart';
+import 'package:telemedicine_hub_doctor/features/profile/provider/profile_provider.dart';
 import 'package:telemedicine_hub_doctor/features/profile/screens/change_language_screen.dart';
+
 import 'package:telemedicine_hub_doctor/features/profile/screens/help_support_screen.dart';
 import 'package:telemedicine_hub_doctor/features/profile/screens/notification_setting_screen.dart';
 import 'package:telemedicine_hub_doctor/features/profile/screens/reset_password_screen.dart';
@@ -23,8 +31,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  XFile? selectedImage;
   @override
   Widget build(BuildContext context) {
+    var authProvider = Provider.of<AuthProvider>(context);
+    var profileProvider = Provider.of<ProfileProvider>(context);
     return Scaffold(
       body: Column(
         children: [
@@ -44,10 +55,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           horizontal: 16.h, vertical: 12.h),
                       child: Row(
                         children: [
-                          CircleAvatar(
-                            radius: 30.h,
-                            backgroundImage: const AssetImage(
-                                "assets/images/desease_image.png"),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(2000),
+                            clipBehavior: Clip.antiAlias,
+                            child: CircleAvatar(
+                              radius: 30.h,
+                              child:
+                                  (authProvider.usermodel?.imageUrl != null &&
+                                          authProvider
+                                              .usermodel!.imageUrl!.isNotEmpty)
+                                      ? Image.network(
+                                          authProvider.usermodel!.imageUrl!)
+                                      : SvgPicture.asset(
+                                          AppImages.person,
+                                          fit: BoxFit.contain,
+                                        ),
+                            ),
                           ),
                           SizedBox(
                             width: 16.h,
@@ -56,17 +79,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Dr. Peter Doe",
+                                authProvider.usermodel?.nameEnglish
+                                        .toString() ??
+                                    '',
                                 style: GoogleFonts.openSans(
                                     textStyle: TextStyle(
-                                        fontSize: 20.h,
+                                        fontSize: 18.h,
                                         fontWeight: FontWeight.w600)),
                               ),
                               Text(
-                                "username@gmail.com",
+                                authProvider.usermodel?.email.toString() ?? "",
+                                // "${authProvider.usermodel?.imageUrl}",
                                 style: GoogleFonts.openSans(
                                     textStyle: TextStyle(
-                                        fontSize: 14.h,
+                                        fontSize: 12.h,
                                         fontWeight: FontWeight.w400)),
                               )
                             ],
@@ -74,11 +100,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const Spacer(),
                           GestureDetector(
                             onTap: () async {
-                              Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                      builder: (context) =>
-                                          const NotificationScreen()));
+                              final XFile? pickedImage =
+                                  await ImagePickerHelper.pickImage(context);
+                              if (pickedImage != null) {
+                                setState(() {
+                                  selectedImage = pickedImage;
+                                });
+                                var res =
+                                    await profileProvider.uploadProfilePicture(
+                                        file: File(selectedImage!.path),
+                                        context: context);
+                                if (res.success) {
+                                  Fluttertoast.showToast(
+                                      msg: "Profile Upload Successfully!");
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: "Profile Upload Failed!");
+                                }
+                              }
                             },
                             child: Container(
                               height: 32.h,
@@ -90,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     color: AppColors.primaryBlue,
                                   )),
                               child: Icon(
-                                Iconsax.edit,
+                                Iconsax.document_upload,
                                 size: 18.h,
                               ),
                             ),
@@ -328,10 +367,12 @@ void _buildLogoutview(BuildContext context) {
                           if (res.success) {
                             Fluttertoast.showToast(
                                 msg: "Logged out succeddfully! ");
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) => const SignInEmail()));
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) => const SignInEmail()),
+                              (route) => false,
+                            );
                           } else {
                             Fluttertoast.showToast(msg: "Log out failed");
                           }

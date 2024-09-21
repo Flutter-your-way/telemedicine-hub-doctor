@@ -1,9 +1,17 @@
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
+import 'package:svg_flutter/svg.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/common/images/app_images.dart';
+import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
+import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
+import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/notification_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/ticket_view_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
@@ -16,6 +24,35 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<TicketModel> ticketList = [];
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        getTickets();
+      },
+    );
+    super.initState();
+  }
+
+  void getTickets() async {
+    try {
+      var res = await Provider.of<HomeProvider>(context, listen: false)
+          .getTickets(
+              doctorId: Provider.of<AuthProvider>(context, listen: false)
+                  .usermodel!
+                  .id
+                  .toString());
+      if (res.success) {
+        if (mounted) {
+          setState(() {
+            ticketList = res.data;
+          });
+        }
+      } else {}
+    } catch (e) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,16 +128,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12.w),
-                    child: ListView.builder(
-                      padding: EdgeInsets.zero,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: 5,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return const TicketCard();
-                      },
-                    ),
-                  )
+                    child: ticketList.isEmpty
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: 100.h,
+                              ),
+                              SizedBox(
+                                  height: 160.h,
+                                  width: 160.w,
+                                  child: SvgPicture.asset(AppImages.no_data)),
+                            ],
+                          )
+                        : ListView.builder(
+                            padding: EdgeInsets.zero,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: ticketList.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              var data = ticketList[index];
+                              return TicketCard(ticket: data);
+                            },
+                          ),
+                  ),
                 ],
               ),
             ),
@@ -118,6 +170,7 @@ class HomeAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var authProvider = Provider.of<AuthProvider>(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Column(
@@ -137,7 +190,7 @@ class HomeAppBar extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8.h),
-                  Text("Dr. Peter",
+                  Text(authProvider.usermodel?.nameEnglish.toString() ?? '',
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
