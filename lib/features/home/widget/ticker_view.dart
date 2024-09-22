@@ -22,8 +22,29 @@ class TicketCard extends StatefulWidget {
 }
 
 class _TicketCardState extends State<TicketCard> {
+  Color getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'draft':
+      case 'pending':
+        return Colors.red;
+      case 'completed':
+        return Colors.green;
+      case 'forwarded':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // Function to capitalize the first letter of the status
+  String capitalizeFirstLetter(String status) {
+    if (status.isEmpty) return status;
+    return status[0].toUpperCase() + status.substring(1).toLowerCase();
+  }
+
   @override
   Widget build(BuildContext context) {
+    String statusText = capitalizeFirstLetter(widget.ticket.status.toString());
     String getTimeUntilAppointment(DateTime scheduledDate) {
       final now = DateTime.now();
       final difference = scheduledDate.difference(now);
@@ -94,11 +115,12 @@ class _TicketCardState extends State<TicketCard> {
                               Container(
                                 padding: EdgeInsets.all(6.h),
                                 decoration: BoxDecoration(
-                                  color: Colors.green,
+                                  color: getStatusColor(
+                                      widget.ticket.status.toString()),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
-                                  widget.ticket.status.toString(),
+                                  statusText,
                                   style: TextStyle(
                                     color: AppColors.greenishWhite,
                                     fontSize: 12.sp,
@@ -197,8 +219,8 @@ class _TicketCardState extends State<TicketCard> {
                 child: Container(
                   height: 129.h,
                   width: 1.5.h,
-                  decoration: const BoxDecoration(
-                    color: Colors.green,
+                  decoration: BoxDecoration(
+                    color: getStatusColor(widget.ticket.status.toString()),
                   ),
                 ),
               ),

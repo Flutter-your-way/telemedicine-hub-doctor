@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
+import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
+import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
+import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
+import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
 
 class TicketViewScreen extends StatefulWidget {
@@ -20,6 +25,66 @@ class TicketViewScreen extends StatefulWidget {
 }
 
 class _TicketViewScreenState extends State<TicketViewScreen> {
+  List<TicketModel> ticketList = [];
+  List<TicketModel> filteredTicketList = [];
+  String status = '';
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        if (widget.title != "Complete Ticket") {
+          setState(() {
+            status = 'draft';
+          });
+        } else if (widget.title != "Pending Ticket") {
+          setState(() {
+            status = 'completed';
+          });
+        }
+        getTickets();
+      },
+    );
+    super.initState();
+  }
+
+  void getTickets() async {
+    try {
+      var res = await Provider.of<HomeProvider>(context, listen: false)
+          .getTickets(
+              doctorId: Provider.of<AuthProvider>(context, listen: false)
+                  .usermodel!
+                  .id
+                  .toString(),
+              status: status);
+      if (res.success) {
+        if (mounted) {
+          setState(() {
+            ticketList = res.data;
+            filteredTicketList = ticketList;
+          });
+        }
+      } else {}
+    } catch (e) {}
+  }
+
+  void _onSearchChanged(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        filteredTicketList = ticketList;
+      } else {
+        filteredTicketList = ticketList.where((ticketList) {
+          return ticketList.name!.toLowerCase().contains(query.toLowerCase()) ||
+              ticketList.disease!.name!
+                  .toLowerCase()
+                  .contains(query.toLowerCase()) ||
+              ticketList.patient!.name!
+                  .toLowerCase()
+                  .contains(query.toLowerCase());
+        }).toList();
+      }
+    });
+  }
+
   List<String> sortList = [
     'Vaginal Yeast Infection',
     'UTI',
@@ -29,6 +94,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
     'Canker Sore',
     'COVID-19',
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +116,11 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             child: SearchField(
+              function: (value) {
+                setState(() {
+                  _onSearchChanged(value);
+                });
+              },
               sortList: sortList,
             ),
           ),
@@ -62,15 +133,24 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
               children: [
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 5,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return TicketCard(ticket: TicketModel());
-                    },
-                  ),
+                  child: Provider.of<HomeProvider>(context).isLoading
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                              top: MediaQuery.sizeOf(context).height * 0.3),
+                          child: LoaderView(),
+                        )
+                      : filteredTicketList.isEmpty
+                          ? noDataView()
+                          : ListView.builder(
+                              padding: EdgeInsets.zero,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: filteredTicketList.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                var data = filteredTicketList[index];
+                                return TicketCard(ticket: data);
+                              },
+                            ),
                 )
               ],
             ),
@@ -83,14 +163,17 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
 
 class SearchField extends StatelessWidget {
   List<String> sortList;
+  void Function(String)? function;
   SearchField({
     super.key,
     required this.sortList,
+    this.function,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onChanged: function,
       onTapOutside: (_) {
         FocusManager.instance.primaryFocus?.unfocus();
       },

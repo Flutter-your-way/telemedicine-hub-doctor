@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +8,7 @@ import 'package:svg_flutter/svg.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/images/app_images.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
+import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/notification_screen.dart';
@@ -42,7 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
               doctorId: Provider.of<AuthProvider>(context, listen: false)
                   .usermodel!
                   .id
-                  .toString());
+                  .toString(),
+              status: '');
       if (res.success) {
         if (mounted) {
           setState(() {
@@ -55,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var homeProvider = Provider.of<HomeProvider>(context);
     return Scaffold(
       body: Column(
         children: [
@@ -128,30 +129,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12.w),
-                    child: ticketList.isEmpty
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 100.h,
-                              ),
-                              SizedBox(
-                                  height: 160.h,
-                                  width: 160.w,
-                                  child: SvgPicture.asset(AppImages.no_data)),
-                            ],
+                    child: homeProvider.isLoading
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                                top: MediaQuery.sizeOf(context).height * 0.2),
+                            child: LoaderView(),
                           )
-                        : ListView.builder(
-                            padding: EdgeInsets.zero,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: ticketList.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              var data = ticketList[index];
-                              return TicketCard(ticket: data);
-                            },
-                          ),
+                        : ticketList.isEmpty
+                            ? noDataView()
+                            : ListView.builder(
+                                padding: EdgeInsets.zero,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: ticketList.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  var data = ticketList[index];
+                                  return TicketCard(ticket: data);
+                                },
+                              ),
                   ),
                 ],
               ),
@@ -161,6 +156,33 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
+
+Widget noDataView() {
+  return Container(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 100.h,
+        ),
+        Text(
+          "No Ticket Found",
+          style: GoogleFonts.openSans(
+              textStyle:
+                  TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
+        ),
+        SizedBox(
+          height: 40.h,
+        ),
+        SizedBox(
+            height: 160.h,
+            width: 160.w,
+            child: SvgPicture.asset(AppImages.no_data)),
+      ],
+    ),
+  );
 }
 
 class HomeAppBar extends StatelessWidget {

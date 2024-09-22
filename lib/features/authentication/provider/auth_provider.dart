@@ -127,7 +127,7 @@ class AuthProvider extends ChangeNotifier {
           "${baseAuthUrl}doctor/get-doctor-by-id/",
           headers: {"Authorization": "Bearer $accessToken", "type": "doctor"});
       var responseBody = jsonDecode(r.body);
-
+      print(r.body);
       bool success = responseBody['success'] ?? false;
       if (success) {
         FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {

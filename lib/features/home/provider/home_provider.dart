@@ -16,6 +16,7 @@ class HomeProvider extends ChangeNotifier {
 
   Future<CustomResponse> getTickets({
     required String doctorId,
+    required String status,
   }) async {
     String? accessToken = await LocalDataManager.getToken();
     isLoading = true;
@@ -23,10 +24,11 @@ class HomeProvider extends ChangeNotifier {
 
     try {
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
-        "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId",
+        "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=$status",
         headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
       );
 
+      log(r.body);
       var responseBody = jsonDecode(r.body);
 
       bool success = responseBody['success'] ?? false;
