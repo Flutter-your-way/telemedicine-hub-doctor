@@ -9,6 +9,7 @@ import 'package:telemedicine_hub_doctor/common/managers/network_manager.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:telemedicine_hub_doctor/common/models/user_model.dart';
 import 'package:telemedicine_hub_doctor/features/profile/widget/loading_dialog.dart';
 
 class HomeProvider extends ChangeNotifier {
@@ -28,7 +29,6 @@ class HomeProvider extends ChangeNotifier {
         headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
       );
 
-      log(r.body);
       var responseBody = jsonDecode(r.body);
 
       bool success = responseBody['success'] ?? false;
@@ -63,6 +63,52 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
+  Future<CustomResponse> getAllDoctors() async {
+    String? accessToken = await LocalDataManager.getToken();
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
+        "${baseAuthUrl}doctor/get-all-general-doctors",
+        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
+      );
+
+      log(r.body);
+      var responseBody = jsonDecode(r.body);
+
+      bool success = responseBody['success'] ?? false;
+
+      if (success) {
+        List<DoctorModel> doctorlist = responseBody['data']['user']
+            .map<DoctorModel>((json) => DoctorModel.fromJson(json))
+            .toList();
+
+        return CustomResponse(
+          success: true,
+          msg: responseBody['msg'],
+          code: r.statusCode,
+          data: doctorlist,
+        );
+      } else {
+        return CustomResponse(
+          success: false,
+          msg: responseBody['msg'] ?? 'Failed to fetch diseases',
+          code: r.statusCode,
+          data: {},
+        );
+      }
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+      return CustomResponse(
+          success: false, msg: "Failed to fetch diseases", code: 400);
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<CustomResponse> completedTicket({
     required String id,
     required String note,
@@ -75,6 +121,53 @@ class HomeProvider extends ChangeNotifier {
       var r = await NetworkDataManger(client: http.Client()).putResponseFromUrl(
         "${baseAuthUrl}ticket/mark-as-complete/$id",
         data: {"note": note},
+        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
+      );
+
+      log(r.body);
+      var responseBody = jsonDecode(r.body);
+
+      bool success = responseBody['success'] ?? false;
+
+      if (success) {
+        return CustomResponse(
+          success: true,
+          msg: responseBody['msg'],
+          code: r.statusCode,
+          data: responseBody['data'],
+        );
+      } else {
+        return CustomResponse(
+          success: false,
+          msg: responseBody['msg'] ?? 'Failed to fetch diseases',
+          code: r.statusCode,
+          data: {},
+        );
+      }
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+      return CustomResponse(
+          success: false, msg: "Failed to fetch diseases", code: 400);
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<CustomResponse> forwardTicket({
+    required String newDoctorId,
+    required String note,
+    required String id,
+  }) async {
+    String? accessToken = await LocalDataManager.getToken();
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      var r = await NetworkDataManger(client: http.Client()).putResponseFromUrl(
+        "${baseAuthUrl}ticket/forward-ticket/$id",
+        data: {"newDoctorId": newDoctorId, "note": note},
         headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
       );
 

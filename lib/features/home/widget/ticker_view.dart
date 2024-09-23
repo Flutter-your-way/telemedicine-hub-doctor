@@ -30,7 +30,7 @@ class _TicketCardState extends State<TicketCard> {
       case 'completed':
         return Colors.green;
       case 'forwarded':
-        return Colors.blue;
+        return AppColors.yellow;
       default:
         return Colors.grey;
     }

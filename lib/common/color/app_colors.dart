@@ -6,6 +6,8 @@ class AppColors {
   /// 212121
   static Color black = const Color(0xFF212121);
 
+  static Color yellow = const Color(0xFFFFAB00);
+
   /// D0D2D5
   static Color greyOutline = const Color(0xFFD0D2D5);
 

@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,6 +15,7 @@ import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
+import 'package:telemedicine_hub_doctor/features/home/screens/forward_case.dart';
 
 class TicketDetailsScreen extends StatefulWidget {
   TicketModel ticket;
@@ -27,6 +29,26 @@ class TicketDetailsScreen extends StatefulWidget {
 }
 
 class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
+  Color getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'draft':
+      case 'pending':
+        return Colors.red;
+      case 'completed':
+        return Colors.green;
+      case 'forwarded':
+        return AppColors.yellow;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // Function to capitalize the first letter of the status
+  String capitalizeFirstLetter(String status) {
+    if (status.isEmpty) return status;
+    return status[0].toUpperCase() + status.substring(1).toLowerCase();
+  }
+
   String getTimeUntilAppointment(DateTime scheduledDate) {
     final now = DateTime.now();
     final difference = scheduledDate.difference(now);
@@ -44,6 +66,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String statusText = capitalizeFirstLetter(widget.ticket.status.toString());
     DateTime dateTime = DateTime.parse(widget.ticket.scheduleDate.toString());
     String formattedDate = DateFormat('d MMM yyyy').format(dateTime);
 
@@ -106,12 +129,13 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                       Container(
                                         padding: const EdgeInsets.all(6),
                                         decoration: BoxDecoration(
-                                          color: Colors.green,
+                                          color: getStatusColor(
+                                              widget.ticket.status.toString()),
                                           borderRadius:
                                               BorderRadius.circular(4),
                                         ),
                                         child: Text(
-                                          widget.ticket.status.toString(),
+                                          statusText,
                                           style: TextStyle(
                                             color: AppColors.greenishWhite,
                                             fontSize: 12.sp,
@@ -230,8 +254,9 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                         child: Container(
                           height: 129.h,
                           width: 1.5.h,
-                          decoration: const BoxDecoration(
-                            color: Colors.green,
+                          decoration: BoxDecoration(
+                            color:
+                                getStatusColor(widget.ticket.status.toString()),
                           ),
                         ),
                       ),
@@ -276,58 +301,93 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                   },
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                child: Column(
-                  children: [
-                    SizedBox(height: 16.h),
-                    FractionallySizedBox(
-                      widthFactor: 1,
-                      child: FilledButton(
-                        style: FilledButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: 12.h),
-                            backgroundColor: const Color(0xFFEDEDF4),
-                            foregroundColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            )),
-                        onPressed: () {},
-                        child: Text(
-                          "Forward Case",
-                          style: TextStyle(
-                            fontSize: 16.sp,
+              widget.ticket.status.toString() == "completed" ||
+                      widget.ticket.status.toString() == "forwarded"
+                  ? Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 12.w, vertical: 10.h),
+                      child: FractionallySizedBox(
+                        widthFactor: 1,
+                        child: FilledButton(
+                          style: FilledButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 12.h),
+                              backgroundColor: Colors.green,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              )),
+                          onPressed: () {
+                            Fluttertoast.showToast(
+                                msg: "Ticket Completed or Forwaded ");
+                          },
+                          child: Text(
+                            "Ticket Closed",
+                            style: TextStyle(
+                                fontSize: 16.sp, fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 16.h),
-                    FractionallySizedBox(
-                      widthFactor: 1,
-                      child: FilledButton(
-                        style: FilledButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: 12.h),
-                            backgroundColor: AppColors.primaryBlue,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            )),
-                        onPressed: () {
-                          _buildPrescribeFeild(
-                              context: context,
-                              id: widget.ticket.id.toString());
-                        },
-                        child: Text(
-                          "Prescribe",
-                          style: TextStyle(
-                            fontSize: 16.sp,
+                    )
+                  : Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 16.h),
+                          FractionallySizedBox(
+                            widthFactor: 1,
+                            child: FilledButton(
+                              style: FilledButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                                  backgroundColor: const Color(0xFFEDEDF4),
+                                  foregroundColor: Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  )),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => ForwardCaseScreen(
+                                          ticketId:
+                                              widget.ticket.id.toString()),
+                                    ));
+                              },
+                              child: Text(
+                                "Forward Case",
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          SizedBox(height: 16.h),
+                          FractionallySizedBox(
+                            widthFactor: 1,
+                            child: FilledButton(
+                              style: FilledButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                                  backgroundColor: AppColors.primaryBlue,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  )),
+                              onPressed: () {
+                                _buildPrescribeFeild(
+                                    context: context,
+                                    id: widget.ticket.id.toString());
+                              },
+                              child: Text(
+                                "Prescribe",
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(height: MediaQuery.paddingOf(context).bottom + 10),
-                  ],
-                ),
-              ),
+              SizedBox(height: MediaQuery.paddingOf(context).bottom + 10),
             ],
           ),
         ),

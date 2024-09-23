@@ -40,7 +40,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
               child: CustomScrollView(
                 slivers: [
                   SliverAppBar(
-                    backgroundColor: Colors.transparent,
+                    backgroundColor: AppColors.bluishWhite,
                     snap: true,
                     expandedHeight: 0.0,
                     floating: true,
@@ -140,6 +140,9 @@ class _RecentTapViewState extends State<RecentTapView> {
     return SingleChildScrollView(
       child: Column(
         children: [
+          SizedBox(
+            height: 20.h,
+          ),
           Provider.of<HomeProvider>(context).isLoading
               ? Padding(
                   padding: EdgeInsets.only(
@@ -149,7 +152,7 @@ class _RecentTapViewState extends State<RecentTapView> {
               : ticketList.isEmpty
                   ? noDataView()
                   : ListView.builder(
-                      padding: EdgeInsets.zero,
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: ticketList.length,
                       shrinkWrap: true,
@@ -219,7 +222,7 @@ class _ForwardedCasesViewState extends State<ForwardedCasesView> {
               : ticketList.isEmpty
                   ? noDataView()
                   : ListView.builder(
-                      padding: EdgeInsets.zero,
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: ticketList.length,
                       shrinkWrap: true,
