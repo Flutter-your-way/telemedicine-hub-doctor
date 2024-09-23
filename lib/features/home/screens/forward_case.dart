@@ -219,7 +219,7 @@ class _DoctorCardState extends State<DoctorCard> {
                             fontSize: 16.sp, fontWeight: FontWeight.w600)),
                   ),
                   Text(
-                    widget.doctor.specialization.toString(),
+                    widget.doctor.specialization!.name.toString(),
                     style: GoogleFonts.openSans(
                         textStyle: TextStyle(
                             fontSize: 12.sp, fontWeight: FontWeight.w400)),

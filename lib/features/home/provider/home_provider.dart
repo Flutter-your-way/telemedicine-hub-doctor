@@ -14,6 +14,11 @@ import 'package:telemedicine_hub_doctor/features/profile/widget/loading_dialog.d
 
 class HomeProvider extends ChangeNotifier {
   bool isLoading = false;
+  final int _completedTickets = 0;
+  final int _pendingTickets = 0;
+
+  int get completedTickets => _completedTickets;
+  int get pendingTickets => _pendingTickets;
 
   Future<CustomResponse> getTickets({
     required String doctorId,
@@ -28,7 +33,6 @@ class HomeProvider extends ChangeNotifier {
         "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=$status",
         headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
       );
-
       var responseBody = jsonDecode(r.body);
 
       bool success = responseBody['success'] ?? false;

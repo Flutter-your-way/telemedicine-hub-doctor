@@ -4,16 +4,16 @@ class DoctorModel {
   final String? nameArabic;
   final String? nameKurdish;
   final String? email;
-  final String? password; // Nullable password
+  final String? password;
   final String? type;
   final String? imageUrl;
   final bool? isAvailable;
   final bool? isBlocked;
   final String? gender;
   final List<String>? languages;
-  final String? refreshToken; // Nullable
+  final String? refreshToken;
   final String? deviceToken; // Nullable
-  final String? specialization;
+  final Specialization? specialization;
   final double? averageRating;
   final List<Rating>? ratings; // Nullable list of ratings
   final String? accountStatus;
@@ -233,6 +233,30 @@ class Time {
     return {
       'time': time,
       'ampm': ampm,
+    };
+  }
+}
+
+class Specialization {
+  final String? id;
+  final String? name;
+
+  Specialization({
+    this.id,
+    this.name,
+  });
+
+  factory Specialization.fromJson(Map<String, dynamic> json) {
+    return Specialization(
+      id: json['time'],
+      name: json['ampm'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
     };
   }
 }

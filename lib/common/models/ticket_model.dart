@@ -13,6 +13,7 @@ class TicketModel {
   final DoctorPrescriptionAndNotes? doctorPrescriptionAndNotes;
   final String? forwardedNote;
 
+
   TicketModel({
     this.id,
     this.name,

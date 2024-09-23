@@ -24,6 +24,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<TicketModel> ticketList = [];
+  int completedTickets = 0;
+  int pendingTickets = 0;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
@@ -36,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void getTickets() async {
     try {
+
       var res = await Provider.of<HomeProvider>(context, listen: false)
           .getTickets(
               doctorId: Provider.of<AuthProvider>(context, listen: false)
@@ -47,6 +50,14 @@ class _HomeScreenState extends State<HomeScreen> {
         if (mounted) {
           setState(() {
             ticketList = res.data;
+            completedTickets = ticketList
+                .where((ticket) => ticket.status == 'completed')
+                .length;
+
+            pendingTickets = ticketList
+                .where((ticket) =>
+                    ticket.status == 'pending' || ticket.status == 'draft')
+                .length;
           });
         }
       } else {}
@@ -69,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       children: [
                         _buildTopViewCards(
-                          "10",
+                          completedTickets.toString(),
                           "Open Tickets",
                           () {
                             Navigator.push(
@@ -86,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: 16.h,
                         ),
                         _buildTopViewCards(
-                          "6",
+                          pendingTickets.toString(),
                           "Resolved Tickets",
                           () {
                             Navigator.push(

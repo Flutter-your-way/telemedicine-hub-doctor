@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -127,7 +128,7 @@ class AuthProvider extends ChangeNotifier {
           "${baseAuthUrl}doctor/get-doctor-by-id/",
           headers: {"Authorization": "Bearer $accessToken", "type": "doctor"});
       var responseBody = jsonDecode(r.body);
-      print(r.body);
+      log(r.body);
       bool success = responseBody['success'] ?? false;
       if (success) {
         FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
@@ -148,7 +149,7 @@ class AuthProvider extends ChangeNotifier {
           languages: (responseBody['data']['user']['languages'] != null)
               ? List<String>.from(responseBody['data']['user']['languages'])
               : null,
-          specialization: responseBody['data']['user']['specialization'],
+          specialization: responseBody['data']['user']['specialization'] != null ?  Specialization.fromJson(responseBody['data']['user']['specialization']) : null ,
           averageRating:
               responseBody['data']['user']['averageRating']?.toDouble(),
           ratings: (responseBody['data']['user']['ratings'] != null)
