@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/profile/provider/profile_provider.dart';
 
@@ -37,7 +38,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: Text(
-          "Reset Password",
+          AppLocalizations.of(context)!.resetPassword,
           style: GoogleFonts.openSans(
               textStyle:
                   TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -54,7 +55,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             CustomTextFormField(
               obscureText: oldPass,
               controller: oldPassword,
-              title: "old Password",
+              title: AppLocalizations.of(context)!.setPassword,
               prefix: const Icon(Iconsax.lock),
               suffix: IconButton(
                 icon: Icon(
@@ -73,7 +74,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             CustomTextFormField(
               obscureText: newPass,
               controller: newPassword,
-              title: "New Password",
+              title: AppLocalizations.of(context)!.newPassword,
               prefix: const Icon(Iconsax.lock),
               suffix: IconButton(
                 icon: Icon(
@@ -125,7 +126,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     Fluttertoast.showToast(msg: "Please enter old password");
                   }
                 },
-                child: Text("Set Password",
+                child: Text(AppLocalizations.of(context)!.setPassword,
                     style: GoogleFonts.openSans(
                       textStyle: TextStyle(
                           fontSize: 16.sp, fontWeight: FontWeight.bold),
@@ -140,7 +141,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("To create a secure password:",
+                  Text(AppLocalizations.of(context)!.toCreateASecurePassword,
                       style: GoogleFonts.openSans(
                         textStyle: TextStyle(
                             fontSize: 18.sp, fontWeight: FontWeight.w600),
@@ -148,7 +149,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   SizedBox(
                     height: 10.h,
                   ),
-                  Text(' • Use at least 8 characters',
+                  Text(
+                      ' • ${AppLocalizations.of(context)!.useAtLeastEightCharacters}',
                       style: GoogleFonts.openSans(
                         textStyle: TextStyle(
                             fontSize: 12.sp, fontWeight: FontWeight.w400),
@@ -157,7 +159,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     height: 6.h,
                   ),
                   Text(
-                      ''' • Use a mix of letters, numbers, and special characters (e.g.:     #)''',
+                      ''' • ${AppLocalizations.of(context)!.useMixOfLettersNumbers}''',
                       style: GoogleFonts.openSans(
                         textStyle: TextStyle(
                             fontSize: 12.sp, fontWeight: FontWeight.w400),
@@ -166,7 +168,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     height: 6.h,
                   ),
                   Text(
-                      ' • Try combining words and symbols into a unique phrase',
+                      ' • ${AppLocalizations.of(context)!.combineWordsAndSymbols}',
                       style: GoogleFonts.openSans(
                         textStyle: TextStyle(
                             fontSize: 12.sp, fontWeight: FontWeight.w400),

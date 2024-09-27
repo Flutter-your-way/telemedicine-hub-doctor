@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,7 +13,6 @@ import 'package:telemedicine_hub_doctor/common/images/app_images.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/screen/sign_in_mail.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
-import 'package:telemedicine_hub_doctor/features/home/screens/notification_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/ticket_details.dart';
 import 'package:telemedicine_hub_doctor/features/profile/provider/profile_provider.dart';
 import 'package:telemedicine_hub_doctor/features/profile/screens/change_language_screen.dart';
@@ -22,6 +20,7 @@ import 'package:telemedicine_hub_doctor/features/profile/screens/change_language
 import 'package:telemedicine_hub_doctor/features/profile/screens/help_support_screen.dart';
 import 'package:telemedicine_hub_doctor/features/profile/screens/notification_setting_screen.dart';
 import 'package:telemedicine_hub_doctor/features/profile/screens/reset_password_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -144,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "General Settings",
+                      AppLocalizations.of(context)!.generalSettings,
                       style: GoogleFonts.openSans(
                           textStyle: TextStyle(
                               fontSize: 14.h, fontWeight: FontWeight.w600)),
@@ -159,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         _buildOptionBar(
                             icon: Iconsax.notification,
-                            name: "Notification",
+                            name: AppLocalizations.of(context)!.notifications,
                             onPressed: () {
                               Navigator.push(
                                   context,
@@ -172,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         _buildOptionBar(
                             icon: Iconsax.language_circle,
-                            name: "Change Language",
+                            name: AppLocalizations.of(context)!.changeLanguage,
                             onPressed: () {
                               Navigator.push(
                                   context,
@@ -185,7 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         _buildOptionBar(
                             icon: Iconsax.like_1,
-                            name: "Help and Support",
+                            name: AppLocalizations.of(context)!.helpAndSupport,
                             onPressed: () {
                               Navigator.push(
                                   context,
@@ -202,7 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Account Settings",
+                      AppLocalizations.of(context)!.accountSettings,
                       style: GoogleFonts.openSans(
                           textStyle: TextStyle(
                               fontSize: 14.h, fontWeight: FontWeight.w600)),
@@ -217,7 +216,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         _buildOptionBar(
                             icon: Iconsax.key,
-                            name: "Reset Password",
+                            name: AppLocalizations.of(context)!.resetPassword,
                             onPressed: () {
                               Navigator.push(
                                   context,
@@ -230,7 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         _buildOptionBar(
                             icon: Iconsax.logout,
-                            name: "Log out",
+                            name: AppLocalizations.of(context)!.logOut,
                             onPressed: () async {
                               _buildLogoutview(context);
                             }),
@@ -322,7 +321,7 @@ void _buildLogoutview(BuildContext context) {
                   height: 28.h,
                 ),
                 Text(
-                  "Are you sure, you want to logout?",
+                  AppLocalizations.of(context)!.areYouSureYouWantToLogout,
                   style: GoogleFonts.openSans(
                       textStyle: TextStyle(
                           fontSize: 16.sp, fontWeight: FontWeight.w600)),
@@ -344,7 +343,7 @@ void _buildLogoutview(BuildContext context) {
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          "Cancel",
+                          AppLocalizations.of(context)!.cancel,
                           style: TextStyle(
                             fontSize: 16.sp,
                           ),
@@ -377,7 +376,7 @@ void _buildLogoutview(BuildContext context) {
                             Fluttertoast.showToast(msg: "Log out failed");
                           }
                         },
-                        child: Text("Yes, Logout",
+                        child: Text(AppLocalizations.of(context)!.yesLogout,
                             style: GoogleFonts.openSans(
                               textStyle: TextStyle(
                                   color: Colors.white,

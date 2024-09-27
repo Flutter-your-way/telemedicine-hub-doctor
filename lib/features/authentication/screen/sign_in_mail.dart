@@ -8,7 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:svg_flutter/svg.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/common/button/custom_button.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/images/app_images.dart';
@@ -57,7 +57,7 @@ class _SignInEmailState extends State<SignInEmail> {
                       ),
                     ),
                     Text(
-                      "Sign in",
+                      AppLocalizations.of(context)!.signIn,
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 32.sp,
@@ -67,7 +67,8 @@ class _SignInEmailState extends State<SignInEmail> {
                       height: 8.h,
                     ),
                     Text(
-                      "Enter your details to proceed further",
+                      AppLocalizations.of(context)!
+                          .enterYourDetailsToProceedFurther,
                       style: TextStyle(
                         color: AppColors.grey,
                         fontSize: 16.sp,
@@ -78,9 +79,8 @@ class _SignInEmailState extends State<SignInEmail> {
                       height: 24.h,
                     ),
                     CustomTextFormField(
-                      obscureText: true,
                       controller: email,
-                      title: "Email",
+                      title: AppLocalizations.of(context)!.email,
                       // prefix: SvgPicture.asset(
                       //   'assets/icons/email_icon.svg',
                       //   height: 16.h,
@@ -98,7 +98,7 @@ class _SignInEmailState extends State<SignInEmail> {
                         valueListenable: _hidePass,
                         builder: (context, value, _) {
                           return CustomTextFormField(
-                            obscureText: true,
+                            obscureText: value,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Enter you password";
@@ -113,11 +113,13 @@ class _SignInEmailState extends State<SignInEmail> {
                                 value ? Iconsax.eye : Iconsax.eye_slash,
                               ),
                               onPressed: () {
-                                _hidePass.value = !value;
+                                setState(() {
+                                  _hidePass.value = !value;
+                                });
                               },
                             ),
                             controller: password,
-                            title: "Password",
+                            title: AppLocalizations.of(context)!.enterPassword,
                             prefix: SvgPicture.asset(
                               AppImages.lock_icon,
                               height: 16.h,
@@ -129,7 +131,7 @@ class _SignInEmailState extends State<SignInEmail> {
                       height: 16.h,
                     ),
                     CustomButton(
-                      name: 'Sign in',
+                      name: AppLocalizations.of(context)!.signIn,
                       onPressed: () async {
                         if (password.text.isNotEmpty) {
                           if (email.text.isNotEmpty &&
@@ -177,7 +179,7 @@ class _SignInEmailState extends State<SignInEmail> {
                               ));
                         },
                         child: Text(
-                          "Forgot Password ?",
+                          AppLocalizations.of(context)!.forgotPassword,
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
@@ -192,43 +194,6 @@ class _SignInEmailState extends State<SignInEmail> {
                     ),
                     SizedBox(
                       height: 16.h,
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        children: [
-                          Text(
-                            "New User ?",
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.black, // Change color to blue
-                            ),
-                            textAlign: TextAlign.end,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   CupertinoPageRoute(
-                              //     builder: (context) => const SignUpEmail(),
-                              //   ),
-                              // );
-                            },
-                            child: Text(
-                              "  Sign-up",
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.blue, // Change color to blue
-                                decoration: TextDecoration
-                                    .underline, // Underline the text
-                              ),
-                              textAlign: TextAlign.end,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ],
                 ),
@@ -245,7 +210,7 @@ class _SignInEmailState extends State<SignInEmail> {
                     // );
                   },
                   child: Text(
-                    "Privacy Policy • Terms of Service",
+                    AppLocalizations.of(context)!.privacyPolicyTermsOfService,
                     style: TextStyle(
                       fontSize: 14.sp,
 
@@ -272,7 +237,7 @@ class CustomTextFormField extends StatelessWidget {
     this.prefix,
     this.suffix,
     this.validator,
-    this.obscureText,
+    this.obscureText = false,
     this.inputFormatters,
     this.keyboardType,
     this.onTap,
@@ -286,7 +251,7 @@ class CustomTextFormField extends StatelessWidget {
   final Widget? suffix;
 
   final String? Function(String? value)? validator;
-  final bool? obscureText;
+  final bool obscureText;
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType? keyboardType;
   final VoidCallback? onTap;
@@ -299,6 +264,7 @@ class CustomTextFormField extends StatelessWidget {
       borderRadius: BorderRadius.circular(10000),
       child: TextFormField(
         // scrollPadding: EdgeInsets.all(12),
+        obscureText: obscureText,
         controller: controller,
         validator: validator,
         style: TextStyle(

@@ -10,6 +10,7 @@ import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_pr
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AppointmentScreen extends StatefulWidget {
   const AppointmentScreen({super.key});
@@ -62,9 +63,9 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                               fontSize: 14.sp,
                               color: AppColors.primaryBlue)),
                       dividerHeight: 0,
-                      tabs: const [
-                        Tab(text: 'Recent Tickets'),
-                        Tab(text: 'Forwarded Cases'),
+                      tabs: [
+                        Tab(text: AppLocalizations.of(context)!.recentTickets),
+                        Tab(text: AppLocalizations.of(context)!.forwardedCases),
                       ],
                     ),
                   ),
@@ -150,7 +151,7 @@ class _RecentTapViewState extends State<RecentTapView> {
                   child: LoaderView(),
                 )
               : ticketList.isEmpty
-                  ? noDataView()
+                  ? noDataView(context)
                   : ListView.builder(
                       padding: EdgeInsets.symmetric(vertical: 20.h),
                       physics: const NeverScrollableScrollPhysics(),
@@ -220,7 +221,7 @@ class _ForwardedCasesViewState extends State<ForwardedCasesView> {
                   child: LoaderView(),
                 )
               : ticketList.isEmpty
-                  ? noDataView()
+                  ? noDataView(context)
                   : ListView.builder(
                       padding: EdgeInsets.symmetric(vertical: 20.h),
                       physics: const NeverScrollableScrollPhysics(),

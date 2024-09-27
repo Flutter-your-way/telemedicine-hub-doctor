@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NotificationSettingScreen extends StatefulWidget {
   const NotificationSettingScreen({super.key});
@@ -21,7 +22,7 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: Text(
-          "Notification Settings",
+          AppLocalizations.of(context)!.notificationSettings,
           style: GoogleFonts.openSans(
               textStyle:
                   TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -36,26 +37,27 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
               height: 20.h,
             ),
             _buildSwitchView(
-                title: "General push notifications",
-                subtitle:
-                    "All kind of notifications that the app gonna show to you",
+                title: AppLocalizations.of(context)!.generalPushNotifications,
+                subtitle: AppLocalizations.of(context)!
+                    .allKindOfNotificationsThatTheAppGonnaShowToYou,
                 onPress: (bool) {},
                 switchValue: true),
             SizedBox(
               height: 20.h,
             ),
             _buildSwitchView(
-                title: "Patient’s Response",
-                subtitle:
-                    "Receive all patient’s response related notifications",
+                title: AppLocalizations.of(context)!.patientsResponse,
+                subtitle: AppLocalizations.of(context)!
+                    .receiveAllPatientsResponseRelatedNotifications,
                 onPress: (bool) {},
                 switchValue: true),
             SizedBox(
               height: 20.h,
             ),
             _buildSwitchView(
-                title: "Ticket notifications",
-                subtitle: "Receive all ticket related notifications ",
+                title: AppLocalizations.of(context)!.ticketNotifications,
+                subtitle: AppLocalizations.of(context)!
+                    .receiveAllTicketRelatedNotifications,
                 onPress: (bool) {},
                 switchValue: false),
             SizedBox(

@@ -11,7 +11,7 @@ import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
-import 'package:telemedicine_hub_doctor/features/home/screens/notification_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/ticket_view_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
 
@@ -38,7 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void getTickets() async {
     try {
-
       var res = await Provider.of<HomeProvider>(context, listen: false)
           .getTickets(
               doctorId: Provider.of<AuthProvider>(context, listen: false)
@@ -79,37 +78,31 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: Row(
                       children: [
-                        _buildTopViewCards(
-                          completedTickets.toString(),
-                          "Open Tickets",
-                          () {
-                            Navigator.push(
-                                context,
-                                CupertinoDialogRoute(
-                                  builder: (context) => TicketViewScreen(
-                                    title: 'Complete Ticket',
-                                  ),
-                                  context: context,
-                                ));
-                          },
-                        ),
+                        _buildTopViewCards(completedTickets.toString(),
+                            AppLocalizations.of(context)!.resolvedTickets, () {
+                          Navigator.push(
+                              context,
+                              CupertinoDialogRoute(
+                                builder: (context) => TicketViewScreen(
+                                  title: 'Complete Ticket',
+                                ),
+                                context: context,
+                              ));
+                        }, context),
                         SizedBox(
                           width: 16.h,
                         ),
-                        _buildTopViewCards(
-                          pendingTickets.toString(),
-                          "Resolved Tickets",
-                          () {
-                            Navigator.push(
-                                context,
-                                CupertinoDialogRoute(
-                                  builder: (context) => TicketViewScreen(
-                                    title: 'Pending Ticket',
-                                  ),
-                                  context: context,
-                                ));
-                          },
-                        ),
+                        _buildTopViewCards(pendingTickets.toString(),
+                            AppLocalizations.of(context)!.resolvedTickets, () {
+                          Navigator.push(
+                              context,
+                              CupertinoDialogRoute(
+                                builder: (context) => TicketViewScreen(
+                                  title: 'Pending Ticket',
+                                ),
+                                context: context,
+                              ));
+                        }, context),
                       ],
                     ),
                   ),
@@ -117,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: Row(
                       children: [
-                        Text("Tickets",
+                        Text(AppLocalizations.of(context)!.ticket,
                             style: GoogleFonts.notoSans(
                               textStyle: const TextStyle(
                                 fontSize: 18,
@@ -126,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             )),
                         const Spacer(),
                         CupertinoButton(
-                          child: Text('View All',
+                          child: Text(AppLocalizations.of(context)!.viewAll,
                               style: GoogleFonts.openSans(
                                 textStyle: const TextStyle(
                                   fontSize: 18,
@@ -147,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: LoaderView(),
                           )
                         : ticketList.isEmpty
-                            ? noDataView()
+                            ? noDataView(context)
                             : ListView.builder(
                                 padding: EdgeInsets.zero,
                                 physics: const NeverScrollableScrollPhysics(),
@@ -169,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Widget noDataView() {
+Widget noDataView(BuildContext context) {
   return Container(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -179,7 +172,7 @@ Widget noDataView() {
           height: 100.h,
         ),
         Text(
-          "No Ticket Found",
+          AppLocalizations.of(context)!.noTicketFound,
           style: GoogleFonts.openSans(
               textStyle:
                   TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
@@ -233,10 +226,12 @@ class HomeAppBar extends StatelessWidget {
               const Spacer(),
               GestureDetector(
                 onTap: () async {
-                  Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                          builder: (context) => const NotificationScreen()));
+                  // Navigator.push(
+                  //     context,
+                  //     CupertinoPageRoute(
+                  //         builder: (context) => const NotificationScreen()));
+                  await Provider.of<AuthProvider>(context, listen: false)
+                      .getUser();
                 },
                 child: Container(
                   padding: EdgeInsets.all(12.w),
@@ -260,11 +255,8 @@ class HomeAppBar extends StatelessWidget {
   }
 }
 
-Widget _buildTopViewCards(
-  String value,
-  String name,
-  final VoidCallback onPressed,
-) {
+Widget _buildTopViewCards(String value, String name,
+    final VoidCallback onPressed, BuildContext context) {
   return Expanded(
       child: Container(
     decoration: BoxDecoration(
@@ -291,7 +283,7 @@ Widget _buildTopViewCards(
               borderRadius: BorderRadius.circular(12.h),
               padding: EdgeInsets.symmetric(horizontal: 35.h),
               onPressed: onPressed,
-              child: Text("View All",
+              child: Text(AppLocalizations.of(context)!.viewAll,
                   style: GoogleFonts.openSans(
                       textStyle: TextStyle(
                           color: Colors.black,

@@ -128,15 +128,15 @@ class AuthProvider extends ChangeNotifier {
           "${baseAuthUrl}doctor/get-doctor-by-id/",
           headers: {"Authorization": "Bearer $accessToken", "type": "doctor"});
       var responseBody = jsonDecode(r.body);
-      log(r.body);
       bool success = responseBody['success'] ?? false;
       if (success) {
         FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
           await updateToken(
               deviceToken: newToken, id: responseBody['data']['user']['_id']);
         });
+        log(r.body);
 
-        var u = DoctorModel(
+        DoctorModel u = DoctorModel(
           id: responseBody['data']['user']['_id'],
           nameEnglish: responseBody['data']['user']['name_english'],
           nameArabic: responseBody['data']['user']['name_arabic'],
@@ -149,7 +149,10 @@ class AuthProvider extends ChangeNotifier {
           languages: (responseBody['data']['user']['languages'] != null)
               ? List<String>.from(responseBody['data']['user']['languages'])
               : null,
-          specialization: responseBody['data']['user']['specialization'] != null ?  Specialization.fromJson(responseBody['data']['user']['specialization']) : null ,
+          specialization: responseBody['data']['user']['specialization'] != null
+              ? Specialization.fromJson(
+                  responseBody['data']['user']['specialization'])
+              : null,
           averageRating:
               responseBody['data']['user']['averageRating']?.toDouble(),
           ratings: (responseBody['data']['user']['ratings'] != null)
@@ -171,7 +174,6 @@ class AuthProvider extends ChangeNotifier {
               : null,
           deviceToken: responseBody['data']['user']['deviceToken'],
         );
-
         _usermodel = u;
 
         notifyListeners();

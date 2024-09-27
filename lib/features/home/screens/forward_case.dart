@@ -137,7 +137,7 @@ class _ForwardCaseScreenState extends State<ForwardCaseScreen> {
                       child: LoaderView(),
                     )
                   : filteredDoctorList.isEmpty
-                      ? noDataView()
+                      ? noDataView(context)
                       : ListView.builder(
                           padding: EdgeInsets.zero,
                           physics: const NeverScrollableScrollPhysics(),

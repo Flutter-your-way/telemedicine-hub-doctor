@@ -1,12 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
-import 'package:svg_flutter/svg.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/common/button/custom_button.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/images/app_images.dart';
@@ -51,7 +51,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       ),
                     ),
                     Text(
-                      "Forget Password",
+                      AppLocalizations.of(context)!.forgotPassword,
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 32.sp,
@@ -61,7 +61,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       height: 8.h,
                     ),
                     Text(
-                      "Enter your email to send reset link",
+                      AppLocalizations.of(context)!
+                          .enterYourEmailToSendResetLink,
                       style: TextStyle(
                         color: AppColors.grey,
                         fontSize: 16.sp,
@@ -73,7 +74,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     ),
                     CustomTextFormField(
                       controller: email,
-                      title: "Enter email",
+                      title: AppLocalizations.of(context)!.enterEmail,
                       prefix: const Icon(
                         Iconsax.sms,
                         color: Colors.black,
@@ -87,7 +88,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       height: 16.h,
                     ),
                     CustomButton(
-                      name: "Send Link",
+                      name: AppLocalizations.of(context)!.sendLink,
                       onPressed: () async {
                         if (email.text.isNotEmpty) {
                           var res = await authProvider.forgetPassword(

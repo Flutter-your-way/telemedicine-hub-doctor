@@ -239,7 +239,7 @@ class Time {
 
 class Specialization {
   final String? id;
-  final String? name;
+  final String? name; // Nullable, depending on availability
 
   Specialization({
     this.id,
@@ -248,15 +248,16 @@ class Specialization {
 
   factory Specialization.fromJson(Map<String, dynamic> json) {
     return Specialization(
-      id: json['time'],
-      name: json['ampm'],
+      id: json['_id'], // Parse id correctly
+      name: json['name'], // Optional: in case name is included later
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      '_id': id,
       'name': name,
     };
   }
 }
+

@@ -39,6 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
         }
       } else {
         Provider.of<AuthProvider>(context, listen: false).authToken = token;
+
         await Provider.of<AuthProvider>(context, listen: false).getUser();
         Navigator.pushReplacement(
             context,

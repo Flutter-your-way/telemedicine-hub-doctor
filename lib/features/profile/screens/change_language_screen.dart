@@ -1,8 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/features/profile/provider/language_provider.dart';
 
 class ChangeLanguageScreen extends StatefulWidget {
   const ChangeLanguageScreen({super.key});
@@ -14,14 +16,33 @@ class ChangeLanguageScreen extends StatefulWidget {
 class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
   int selectedIndex = -1; // Initialize with -1 to indicate no selection
   List<String> languageList = ['English', 'Arabic', 'Kurdish (Sorani)'];
+  List<String> languageCodes = ['en', 'ar', 'ar'];
+
+  @override
+  void initState() {
+    super.initState();
+    // Call the loadLanguagePreference method when initializing
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final languageProvider =
+          Provider.of<LanguageProvider>(context, listen: false);
+      await languageProvider
+          .loadLanguagePreference(); // Load the preferred language
+      setState(() {
+        selectedIndex =
+            languageCodes.indexOf(languageProvider.locale.languageCode);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider =
+        Provider.of<LanguageProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: Text(
-          "Change Language",
+          AppLocalizations.of(context)!.changeLanguage,
           style: GoogleFonts.openSans(
               textStyle:
                   TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -43,6 +64,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                   itemCount: languageList.length,
                   itemBuilder: (context, index) {
                     String data = languageList[index];
+
                     bool isSelected = index ==
                         selectedIndex; // Check if this item is selected
                     return Padding(
@@ -96,8 +118,36 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                 ),
               ),
             ),
+            FractionallySizedBox(
+              widthFactor: 1,
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    backgroundColor: AppColors.primaryBlue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    )),
+                onPressed: () async {
+                  if (selectedIndex != -1) {
+                    await languageProvider
+                        .setLocale(languageCodes[selectedIndex]);
+                    if (mounted) {
+                      Navigator.of(context)
+                          .pop(); // Close the language selection screen
+                    }
+                  }
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.save,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                  ),
+                ),
+              ),
+            ),
             SizedBox(
-              height: 20.h,
+              height: MediaQuery.paddingOf(context).bottom + 20,
             ),
           ],
         ),

@@ -14,6 +14,7 @@ import 'package:telemedicine_hub_doctor/features/appointment/provider/appointmen
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/screen/sign_in_mail.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
+import 'package:telemedicine_hub_doctor/features/profile/provider/language_provider.dart';
 import 'package:telemedicine_hub_doctor/features/profile/provider/profile_provider.dart';
 import 'package:telemedicine_hub_doctor/features/splash/screen/splash_screen.dart';
 import 'package:telemedicine_hub_doctor/firebase_options.dart';
@@ -24,6 +25,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final languageProvider = LanguageProvider();
+  await languageProvider.initPrefs();
   runApp(
     MultiProvider(
       providers: [
@@ -31,6 +34,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => AppointmentProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
       ],
       child: DevicePreview(
         // enabled: !kReleaseMode,
@@ -50,42 +54,46 @@ class MyApp extends StatelessWidget {
       designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
-      child: MaterialApp(
-        useInheritedMediaQuery: true,
-        locale: const Locale('en', 'ar'),
-        // builder: DevicePreview.appBuilder,
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: const [
-          AppLocalizations.delegate, // Add this line
+      child: Consumer<LanguageProvider>(
+        builder:
+            (BuildContext context,  languageProvider, Widget? child) =>
+                MaterialApp(
+          useInheritedMediaQuery: true,
+            locale: languageProvider.locale,
+          // builder: DevicePreview.appBuilder,
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: const [
+            AppLocalizations.delegate, // Add this line
 
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('en'),
-          Locale('ar'),
-        ],
-        theme: ThemeData(
-          scaffoldBackgroundColor: AppColors.backgroundColor,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.white,
-            scrolledUnderElevation: 0,
-            elevation: 0,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en'),
+            Locale('ar'),
+          ],
+          theme: ThemeData(
+            scaffoldBackgroundColor: AppColors.backgroundColor,
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.white,
+              scrolledUnderElevation: 0,
+              elevation: 0,
+            ),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColors.lightBlue,
+              // brightness: Brightness.dark,
+              // surface: AppColors.black,
+              background: AppColors.lightBlue,
+            ),
+            fontFamily: GoogleFonts.openSans().fontFamily,
           ),
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: AppColors.lightBlue,
-            // brightness: Brightness.dark,
-            // surface: AppColors.black,
-            background: AppColors.lightBlue,
-          ),
-          fontFamily: GoogleFonts.openSans().fontFamily,
+          initialRoute: AppRoutes.splash,
+          routes: {
+            AppRoutes.splash: (context) => const SplashScreen(),
+            AppRoutes.singin: (context) => const SignInEmail(),
+          },
         ),
-        initialRoute: AppRoutes.splash,
-        routes: {
-          AppRoutes.splash: (context) => const SplashScreen(),
-          AppRoutes.singin: (context) => const SignInEmail(),
-        },
       ),
     );
   }

@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class HelpSupportScreen extends StatefulWidget {
   const HelpSupportScreen({super.key});
 
@@ -17,7 +19,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: Text(
-          "Help and Support",
+          AppLocalizations.of(context)!.helpAndSupport,
           style: GoogleFonts.openSans(
               textStyle:
                   TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -33,7 +35,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
             ),
             _buildOptionBar(
                 icon: Iconsax.call,
-                name: 'Customer Support Contact',
+                name: AppLocalizations.of(context)!.customerSupportContact,
                 onPressed: () {
                   showContactInfoBottomSheet(context);
                 }),
@@ -42,7 +44,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
             ),
             _buildOptionBar(
                 icon: Iconsax.message,
-                name: 'Support Chat',
+                name: AppLocalizations.of(context)!.supportChat,
                 onPressed: () {
                   showContactInfoBottomSheet(context);
                 }),
@@ -51,7 +53,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
             ),
             _buildOptionBar(
                 icon: Iconsax.note,
-                name: 'Submit Feedback',
+                name: AppLocalizations.of(context)!.submitFeedback,
                 onPressed: () {
                   showContactInfoBottomSheet(context);
                 }),
@@ -60,7 +62,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
             ),
             _buildOptionBar(
                 icon: Iconsax.shield,
-                name: 'Privacy Policy',
+                name: AppLocalizations.of(context)!.privacyPolicy,
                 onPressed: () {
                   showContactInfoBottomSheet(context);
                 }),
@@ -146,10 +148,14 @@ void showContactInfoBottomSheet(BuildContext context) {
                   ),
                 ),
                 _buildContactInfo(
-                    Icons.phone, 'Contact Number', '+1 332 335 6767'),
+                    Icons.phone,
+                    AppLocalizations.of(context)!.contactNumber,
+                    '+1 332 335 6767'),
                 const SizedBox(height: 16),
                 _buildContactInfo(
-                    Icons.email_outlined, 'Email', 'hospitalname@domain.com'),
+                    Icons.email_outlined,
+                    AppLocalizations.of(context)!.email,
+                    'hospitalname@domain.com'),
               ],
             ),
           ),
