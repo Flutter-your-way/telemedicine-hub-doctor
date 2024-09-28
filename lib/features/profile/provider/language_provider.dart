@@ -6,6 +6,19 @@ class LanguageProvider with ChangeNotifier {
   Locale _locale = const Locale('en'); // Default locale
   String _currentLanguage = 'en'; // Default language
 
+  String get selectedLanguage {
+    switch (_currentLanguage) {
+      case 'en':
+        return 'english';
+      case 'ar':
+        return 'arabic';
+      case 'ku':
+        return 'kurdish';
+      default:
+        return 'english';
+    }
+  }
+
   Locale get locale => _locale;
   String get currentLanguage => _currentLanguage;
 

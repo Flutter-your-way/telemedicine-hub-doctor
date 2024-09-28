@@ -14,6 +14,7 @@ import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_pr
 import 'package:telemedicine_hub_doctor/features/authentication/screen/sign_in_mail.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/ticket_details.dart';
+import 'package:telemedicine_hub_doctor/features/profile/provider/language_provider.dart';
 import 'package:telemedicine_hub_doctor/features/profile/provider/profile_provider.dart';
 import 'package:telemedicine_hub_doctor/features/profile/screens/change_language_screen.dart';
 
@@ -64,6 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           authProvider
                                               .usermodel!.imageUrl!.isNotEmpty)
                                       ? Image.network(
+                                          fit: BoxFit.cover,
                                           authProvider.usermodel!.imageUrl!)
                                       : SvgPicture.asset(
                                           AppImages.person,

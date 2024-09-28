@@ -12,8 +12,10 @@ import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:telemedicine_hub_doctor/features/home/screens/notification_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/ticket_view_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
+import 'package:telemedicine_hub_doctor/features/profile/provider/language_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -196,7 +198,20 @@ class HomeAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String getGreeting() {
+      final hour = DateTime.now().hour;
+      if (hour < 12) {
+        return 'Good Morning';
+      } else if (hour < 17) {
+        return 'Good Afternoon';
+      } else {
+        return 'Good Evening';
+      }
+    }
+
     var authProvider = Provider.of<AuthProvider>(context);
+    var selectedLanguage =
+        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Column(
@@ -209,14 +224,24 @@ class HomeAppBar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Good Morning",
+                    getGreeting(),
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: AppColors.captionColor,
                     ),
                   ),
                   SizedBox(height: 8.h),
-                  Text(authProvider.usermodel?.nameEnglish.toString() ?? '',
+                  Text(
+                      selectedLanguage == "english"
+                          ? authProvider.usermodel?.nameEnglish.toString() ?? ''
+                          : selectedLanguage == "arabic"
+                              ? authProvider.usermodel?.nameArabic.toString() ??
+                                  ''
+                              : selectedLanguage == "kurdish"
+                                  ? authProvider.usermodel?.nameKurdish
+                                          .toString() ??
+                                      ''
+                                  : "N/A",
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
@@ -226,12 +251,10 @@ class HomeAppBar extends StatelessWidget {
               const Spacer(),
               GestureDetector(
                 onTap: () async {
-                  // Navigator.push(
-                  //     context,
-                  //     CupertinoPageRoute(
-                  //         builder: (context) => const NotificationScreen()));
-                  await Provider.of<AuthProvider>(context, listen: false)
-                      .getUser();
+                  Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => const NotificationScreen()));
                 },
                 child: Container(
                   padding: EdgeInsets.all(12.w),
