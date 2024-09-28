@@ -33,6 +33,7 @@ class HomeProvider extends ChangeNotifier {
         "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=$status",
         headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
       );
+      log(r.body);
       var responseBody = jsonDecode(r.body);
 
       bool success = responseBody['success'] ?? false;

@@ -59,18 +59,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             borderRadius: BorderRadius.circular(2000),
                             clipBehavior: Clip.antiAlias,
                             child: CircleAvatar(
-                              radius: 30.h,
-                              child:
+                              backgroundImage:
                                   (authProvider.usermodel?.imageUrl != null &&
                                           authProvider
                                               .usermodel!.imageUrl!.isNotEmpty)
-                                      ? Image.network(
-                                          fit: BoxFit.cover,
+                                      ? NetworkImage(
+                                          // fit: BoxFit.contain,
                                           authProvider.usermodel!.imageUrl!)
-                                      : SvgPicture.asset(
-                                          AppImages.person,
-                                          fit: BoxFit.contain,
-                                        ),
+                                      : const AssetImage(
+                                          "assets/images/profile.png"),
+                              radius: 30.h,
+                              //   child:
+
+                              //       (authProvider.usermodel?.imageUrl != null &&
+                              //               authProvider
+                              //                   .usermodel!.imageUrl!.isNotEmpty)
+                              //           ? Image.network(
+                              //               fit: BoxFit.contain,
+                              //               authProvider.usermodel!.imageUrl!)
+                              //           : SvgPicture.asset(
+                              //               AppImages.person,
+                              //               fit: BoxFit.contain,
+                              //             ),
                             ),
                           ),
                           SizedBox(

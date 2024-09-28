@@ -740,9 +740,22 @@ void _buildPatientProfile(
     {required BuildContext context,
     required Patient? patient,
     required String disease}) {
-  String formattedDate = DateTime.parse(patient!.age.toString())
-      .toIso8601String()
-      .substring(0, 10);
+  String formattedDate = '';
+
+  // Ensure patient and patient.age are not null before parsing
+  if (patient != null && patient.age != null) {
+    try {
+      // Assuming patient.age is in a proper date format. Adjust as necessary.
+      formattedDate = DateTime.parse(patient.age.toString())
+          .toIso8601String()
+          .substring(0, 10);
+    } catch (e) {
+      print('Error parsing date: $e');
+      formattedDate = 'Invalid date'; // Default value or handle it accordingly
+    }
+  } else {
+    formattedDate = 'N/A'; // Handle the case when patient or age is null
+  }
 
   showModalBottomSheet(
     context: context,
@@ -803,7 +816,7 @@ void _buildPatientProfile(
                         SizedBox(height: 20.h),
                         infoRow(
                             key: 'Patient Name:',
-                            value: patient.name.toString()),
+                            value: patient!.name.toString()),
                         SizedBox(height: 20.h),
                         Row(
                           children: [
