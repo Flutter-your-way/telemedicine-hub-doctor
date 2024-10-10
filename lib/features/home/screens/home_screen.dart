@@ -8,6 +8,7 @@ import 'package:svg_flutter/svg.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/images/app_images.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
+import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
 import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
@@ -16,6 +17,7 @@ import 'package:telemedicine_hub_doctor/features/home/screens/notification_scree
 import 'package:telemedicine_hub_doctor/features/home/screens/ticket_view_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
 import 'package:telemedicine_hub_doctor/features/profile/provider/language_provider.dart';
+import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -38,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  void getTickets() async {
+  Future<void> getTickets() async {
     try {
       var res = await Provider.of<HomeProvider>(context, listen: false)
           .getTickets(
@@ -68,97 +70,105 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     var homeProvider = Provider.of<HomeProvider>(context);
-    return Scaffold(
-      body: Column(
-        children: [
-          const HomeAppBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Row(
-                      children: [
-                        _buildTopViewCards(completedTickets.toString(),
-                            AppLocalizations.of(context)!.resolvedTickets, () {
-                          Navigator.push(
-                              context,
-                              CupertinoDialogRoute(
-                                builder: (context) => TicketViewScreen(
-                                  title: 'Complete Ticket',
-                                ),
-                                context: context,
-                              ));
-                        }, context),
-                        SizedBox(
-                          width: 16.h,
+    return Container(
+      decoration: BoxDecoration(
+        gradient:
+            Theme.of(context).extension<GradientTheme>()?.backgroundGradient,
+      ),
+      child: Scaffold(
+        body: Column(
+          children: [
+            const HomeAppBar(),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: getTickets,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Row(
+                          children: [
+                            _buildTopViewCards(completedTickets.toString(),
+                                AppLocalizations.of(context)!.resolvedTickets,
+                                () {
+                              Navigator.push(
+                                  context,
+                                  CupertinoDialogRoute(
+                                    builder: (context) => TicketViewScreen(
+                                      title: 'Complete Ticket',
+                                    ),
+                                    context: context,
+                                  ));
+                            }, context),
+                            SizedBox(
+                              width: 16.h,
+                            ),
+                            _buildTopViewCards(pendingTickets.toString(),
+                                AppLocalizations.of(context)!.resolvedTickets,
+                                () {
+                              Navigator.push(
+                                  context,
+                                  CupertinoDialogRoute(
+                                    builder: (context) => TicketViewScreen(
+                                      title: 'Pending Ticket',
+                                    ),
+                                    context: context,
+                                  ));
+                            }, context),
+                          ],
                         ),
-                        _buildTopViewCards(pendingTickets.toString(),
-                            AppLocalizations.of(context)!.resolvedTickets, () {
-                          Navigator.push(
-                              context,
-                              CupertinoDialogRoute(
-                                builder: (context) => TicketViewScreen(
-                                  title: 'Pending Ticket',
-                                ),
-                                context: context,
-                              ));
-                        }, context),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Row(
-                      children: [
-                        Text(AppLocalizations.of(context)!.ticket,
-                            style: GoogleFonts.notoSans(
-                              textStyle: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )),
-                        const Spacer(),
-                        CupertinoButton(
-                          child: Text(AppLocalizations.of(context)!.viewAll,
-                              style: GoogleFonts.openSans(
-                                textStyle: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              )),
-                          onPressed: () {},
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Row(
+                          children: [
+                            Text(AppLocalizations.of(context)!.ticket,
+                                style: GoogleFonts.notoSans(
+                                  textStyle: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )),
+                            const Spacer(),
+                            CupertinoButton(
+                              child: Text(AppLocalizations.of(context)!.viewAll,
+                                  style: GoogleFonts.openSans(
+                                    textStyle: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )),
+                              onPressed: () {},
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12.w),
+                        child: homeProvider.isLoading
+                            ? TicketShimmer()
+                            : ticketList.isEmpty
+                                ? noDataView(context)
+                                : ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: ticketList.length,
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) {
+                                      var data = ticketList[index];
+                                      return TicketCard(ticket: data);
+                                    },
+                                  ),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w),
-                    child: homeProvider.isLoading
-                        ? Padding(
-                            padding: EdgeInsets.only(
-                                top: MediaQuery.sizeOf(context).height * 0.2),
-                            child: LoaderView(),
-                          )
-                        : ticketList.isEmpty
-                            ? noDataView(context)
-                            : ListView.builder(
-                                padding: EdgeInsets.zero,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: ticketList.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  var data = ticketList[index];
-                                  return TicketCard(ticket: data);
-                                },
-                              ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

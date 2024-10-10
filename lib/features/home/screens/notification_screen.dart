@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -15,77 +16,83 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text(
-          "Notifications",
-          style: GoogleFonts.openSans(
-              textStyle:
-                  TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
-        ),
-        centerTitle: false,
+    return Container(
+      decoration: BoxDecoration(
+        gradient:
+            Theme.of(context).extension<GradientTheme>()?.backgroundGradient,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.h),
-        child: Column(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  _buildNotification(
-                      time: '12:00',
-                      title: 'New Ticket',
-                      subtitle:
-                          'New ticket with [Ticket No.] on [Date] at [Time]'),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  _buildNotification(
-                      time: '12:00',
-                      title: 'New Ticket',
-                      subtitle:
-                          'New ticket with [Ticket No.] on [Date] at [Time]'),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  _buildNotification(
-                      time: '12:00',
-                      title: 'New Ticket',
-                      subtitle:
-                          'New ticket with [Ticket No.] on [Date] at [Time]'),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                ],
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          title: Text(
+            "Notifications",
+            style: GoogleFonts.openSans(
+                textStyle:
+                    TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
+          ),
+          centerTitle: false,
+        ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.h),
+          child: Column(
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    _buildNotification(
+                        time: '12:00',
+                        title: 'New Ticket',
+                        subtitle:
+                            'New ticket with [Ticket No.] on [Date] at [Time]'),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    _buildNotification(
+                        time: '12:00',
+                        title: 'New Ticket',
+                        subtitle:
+                            'New ticket with [Ticket No.] on [Date] at [Time]'),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    _buildNotification(
+                        time: '12:00',
+                        title: 'New Ticket',
+                        subtitle:
+                            'New ticket with [Ticket No.] on [Date] at [Time]'),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            FractionallySizedBox(
-              widthFactor: 1,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                    backgroundColor: AppColors.primaryBlue,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    )),
-                onPressed: () {},
-                child: Text(
-                  "Clear All",
-                  style: TextStyle(
-                    fontSize: 16.sp,
+              FractionallySizedBox(
+                widthFactor: 1,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      )),
+                  onPressed: () {},
+                  child: Text(
+                    "Clear All",
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: MediaQuery.paddingOf(context).bottom + 20.h,
-            ),
-          ],
+              SizedBox(
+                height: MediaQuery.paddingOf(context).bottom + 20.h,
+              ),
+            ],
+          ),
         ),
       ),
     );

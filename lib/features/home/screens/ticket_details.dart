@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,8 +15,10 @@ import 'package:provider/provider.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
+import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/forward_case.dart';
+import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
 class TicketDetailsScreen extends StatefulWidget {
   TicketModel ticket;
@@ -72,323 +75,351 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
 
     String formattedTime = DateFormat('h:mm a').format(dateTime);
     String timeUntilAppointment = getTimeUntilAppointment(dateTime);
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text(
-          widget.ticket.name.toString(),
-          style: GoogleFonts.openSans(
-              textStyle:
-                  TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
-        ),
-        centerTitle: false,
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient:
+            Theme.of(context).extension<GradientTheme>()?.backgroundGradient,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.h),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 200.h,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 8.w,
-                    vertical: 16.h,
-                  ),
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: MediaQuery.sizeOf(context).width - 56,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFAFAFC),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: const Color(0xFFF4F4F6),
-                            width: 2,
-                            strokeAlign: BorderSide.strokeAlignInside,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(.15),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16.w, vertical: 20.h),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(6),
-                                        decoration: BoxDecoration(
-                                          color: getStatusColor(
-                                              widget.ticket.status.toString()),
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                        ),
-                                        child: Text(
-                                          statusText,
-                                          style: TextStyle(
-                                            color: AppColors.greenishWhite,
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      GestureDetector(
-                                        onTap: () {
-                                          _buildPatientProfile(
-                                              context: context,
-                                              patient: widget.ticket.patient,
-                                              disease: widget
-                                                  .ticket.disease!.name
-                                                  .toString());
-                                        },
-                                        child: Text(
-                                          "Patient Profile",
-                                          style: GoogleFonts.openSans(
-                                              textStyle: TextStyle(
-                                                  fontSize: 14.sp,
-                                                  color: AppColors.primaryBlue,
-                                                  fontWeight: FontWeight.w600,
-                                                  decoration: TextDecoration
-                                                      .underline)),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  Text(
-                                    widget.ticket.name.toString(),
-                                    style: TextStyle(
-                                      fontSize: 20.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 12.h),
-                                  Row(
-                                    children: [
-                                      Text("ETA - $timeUntilAppointment  • ",
-                                          style: GoogleFonts.openSans(
-                                              textStyle: TextStyle(
-                                                  fontSize: 14.sp,
-                                                  fontWeight:
-                                                      FontWeight.w400))),
-                                      Text(
-                                        widget.ticket.disease!.name.toString(),
-                                        style: GoogleFonts.openSans(
-                                            textStyle: TextStyle(
-                                                fontSize: 12.sp,
-                                                color: const Color(0xFF015988),
-                                                fontWeight: FontWeight.w600)),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                            const Spacer(),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          padding: EdgeInsets.all(12.w),
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          title: Text(
+            widget.ticket.name.toString(),
+            style: GoogleFonts.openSans(
+                textStyle:
+                    TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
+          ),
+          centerTitle: false,
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.h),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 200.h,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 16.h,
+                    ),
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: MediaQuery.sizeOf(context).width - 56,
                           decoration: BoxDecoration(
-                              color: AppColors.bluishWhite,
-                              borderRadius: const BorderRadius.vertical(
-                                bottom: Radius.circular(12),
-                              )),
-                          child: Row(
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Iconsax.calendar,
-                                    color: AppColors.grey,
-                                  ),
-                                  SizedBox(width: 4.w),
-                                  Text(
-                                    formattedDate,
-                                    style: TextStyle(
-                                      color: AppColors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Iconsax.clock,
-                                    color: AppColors.grey,
-                                  ),
-                                  SizedBox(width: 4.w),
-                                  Text(
-                                    formattedTime,
-                                    style: TextStyle(
-                                      color: AppColors.grey,
-                                    ),
-                                  ),
-                                ],
+                            color: const Color(0xFFFAFAFC),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFF4F4F6),
+                              width: 2,
+                              strokeAlign: BorderSide.strokeAlignInside,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(.15),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 0,
-                        top: 12.h,
-                        child: Container(
-                          height: 129.h,
-                          width: 1.5.h,
-                          decoration: BoxDecoration(
-                            color:
-                                getStatusColor(widget.ticket.status.toString()),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.w, vertical: 20.h),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            color: getStatusColor(widget
+                                                .ticket.status
+                                                .toString()),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                          ),
+                                          child: Text(
+                                            statusText,
+                                            style: TextStyle(
+                                              color: AppColors.greenishWhite,
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        GestureDetector(
+                                          onTap: () {
+                                            _buildPatientProfile(
+                                                context: context,
+                                                patient: widget.ticket.patient,
+                                                disease: widget
+                                                    .ticket.disease!.name
+                                                    .toString());
+                                          },
+                                          child: Text(
+                                            "Patient Profile",
+                                            style: GoogleFonts.openSans(
+                                                textStyle: TextStyle(
+                                                    fontSize: 14.sp,
+                                                    color:
+                                                        AppColors.primaryBlue,
+                                                    fontWeight: FontWeight.w600,
+                                                    decoration: TextDecoration
+                                                        .underline)),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(height: 8.h),
+                                    Text(
+                                      widget.ticket.name.toString(),
+                                      style: TextStyle(
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 12.h),
+                                    Row(
+                                      children: [
+                                        Text("ETA - $timeUntilAppointment  • ",
+                                            style: GoogleFonts.openSans(
+                                                textStyle: TextStyle(
+                                                    fontSize: 14.sp,
+                                                    fontWeight:
+                                                        FontWeight.w400))),
+                                        Text(
+                                          widget.ticket.disease!.name
+                                              .toString(),
+                                          style: GoogleFonts.openSans(
+                                              textStyle: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color:
+                                                      const Color(0xFF015988),
+                                                  fontWeight: FontWeight.w600)),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                              const Spacer(),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.all(12.w),
+                            decoration: BoxDecoration(
+                                color: AppColors.bluishWhite,
+                                borderRadius: const BorderRadius.vertical(
+                                  bottom: Radius.circular(12),
+                                )),
+                            child: Row(
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Iconsax.calendar,
+                                      color: AppColors.grey,
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    Text(
+                                      formattedDate,
+                                      style: TextStyle(
+                                        color: AppColors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Spacer(),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Iconsax.clock,
+                                      color: AppColors.grey,
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    Text(
+                                      formattedTime,
+                                      style: TextStyle(
+                                        color: AppColors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 0,
+                          top: 12.h,
+                          child: Container(
+                            height: 129.h,
+                            width: 1.5.h,
+                            decoration: BoxDecoration(
+                              color: getStatusColor(
+                                  widget.ticket.status.toString()),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 16.h),
-              SizedBox(
-                  height: 100.h,
-                  child: ListView.builder(
-                    itemCount: 4,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.h),
-                        child: GestureDetector(
-                          onTap: () {
-                            showImageDialog(
-                                context, 'assets/images/desease_image.png');
+                SizedBox(height: 16.h),
+                SizedBox(
+                  height: 120,
+                  child: widget.ticket.prescriptions != null &&
+                          widget.ticket.prescriptions!.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: widget.ticket.prescriptions!.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
+                              child: GestureDetector(
+                                onTap: () {
+                                  showImageDialog(context,
+                                      widget.ticket.prescriptions![index]);
+                                },
+                                child: Image.network(
+                                  widget.ticket.prescriptions![index],
+                                  height: 90,
+                                  width: 115,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent? loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(child: ImagesShimmer());
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(Icons.error);
+                                  },
+                                ),
+                              ),
+                            );
                           },
-                          child: Image.asset(
-                            'assets/images/desease_image.png',
-                            height: 90.h,
-                            width: 115.w,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
+                        )
+                      : const Center(
+                          child: Text('No prescription images available')),
+                ),
+                SizedBox(height: 16.h),
+                Column(
+                  children: List.generate(
+                    widget.ticket.questionsAndAnswers!.length,
+                    (index) {
+                      var data = widget.ticket.questionsAndAnswers![index];
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 8.h),
+                        child: QuestionAnswerWidget(questionAnswer: data),
                       );
                     },
-                  )),
-              SizedBox(height: 16.h),
-              Column(
-                children: List.generate(
-                  widget.ticket.questionsAndAnswers!.length,
-                  (index) {
-                    var data = widget.ticket.questionsAndAnswers![index];
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: 8.h),
-                      child: QuestionAnswerWidget(questionAnswer: data),
-                    );
-                  },
+                  ),
                 ),
-              ),
-              widget.ticket.status.toString() == "completed" ||
-                      widget.ticket.status.toString() == "forwarded"
-                  ? Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 12.w, vertical: 10.h),
-                      child: FractionallySizedBox(
-                        widthFactor: 1,
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(
-                              padding: EdgeInsets.symmetric(vertical: 12.h),
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              )),
-                          onPressed: () {
-                            Fluttertoast.showToast(
-                                msg: "Ticket Completed or Forwaded ");
-                          },
-                          child: Text(
-                            "Ticket Closed",
-                            style: TextStyle(
-                                fontSize: 16.sp, fontWeight: FontWeight.w600),
+                widget.ticket.status.toString() == "completed" ||
+                        widget.ticket.status.toString() == "forwarded"
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 12.w, vertical: 10.h),
+                        child: FractionallySizedBox(
+                          widthFactor: 1,
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                                padding: EdgeInsets.symmetric(vertical: 12.h),
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                )),
+                            onPressed: () {
+                              Fluttertoast.showToast(
+                                  msg: "Ticket Completed or Forwaded ");
+                            },
+                            child: Text(
+                              "Ticket Closed",
+                              style: TextStyle(
+                                  fontSize: 16.sp, fontWeight: FontWeight.w600),
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                  : Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 16.h),
-                          FractionallySizedBox(
-                            widthFactor: 1,
-                            child: FilledButton(
-                              style: FilledButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(vertical: 12.h),
-                                  backgroundColor: const Color(0xFFEDEDF4),
-                                  foregroundColor: Colors.black,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  )),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) => ForwardCaseScreen(
-                                          ticketId:
-                                              widget.ticket.id.toString()),
-                                    ));
-                              },
-                              child: Text(
-                                "Forward Case",
-                                style: TextStyle(
-                                  fontSize: 16.sp,
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12.w),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 16.h),
+                            FractionallySizedBox(
+                              widthFactor: 1,
+                              child: FilledButton(
+                                style: FilledButton.styleFrom(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 12.h),
+                                    backgroundColor: const Color(0xFFEDEDF4),
+                                    foregroundColor: Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    )),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (context) => ForwardCaseScreen(
+                                            ticketId:
+                                                widget.ticket.id.toString()),
+                                      ));
+                                },
+                                child: Text(
+                                  "Forward Case",
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 16.h),
-                          FractionallySizedBox(
-                            widthFactor: 1,
-                            child: FilledButton(
-                              style: FilledButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(vertical: 12.h),
-                                  backgroundColor: AppColors.primaryBlue,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  )),
-                              onPressed: () {
-                                _buildPrescribeFeild(
-                                    context: context,
-                                    id: widget.ticket.id.toString());
-                              },
-                              child: Text(
-                                "Prescribe",
-                                style: TextStyle(
-                                  fontSize: 16.sp,
+                            SizedBox(height: 16.h),
+                            FractionallySizedBox(
+                              widthFactor: 1,
+                              child: FilledButton(
+                                style: FilledButton.styleFrom(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 12.h),
+                                    backgroundColor: AppColors.primaryBlue,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    )),
+                                onPressed: () {
+                                  _buildPrescribeFeild(
+                                      context: context,
+                                      id: widget.ticket.id.toString());
+                                },
+                                child: Text(
+                                  "Prescribe",
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-              SizedBox(height: MediaQuery.paddingOf(context).bottom + 10),
-            ],
+                SizedBox(height: MediaQuery.paddingOf(context).bottom + 10),
+              ],
+            ),
           ),
         ),
       ),
@@ -722,7 +753,7 @@ void showImageDialog(BuildContext context, String imagePath) {
                   panEnabled: true,
                   minScale: 0.5,
                   maxScale: 4.0,
-                  child: Image.asset(
+                  child: Image.network(
                     imagePath,
                     fit: BoxFit.cover,
                   ),

@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
 class NotificationSettingScreen extends StatefulWidget {
   const NotificationSettingScreen({super.key});
@@ -18,52 +19,58 @@ class NotificationSettingScreen extends StatefulWidget {
 class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text(
-          AppLocalizations.of(context)!.notificationSettings,
-          style: GoogleFonts.openSans(
-              textStyle:
-                  TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
-        ),
-        centerTitle: false,
+    return Container(
+      decoration: BoxDecoration(
+        gradient:
+            Theme.of(context).extension<GradientTheme>()?.backgroundGradient,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.h),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20.h,
-            ),
-            _buildSwitchView(
-                title: AppLocalizations.of(context)!.generalPushNotifications,
-                subtitle: AppLocalizations.of(context)!
-                    .allKindOfNotificationsThatTheAppGonnaShowToYou,
-                onPress: (bool) {},
-                switchValue: true),
-            SizedBox(
-              height: 20.h,
-            ),
-            _buildSwitchView(
-                title: AppLocalizations.of(context)!.patientsResponse,
-                subtitle: AppLocalizations.of(context)!
-                    .receiveAllPatientsResponseRelatedNotifications,
-                onPress: (bool) {},
-                switchValue: true),
-            SizedBox(
-              height: 20.h,
-            ),
-            _buildSwitchView(
-                title: AppLocalizations.of(context)!.ticketNotifications,
-                subtitle: AppLocalizations.of(context)!
-                    .receiveAllTicketRelatedNotifications,
-                onPress: (bool) {},
-                switchValue: false),
-            SizedBox(
-              height: 20.h,
-            ),
-          ],
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          title: Text(
+            AppLocalizations.of(context)!.notificationSettings,
+            style: GoogleFonts.openSans(
+                textStyle:
+                    TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
+          ),
+          centerTitle: false,
+        ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.h),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildSwitchView(
+                  title: AppLocalizations.of(context)!.generalPushNotifications,
+                  subtitle: AppLocalizations.of(context)!
+                      .allKindOfNotificationsThatTheAppGonnaShowToYou,
+                  onPress: (bool) {},
+                  switchValue: true),
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildSwitchView(
+                  title: AppLocalizations.of(context)!.patientsResponse,
+                  subtitle: AppLocalizations.of(context)!
+                      .receiveAllPatientsResponseRelatedNotifications,
+                  onPress: (bool) {},
+                  switchValue: true),
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildSwitchView(
+                  title: AppLocalizations.of(context)!.ticketNotifications,
+                  subtitle: AppLocalizations.of(context)!
+                      .receiveAllTicketRelatedNotifications,
+                  onPress: (bool) {},
+                  switchValue: false),
+              SizedBox(
+                height: 20.h,
+              ),
+            ],
+          ),
         ),
       ),
     );

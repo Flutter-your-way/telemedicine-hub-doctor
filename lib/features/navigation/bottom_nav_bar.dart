@@ -4,7 +4,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/features/appointment/appointment_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
-import 'package:telemedicine_hub_doctor/features/profile/profile_screen.dart';
+import 'package:telemedicine_hub_doctor/features/profile/screens/profile_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});

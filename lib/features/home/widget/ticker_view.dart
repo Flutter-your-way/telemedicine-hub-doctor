@@ -168,13 +168,13 @@ class _TicketCardState extends State<TicketCard> {
               Positioned(
                 bottom: 0,
                 left: 0,
-                right: 0,
+                right: 12,
                 child: Container(
                   padding: EdgeInsets.all(12.w),
                   decoration: BoxDecoration(
                       color: AppColors.bluishWhite,
-                      borderRadius: BorderRadius.vertical(
-                        bottom: Radius.circular(12.h),
+                      borderRadius: const BorderRadius.vertical(
+                        bottom: Radius.circular(12),
                       )),
                   child: Row(
                     children: [

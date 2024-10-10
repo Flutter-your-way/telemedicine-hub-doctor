@@ -9,7 +9,7 @@ import 'package:telemedicine_hub_doctor/common/managers/local_manager.dart';
 import 'package:telemedicine_hub_doctor/common/managers/network_manager.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 
-import 'package:telemedicine_hub_doctor/common/models/user_model.dart';
+import 'package:telemedicine_hub_doctor/common/models/doctor_model.dart';
 import 'package:telemedicine_hub_doctor/features/splash/screen/splash_screen.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -49,9 +49,13 @@ class AuthProvider extends ChangeNotifier {
       bool success = responseBody['success'] ?? false;
 
       if (success) {
+        print("happending");
         String? fcmToken = await FirebaseMessaging.instance.getToken();
         String token = responseBody['data']['accessToken'];
         String refreshToken = responseBody['data']['accessToken'];
+        print("refreshToken ${refreshToken}");
+        print("token ${token}");
+
         await LocalDataManager.storeToken(token);
         await LocalDataManager.storeRefreshToken(refreshToken);
 
@@ -60,7 +64,7 @@ class AuthProvider extends ChangeNotifier {
         await getUser();
         await updateToken(
             deviceToken: fcmToken.toString(),
-            id: responseBody['data']['user']['_id']);
+            id: responseBody['data']['doctor']['_id']);
 
         notifyListeners();
 
@@ -202,14 +206,16 @@ class AuthProvider extends ChangeNotifier {
     try {
       String? accessToken = await LocalDataManager.getToken();
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
-          "${baseAuthUrl}doctor/get-doctor-by-id/",
-          headers: {"Authorization": "Bearer $accessToken", "type": "doctor"});
+          "${baseAuthUrl}doctor/get-doctor-by-id",
+          headers: {"Authorization": "Bearer $accessToken"});
 
       var responseBody = jsonDecode(r.body);
       bool success = responseBody['success'] ?? false;
+      print(responseBody);
 
       if (success) {
-        DoctorModel u = DoctorModel.fromJson(responseBody['data']['user']);
+        DoctorModel u = DoctorModel.fromJson(responseBody['data']['doctor']);
+        print(u.email);
 
         handleFCMTokenRefresh(u.id.toString());
 
@@ -223,6 +229,7 @@ class AuthProvider extends ChangeNotifier {
           data: responseBody,
         );
       } else {
+        print("Failed to get User");
         return CustomResponse(
           success: false,
           msg: responseBody['msg'] ?? 'Failed to get User',
@@ -231,6 +238,7 @@ class AuthProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
+      print(e.toString());
       return CustomResponse(
           success: false, msg: "Failed to get User", code: 400);
     }

@@ -9,7 +9,7 @@ import 'package:telemedicine_hub_doctor/common/managers/network_manager.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:telemedicine_hub_doctor/common/models/user_model.dart';
+import 'package:telemedicine_hub_doctor/common/models/doctor_model.dart';
 import 'package:telemedicine_hub_doctor/features/profile/widget/loading_dialog.dart';
 
 class HomeProvider extends ChangeNotifier {
@@ -35,6 +35,7 @@ class HomeProvider extends ChangeNotifier {
       );
       log(r.body);
       var responseBody = jsonDecode(r.body);
+      print(responseBody);
 
       bool success = responseBody['success'] ?? false;
 

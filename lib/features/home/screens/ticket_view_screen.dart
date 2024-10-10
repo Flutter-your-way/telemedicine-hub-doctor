@@ -7,11 +7,13 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
+import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
 import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
+import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
 class TicketViewScreen extends StatefulWidget {
   String title;
@@ -97,65 +99,67 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text(
-          widget.title,
-          style: GoogleFonts.openSans(
-              textStyle:
-                  TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
-        ),
-        centerTitle: false,
+    return Container(
+      decoration: BoxDecoration(
+        gradient:
+            Theme.of(context).extension<GradientTheme>()?.backgroundGradient,
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 20.h,
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          title: Text(
+            widget.title,
+            style: GoogleFonts.openSans(
+                textStyle:
+                    TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w),
-            child: SearchField(
-              function: (value) {
-                setState(() {
-                  _onSearchChanged(value);
-                });
-              },
-              sortList: sortList,
+          centerTitle: false,
+        ),
+        body: Column(
+          children: [
+            SizedBox(
+              height: 20.h,
             ),
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          Expanded(
-              child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  child: Provider.of<HomeProvider>(context).isLoading
-                      ? Padding(
-                          padding: EdgeInsets.only(
-                              top: MediaQuery.sizeOf(context).height * 0.3),
-                          child: LoaderView(),
-                        )
-                      : filteredTicketList.isEmpty
-                          ? noDataView(context)
-                          : ListView.builder(
-                              padding: EdgeInsets.zero,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: filteredTicketList.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                var data = filteredTicketList[index];
-                                return TicketCard(ticket: data);
-                              },
-                            ),
-                )
-              ],
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: SearchField(
+                function: (value) {
+                  setState(() {
+                    _onSearchChanged(value);
+                  });
+                },
+                sortList: sortList,
+              ),
             ),
-          ))
-        ],
+            SizedBox(
+              height: 20.h,
+            ),
+            Expanded(
+                child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12.w),
+                    child: Provider.of<HomeProvider>(context).isLoading
+                        ? TicketShimmer()
+                        : filteredTicketList.isEmpty
+                            ? noDataView(context)
+                            : ListView.builder(
+                                padding: EdgeInsets.zero,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: filteredTicketList.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  var data = filteredTicketList[index];
+                                  return TicketCard(ticket: data);
+                                },
+                              ),
+                  )
+                ],
+              ),
+            ))
+          ],
+        ),
       ),
     );
   }
@@ -215,9 +219,7 @@ void showSortBottomSheet(BuildContext context, List<String> sortList) {
     context: context,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(20),
-      ),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (BuildContext context) {
       return DraggableScrollableSheet(
@@ -240,107 +242,16 @@ void showSortBottomSheet(BuildContext context, List<String> sortList) {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      width: 32,
-                      height: 4,
-                      margin: const EdgeInsets.only(bottom: 10),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF79747E),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
+                    _buildDragHandle(),
                     const SizedBox(height: 20),
                     Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.h),
-                        child: ListView.builder(
-                          padding: EdgeInsets.zero,
-                          controller: scrollController,
-                          itemCount: sortList.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 12.h),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.h),
-                                    border: Border.all(
-                                        color: Colors.grey.shade300)),
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.all(8.h),
-                                  onTap: () {
-                                    setState(() {
-                                      selectedList.contains(sortList[index])
-                                          ? selectedList.remove(sortList[index])
-                                          : selectedList.add(sortList[index]);
-                                    });
-                                  },
-                                  horizontalTitleGap: 24.h,
-                                  leading: Container(
-                                    height: 24,
-                                    width: 24,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: selectedList
-                                                .contains(sortList[index])
-                                            ? AppColors.blue
-                                            : const Color(0xFFD9D9D9),
-                                        width: 2,
-                                      ),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(2),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: selectedList
-                                                  .contains(sortList[index])
-                                              ? AppColors.blue
-                                              : Colors.transparent,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    sortList[index],
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                      child: _buildSortList(
+                          sortList, selectedList, setState, scrollController),
                     ),
                     const SizedBox(height: 16),
-                    FractionallySizedBox(
-                      widthFactor: 1,
-                      child: FilledButton(
-                        style: FilledButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () {
-                          // Handle sort action
-                          Navigator.pop(context);
-                        },
-                        child: const Text(
-                          "Sort",
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
+                    _buildSortButton(context),
                     SizedBox(
-                      height: MediaQuery.paddingOf(context).bottom - 10,
+                      height: MediaQuery.of(context).padding.bottom,
                     ),
                   ],
                 ),
@@ -350,5 +261,105 @@ void showSortBottomSheet(BuildContext context, List<String> sortList) {
         },
       );
     },
+  );
+}
+
+Widget _buildDragHandle() {
+  return Container(
+    width: 32,
+    height: 4,
+    margin: const EdgeInsets.only(bottom: 10),
+    decoration: BoxDecoration(
+      color: const Color(0xFF79747E),
+      borderRadius: BorderRadius.circular(20),
+    ),
+  );
+}
+
+Widget _buildSortList(List<String> sortList, List<String> selectedList,
+    StateSetter setState, ScrollController scrollController) {
+  return ListView.builder(
+    padding: EdgeInsets.zero,
+    controller: scrollController,
+    itemCount: sortList.length,
+    itemBuilder: (context, index) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(8),
+            onTap: () {
+              setState(() {
+                if (selectedList.contains(sortList[index])) {
+                  selectedList.remove(sortList[index]);
+                } else {
+                  selectedList.add(sortList[index]);
+                }
+              });
+            },
+            horizontalTitleGap: 24,
+            leading: _buildCheckbox(selectedList.contains(sortList[index])),
+            title: Text(
+              sortList[index],
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Widget _buildCheckbox(bool isSelected) {
+  return Container(
+    height: 24,
+    width: 24,
+    decoration: BoxDecoration(
+      border: Border.all(
+        color: isSelected ? AppColors.blue : const Color(0xFFD9D9D9),
+        width: 2,
+      ),
+      shape: BoxShape.circle,
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(2),
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: isSelected ? AppColors.blue : Colors.transparent,
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _buildSortButton(BuildContext context) {
+  return SizedBox(
+    width: double.infinity,
+    child: FilledButton(
+      style: FilledButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        backgroundColor: AppColors.primaryBlue,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      onPressed: () {
+        // Handle sort action
+        Navigator.pop(context);
+      },
+      child: const Text(
+        "Sort",
+        style: TextStyle(fontSize: 16),
+      ),
+    ),
   );
 }

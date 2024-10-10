@@ -18,6 +18,7 @@ import 'package:telemedicine_hub_doctor/features/profile/provider/language_provi
 import 'package:telemedicine_hub_doctor/features/profile/provider/profile_provider.dart';
 import 'package:telemedicine_hub_doctor/features/splash/screen/splash_screen.dart';
 import 'package:telemedicine_hub_doctor/firebase_options.dart';
+import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 import 'package:telemedicine_hub_doctor/routes/app_routes.dart';
 
 void main() async {
@@ -55,11 +56,10 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       child: Consumer<LanguageProvider>(
-        builder:
-            (BuildContext context,  languageProvider, Widget? child) =>
-                MaterialApp(
+        builder: (BuildContext context, languageProvider, Widget? child) =>
+            MaterialApp(
           useInheritedMediaQuery: true,
-            locale: languageProvider.locale,
+          locale: languageProvider.locale,
           // builder: DevicePreview.appBuilder,
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
@@ -74,20 +74,43 @@ class MyApp extends StatelessWidget {
             Locale('ar'),
           ],
           theme: ThemeData(
-            scaffoldBackgroundColor: AppColors.backgroundColor,
+            scaffoldBackgroundColor: Colors.transparent,
             appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.transparent, // Make app bar transparent
+              elevation: 0, // Remove shadow
               scrolledUnderElevation: 0,
-              elevation: 0,
             ),
             colorScheme: ColorScheme.fromSeed(
               seedColor: AppColors.lightBlue,
-              // brightness: Brightness.dark,
-              // surface: AppColors.black,
               background: AppColors.lightBlue,
             ),
             fontFamily: GoogleFonts.openSans().fontFamily,
+            extensions: const [
+              GradientTheme(
+                backgroundGradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [0.16, 0.51, 0.74, 1.0],
+                  colors: [
+                    Color(0xFFF1FAFF),
+                    Color(0xFFF6FCFF),
+                    Color(0xFFF5FBFF),
+                    Color(0xFFFFFFFF),
+                  ],
+                ),
+              ),
+            ],
           ),
+          builder: (context, child) {
+            return Container(
+              decoration: BoxDecoration(
+                gradient: Theme.of(context)
+                    .extension<GradientTheme>()
+                    ?.backgroundGradient,
+              ),
+              child: child!,
+            );
+          },
           initialRoute: AppRoutes.splash,
           routes: {
             AppRoutes.splash: (context) => const SplashScreen(),

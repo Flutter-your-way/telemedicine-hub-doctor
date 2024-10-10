@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
+import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
 import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
 import 'package:telemedicine_hub_doctor/features/appointment/provider/appointment_provider.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
@@ -11,6 +12,7 @@ import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dar
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
 class AppointmentScreen extends StatefulWidget {
   const AppointmentScreen({super.key});
@@ -31,58 +33,68 @@ class _AppointmentScreenState extends State<AppointmentScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          const HomeAppBar(),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.h),
-              child: CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    backgroundColor: AppColors.bluishWhite,
-                    snap: true,
-                    expandedHeight: 0.0,
-                    floating: true,
-                    pinned: true,
-                    primary: false,
-                    bottom: TabBar(
-                      padding: EdgeInsets.zero,
-                      controller: controller,
-                      indicatorColor: AppColors.primaryBlue,
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      unselectedLabelStyle: GoogleFonts.openSans(
-                          textStyle: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14.sp,
-                              color: Colors.black)),
-                      labelStyle: GoogleFonts.openSans(
-                          textStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.sp,
-                              color: AppColors.primaryBlue)),
-                      dividerHeight: 0,
-                      tabs: [
-                        Tab(text: AppLocalizations.of(context)!.recentTickets),
-                        Tab(text: AppLocalizations.of(context)!.forwardedCases),
-                      ],
+    return Container(
+      decoration: BoxDecoration(
+        gradient:
+            Theme.of(context).extension<GradientTheme>()?.backgroundGradient,
+      ),
+      child: Scaffold(
+        body: Column(
+          children: [
+            const HomeAppBar(),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.h),
+                child: CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      backgroundColor: AppColors.bluishWhite,
+                      snap: true,
+                      expandedHeight: 0.0,
+                      floating: true,
+                      pinned: true,
+                      primary: false,
+                      bottom: TabBar(
+                        padding: EdgeInsets.zero,
+                        controller: controller,
+                        indicatorColor: AppColors.primaryBlue,
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        unselectedLabelStyle: GoogleFonts.openSans(
+                            textStyle: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14.sp,
+                                color: Colors.black)),
+                        labelStyle: GoogleFonts.openSans(
+                            textStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14.sp,
+                                color: AppColors.primaryBlue)),
+                        dividerHeight: 0,
+                        tabs: [
+                          Tab(
+                              text:
+                                  AppLocalizations.of(context)!.recentTickets),
+                          Tab(
+                              text:
+                                  AppLocalizations.of(context)!.forwardedCases),
+                        ],
+                      ),
                     ),
-                  ),
-                  SliverFillRemaining(
-                    child: TabBarView(
-                      controller: controller,
-                      children: const <Widget>[
-                        RecentTapView(),
-                        ForwardedCasesView()
-                      ],
+                    SliverFillRemaining(
+                      child: TabBarView(
+                        controller: controller,
+                        children: const <Widget>[
+                          RecentTapView(),
+                          ForwardedCasesView()
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -113,7 +125,7 @@ class _RecentTapViewState extends State<RecentTapView> {
     super.initState();
   }
 
-  void getTickets() async {
+  Future<void> getTickets() async {
     try {
       var res = await Provider.of<AppointmentProvider>(context, listen: false)
           .getRecentTickets(
@@ -138,32 +150,31 @@ class _RecentTapViewState extends State<RecentTapView> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(
-            height: 20.h,
-          ),
-          Provider.of<HomeProvider>(context).isLoading
-              ? Padding(
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.sizeOf(context).height * 0.3),
-                  child: LoaderView(),
-                )
-              : ticketList.isEmpty
-                  ? noDataView(context)
-                  : ListView.builder(
-                      padding: EdgeInsets.symmetric(vertical: 20.h),
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: ticketList.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        var data = ticketList[index];
-                        return TicketCard(ticket: data);
-                      },
-                    ),
-          SizedBox(height: MediaQuery.paddingOf(context).bottom),
-        ],
+    return RefreshIndicator(
+      onRefresh: getTickets,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20.h,
+            ),
+            Provider.of<HomeProvider>(context).isLoading
+                ? TicketShimmer()
+                : ticketList.isEmpty
+                    ? noDataView(context)
+                    : ListView.builder(
+                        padding: EdgeInsets.symmetric(vertical: 20.h),
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: ticketList.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          var data = ticketList[index];
+                          return TicketCard(ticket: data);
+                        },
+                      ),
+            SizedBox(height: MediaQuery.paddingOf(context).bottom),
+          ],
+        ),
       ),
     );
   }
@@ -218,7 +229,7 @@ class _ForwardedCasesViewState extends State<ForwardedCasesView> {
               ? Padding(
                   padding: EdgeInsets.only(
                       top: MediaQuery.sizeOf(context).height * 0.3),
-                  child: LoaderView(),
+                  child: TicketShimmer(),
                 )
               : ticketList.isEmpty
                   ? noDataView(context)
