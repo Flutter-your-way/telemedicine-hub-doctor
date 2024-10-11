@@ -97,9 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  authProvider.usermodel?.nameEnglish
-                                          .toString() ??
-                                      '',
+                                  authProvider.usermodel?.name.toString() ?? '',
                                   style: GoogleFonts.openSans(
                                       textStyle: TextStyle(
                                           fontSize: 18.h,

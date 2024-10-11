@@ -71,7 +71,7 @@ class _TicketCardState extends State<TicketCard> {
         Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (context) => TicketDetailsScreen(ticket: widget.ticket),
+              builder: (context) => TicketDetailsScreen(id: widget.ticket.id),
             ));
       },
       child: SizedBox(
@@ -168,7 +168,7 @@ class _TicketCardState extends State<TicketCard> {
               Positioned(
                 bottom: 0,
                 left: 0,
-                right: 12,
+                right: 0,
                 child: Container(
                   padding: EdgeInsets.all(12.w),
                   decoration: BoxDecoration(

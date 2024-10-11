@@ -11,10 +11,12 @@ import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/common/models/doctor_model.dart';
+import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
 import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
 import 'package:telemedicine_hub_doctor/features/navigation/bottom_nav_bar.dart';
+import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
 class ForwardCaseScreen extends StatefulWidget {
   String ticketId;
@@ -62,9 +64,7 @@ class _ForwardCaseScreenState extends State<ForwardCaseScreen> {
         filteredDoctorList = doctorsList;
       } else {
         filteredDoctorList = doctorsList.where((ticketList) {
-          return ticketList.nameEnglish!
-                  .toLowerCase()
-                  .contains(query.toLowerCase()) ||
+          return ticketList.name!.toLowerCase().contains(query.toLowerCase()) ||
               ticketList.email
                   .toString()
                   .toLowerCase()
@@ -76,86 +76,90 @@ class _ForwardCaseScreenState extends State<ForwardCaseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text(
-          "Forward Case",
-          style: GoogleFonts.openSans(
-              textStyle:
-                  TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
-        ),
-        centerTitle: false,
+    return Container(
+      decoration: BoxDecoration(
+        gradient:
+            Theme.of(context).extension<GradientTheme>()?.backgroundGradient,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.h, vertical: 20.h),
-        child: Column(
-          children: [
-            TextFormField(
-              onChanged: (value) {
-                setState(() {
-                  _onSearchChanged(value);
-                });
-              },
-              onTapOutside: (_) {
-                FocusManager.instance.primaryFocus?.unfocus();
-              },
-              decoration: InputDecoration(
-                fillColor: Colors.white,
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 25.h, vertical: 15.w),
-                hintText: "Search for doctors",
-                prefixIcon: const Icon(Iconsax.search_normal),
-                hintStyle: TextStyle(
-                  color: AppColors.captionColor,
-                  fontWeight: FontWeight.bold,
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          title: Text(
+            "Forward Case",
+            style: GoogleFonts.openSans(
+                textStyle:
+                    TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
+          ),
+          centerTitle: false,
+        ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.h, vertical: 20.h),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextFormField(
+                  onChanged: (value) {
+                    setState(() {
+                      _onSearchChanged(value);
+                    });
+                  },
+                  onTapOutside: (_) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  },
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 25.h, vertical: 15.w),
+                    hintText: "Search for doctors",
+                    prefixIcon: const Icon(Iconsax.search_normal),
+                    hintStyle: TextStyle(
+                      color: AppColors.captionColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColors.captionColor),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColors.captionColor),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColors.captionColor),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.captionColor),
-                  borderRadius: BorderRadius.circular(12),
+                SizedBox(
+                  height: 20.h,
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.captionColor),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.captionColor),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.h),
+                  child: Provider.of<HomeProvider>(context).isLoading
+                      ? TicketShimmer()
+                      : filteredDoctorList.isEmpty
+                          ? noDataView(context)
+                          : ListView.builder(
+                              padding: EdgeInsets.zero,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: filteredDoctorList.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                var data = filteredDoctorList[index];
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 10.h),
+                                  child: DoctorCard(
+                                    doctor: data,
+                                    ticketId: widget.ticketId,
+                                  ),
+                                );
+                              },
+                            ),
+                )
+              ],
             ),
-            SizedBox(
-              height: 20.h,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.h),
-              child: Provider.of<HomeProvider>(context).isLoading
-                  ? Padding(
-                      padding: EdgeInsets.only(
-                          top: MediaQuery.sizeOf(context).height * 0.3),
-                      child: LoaderView(),
-                    )
-                  : filteredDoctorList.isEmpty
-                      ? noDataView(context)
-                      : ListView.builder(
-                          padding: EdgeInsets.zero,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: filteredDoctorList.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            var data = filteredDoctorList[index];
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 10.h),
-                              child: DoctorCard(
-                                doctor: data,
-                                ticketId: widget.ticketId,
-                              ),
-                            );
-                          },
-                        ),
-            )
-          ],
+          ),
         ),
       ),
     );
@@ -213,7 +217,7 @@ class _DoctorCardState extends State<DoctorCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
-                    widget.doctor.nameEnglish.toString(),
+                    widget.doctor.name.toString(),
                     style: GoogleFonts.openSans(
                         textStyle: TextStyle(
                             fontSize: 16.sp, fontWeight: FontWeight.w600)),

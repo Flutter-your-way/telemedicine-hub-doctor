@@ -23,6 +23,8 @@ class HomeProvider extends ChangeNotifier {
   Future<CustomResponse> getTickets({
     required String doctorId,
     required String status,
+    int page = 1,
+    int limit = 10,
   }) async {
     String? accessToken = await LocalDataManager.getToken();
     isLoading = true;
@@ -30,7 +32,68 @@ class HomeProvider extends ChangeNotifier {
 
     try {
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
-        "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=$status",
+        "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=$status&page=$page&limit=$limit",
+        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
+      );
+
+      log(r.body);
+      var responseBody = jsonDecode(r.body);
+      print(responseBody);
+
+      bool success = responseBody['success'] ?? false;
+
+      if (success) {
+        List<TicketModel> tickets = (responseBody['data']['tickets'] as List)
+            .map<TicketModel>((json) => TicketModel.fromJson(json))
+            .toList();
+
+        // Extract pagination information
+        var paginationInfo = {
+          'currentPage': responseBody['data']['currentPage'] ?? page,
+          'totalPages': responseBody['data']['totalPages'] ?? 1,
+          'totalTickets':
+              responseBody['data']['totalTickets'] ?? tickets.length,
+        };
+
+        return CustomResponse(
+          success: true,
+          msg: responseBody['msg'],
+          code: r.statusCode,
+          data: {
+            'tickets': tickets,
+            'pagination': paginationInfo,
+          },
+        );
+      } else {
+        return CustomResponse(
+          success: false,
+          msg: responseBody['msg'] ?? 'Failed to fetch tickets',
+          code: r.statusCode,
+          data: {},
+        );
+      }
+    } catch (e) {
+      print('Error fetching tickets: $e');
+      return CustomResponse(
+        success: false,
+        msg: "Failed to fetch tickets: $e",
+        code: 400,
+        data: {},
+      );
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<CustomResponse> getTicketById({required String? ticketId}) async {
+    String? accessToken = await LocalDataManager.getToken();
+    isLoading = true;
+    notifyListeners();
+    print(ticketId);
+    try {
+      var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
+        "${baseAuthUrl}ticket/get-ticket-by-id/$ticketId",
         headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
       );
       log(r.body);
@@ -40,20 +103,21 @@ class HomeProvider extends ChangeNotifier {
       bool success = responseBody['success'] ?? false;
 
       if (success) {
-        List<TicketModel> tickets = responseBody['data']['tickets']
-            .map<TicketModel>((json) => TicketModel.fromJson(json))
-            .toList();
-
+        TicketModel ticket =
+            TicketModel.fromJson(responseBody['data']['ticket']);
+        print('Parsed Ticket: $ticket'); // For debugging
+        print(
+            'Questions and Answers: ${ticket.questionsAndAnswers}'); // For debugging
         return CustomResponse(
           success: true,
           msg: responseBody['msg'],
           code: r.statusCode,
-          data: tickets,
+          data: ticket,
         );
       } else {
         return CustomResponse(
           success: false,
-          msg: responseBody['msg'] ?? 'Failed to fetch diseases',
+          msg: responseBody['msg'] ?? 'Failed to fetch ticket',
           code: r.statusCode,
           data: {},
         );
@@ -62,7 +126,7 @@ class HomeProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
       return CustomResponse(
-          success: false, msg: "Failed to fetch diseases", code: 400);
+          success: false, msg: "Failed to fetch ticket", code: 400);
     } finally {
       isLoading = false;
       notifyListeners();
@@ -86,7 +150,7 @@ class HomeProvider extends ChangeNotifier {
       bool success = responseBody['success'] ?? false;
 
       if (success) {
-        List<DoctorModel> doctorlist = responseBody['data']['user']
+        List<DoctorModel> doctorlist = responseBody['data']['doctors']
             .map<DoctorModel>((json) => DoctorModel.fromJson(json))
             .toList();
 
@@ -115,49 +179,68 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  Future<CustomResponse> completedTicket({
+  Future<CustomResponse> MarkAsComplete({
     required String id,
     required String note,
+    File? file,
+    String? directoryType,
+    required BuildContext context,
   }) async {
     String? accessToken = await LocalDataManager.getToken();
     isLoading = true;
     notifyListeners();
+    LoadingDialog.showLoadingDialog(context);
 
     try {
-      var r = await NetworkDataManger(client: http.Client()).putResponseFromUrl(
-        "${baseAuthUrl}ticket/mark-as-complete/$id",
-        data: {"note": note},
-        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
-      );
+      var uri = Uri.parse("${baseAuthUrl}ticket/mark-as-complete/$id");
+      var request = http.MultipartRequest("PUT", uri)
+        ..fields['note'] = note
+        ..headers['type'] = 'doctor'
+        ..headers['Authorization'] = 'Bearer $accessToken';
 
-      log(r.body);
-      var responseBody = jsonDecode(r.body);
+      if (directoryType != null) {
+        request.fields['directoryType'] = directoryType;
+      }
 
-      bool success = responseBody['success'] ?? false;
+      if (file != null) {
+        var stream = http.ByteStream(file.openRead());
+        var length = await file.length();
+        var multipartFile = http.MultipartFile('files', stream, length,
+            filename: 'prescriptionFor$id.${file.path.split('.').last}');
+        request.files.add(multipartFile);
+      }
 
-      if (success) {
+      var response = await request.send();
+      var responseBody = await response.stream.bytesToString();
+      var resBody = jsonDecode(responseBody);
+
+      int statusCode = response.statusCode;
+      bool success = resBody['success'] ?? false;
+
+      if (statusCode == 200 && success) {
         return CustomResponse(
           success: true,
-          msg: responseBody['msg'],
-          code: r.statusCode,
-          data: responseBody['data'],
+          msg: resBody['msg'],
+          code: statusCode,
+          data: resBody['data'],
         );
       } else {
         return CustomResponse(
           success: false,
-          msg: responseBody['msg'] ?? 'Failed to fetch diseases',
-          code: r.statusCode,
+          msg: resBody['msg'] ?? 'Failed to mark as complete',
+          code: statusCode,
           data: {},
         );
       }
-    } catch (e) {
-      isLoading = false;
-      notifyListeners();
+    } catch (e, stacktrace) {
+      print("Error in MarkAsComplete: $e");
+      print("Stacktrace: $stacktrace");
       return CustomResponse(
-          success: false, msg: "Failed to fetch diseases", code: 400);
+          success: false, msg: "Failed to mark as complete", code: 400);
     } finally {
       isLoading = false;
       notifyListeners();
+      LoadingDialog.hideLoadingDialog(context);
     }
   }
 
@@ -208,10 +291,12 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  Future<CustomResponse> uploadPrescriptions(
-      {required File file,
-      required BuildContext context,
-      required String ticketID}) async {
+  Future<CustomResponse> uploadPrescriptions({
+    required File file,
+    required BuildContext context,
+    required String ticketID,
+    required String fileType,
+  }) async {
     String? accessToken = await LocalDataManager.getToken();
     isLoading = true;
     notifyListeners();

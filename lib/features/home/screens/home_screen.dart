@@ -18,6 +18,7 @@ import 'package:telemedicine_hub_doctor/features/home/screens/ticket_view_screen
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
 import 'package:telemedicine_hub_doctor/features/profile/provider/language_provider.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,150 +28,182 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<TicketModel> ticketList = [];
+  static const _pageSize = 5;
+  final PagingController<int, TicketModel> _pagingController =
+      PagingController(firstPageKey: 1);
   int completedTickets = 0;
   int pendingTickets = 0;
+
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        getTickets();
-      },
-    );
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
     super.initState();
   }
 
-  Future<void> getTickets() async {
+  Future<void> _fetchPage(int pageKey) async {
     try {
-      var res = await Provider.of<HomeProvider>(context, listen: false)
-          .getTickets(
-              doctorId: Provider.of<AuthProvider>(context, listen: false)
-                  .usermodel!
-                  .id
-                  .toString(),
-              status: '');
-      if (res.success) {
-        if (mounted) {
-          setState(() {
-            ticketList = res.data;
-            completedTickets = ticketList
-                .where((ticket) => ticket.status == 'completed')
-                .length;
+      final newItems = await getTickets(pageKey);
+      final isLastPage = newItems.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(newItems);
+      } else {
+        final nextPageKey = pageKey + 1;
+        _pagingController.appendPage(newItems, nextPageKey);
+      }
+      _updateTicketCounts();
+    } catch (error) {
+      _pagingController.error = error;
+    }
+  }
 
-            pendingTickets = ticketList
-                .where((ticket) =>
-                    ticket.status == 'pending' || ticket.status == 'draft')
-                .length;
-          });
-        }
-      } else {}
-    } catch (e) {}
+  Future<List<TicketModel>> getTickets(int pageKey) async {
+    var homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    var authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    var res = await homeProvider.getTickets(
+      doctorId: authProvider.usermodel!.id.toString(),
+      status: '',
+      page: pageKey,
+      limit: _pageSize,
+    );
+
+    if (res.success) {
+      return res.data['tickets'];
+    } else {
+      throw Exception(res.msg ?? 'Failed to fetch tickets');
+    }
+  }
+
+  void _updateTicketCounts() {
+    completedTickets = _pagingController.itemList
+            ?.where((ticket) => ticket.status == 'completed')
+            .length ??
+        0;
+    pendingTickets = _pagingController.itemList
+            ?.where((ticket) =>
+                ticket.status == 'pending' || ticket.status == 'draft')
+            .length ??
+        0;
+    setState(() {});
+  }
+
+  Future<void> _refreshData() async {
+    _pagingController.refresh();
   }
 
   @override
   Widget build(BuildContext context) {
-    var homeProvider = Provider.of<HomeProvider>(context);
     return Container(
       decoration: BoxDecoration(
         gradient:
             Theme.of(context).extension<GradientTheme>()?.backgroundGradient,
       ),
       child: Scaffold(
-        body: Column(
-          children: [
-            const HomeAppBar(),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: getTickets,
-                child: SingleChildScrollView(
-                  child: Column(
+        body: RefreshIndicator(
+          onRefresh: _refreshData,
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(child: HomeAppBar()),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Row(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24.w),
-                        child: Row(
-                          children: [
-                            _buildTopViewCards(completedTickets.toString(),
-                                AppLocalizations.of(context)!.resolvedTickets,
-                                () {
-                              Navigator.push(
-                                  context,
-                                  CupertinoDialogRoute(
-                                    builder: (context) => TicketViewScreen(
-                                      title: 'Complete Ticket',
-                                    ),
-                                    context: context,
-                                  ));
-                            }, context),
-                            SizedBox(
-                              width: 16.h,
+                      _buildTopViewCards(
+                        completedTickets.toString(),
+                        AppLocalizations.of(context)!.completedTickets,
+                        () {
+                          Navigator.push(
+                            context,
+                            CupertinoDialogRoute(
+                              builder: (context) =>
+                                  TicketViewScreen(title: 'Completed Ticket'),
+                              context: context,
                             ),
-                            _buildTopViewCards(pendingTickets.toString(),
-                                AppLocalizations.of(context)!.resolvedTickets,
-                                () {
-                              Navigator.push(
-                                  context,
-                                  CupertinoDialogRoute(
-                                    builder: (context) => TicketViewScreen(
-                                      title: 'Pending Ticket',
-                                    ),
-                                    context: context,
-                                  ));
-                            }, context),
-                          ],
-                        ),
+                          );
+                        },
+                        context,
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24.w),
-                        child: Row(
-                          children: [
-                            Text(AppLocalizations.of(context)!.ticket,
-                                style: GoogleFonts.notoSans(
-                                  textStyle: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )),
-                            const Spacer(),
-                            CupertinoButton(
-                              child: Text(AppLocalizations.of(context)!.viewAll,
-                                  style: GoogleFonts.openSans(
-                                    textStyle: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  )),
-                              onPressed: () {},
+                      SizedBox(width: 16.h),
+                      _buildTopViewCards(
+                        pendingTickets.toString(),
+                        AppLocalizations.of(context)!.pendingTickets,
+                        () {
+                          Navigator.push(
+                            context,
+                            CupertinoDialogRoute(
+                              builder: (context) =>
+                                  TicketViewScreen(title: 'Pending Ticket'),
+                              context: context,
                             ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w),
-                        child: homeProvider.isLoading
-                            ? TicketShimmer()
-                            : ticketList.isEmpty
-                                ? noDataView(context)
-                                : ListView.builder(
-                                    padding: EdgeInsets.zero,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: ticketList.length,
-                                    shrinkWrap: true,
-                                    itemBuilder: (context, index) {
-                                      var data = ticketList[index];
-                                      return TicketCard(ticket: data);
-                                    },
-                                  ),
+                          );
+                        },
+                        context,
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-          ],
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Row(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.ticket,
+                        style: GoogleFonts.notoSans(
+                          textStyle: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const Spacer(),
+                      CupertinoButton(
+                        child: Text(
+                          AppLocalizations.of(context)!.viewAll,
+                          style: GoogleFonts.openSans(
+                            textStyle: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                sliver: PagedSliverList<int, TicketModel>(
+                  pagingController: _pagingController,
+                  builderDelegate: PagedChildBuilderDelegate<TicketModel>(
+                    itemBuilder: (context, item, index) =>
+                        TicketCard(ticket: item),
+                    firstPageErrorIndicatorBuilder: (context) => Center(
+                      child: Text('Error loading tickets. Tap to retry.'),
+                    ),
+                    firstPageProgressIndicatorBuilder: (context) => Column(
+                      children: List.generate(3, (index) => TicketShimmer()),
+                    ),
+                    newPageProgressIndicatorBuilder: (context) =>
+                        TicketShimmer(),
+                    noItemsFoundIndicatorBuilder: (context) =>
+                        noDataView(context),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
   }
 }
 
@@ -241,17 +274,7 @@ class HomeAppBar extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8.h),
-                  Text(
-                      selectedLanguage == "english"
-                          ? authProvider.usermodel?.nameEnglish.toString() ?? ''
-                          : selectedLanguage == "arabic"
-                              ? authProvider.usermodel?.nameArabic.toString() ??
-                                  ''
-                              : selectedLanguage == "kurdish"
-                                  ? authProvider.usermodel?.nameKurdish
-                                          .toString() ??
-                                      ''
-                                  : "N/A",
+                  Text(authProvider.usermodel?.name.toString() ?? '',
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
@@ -308,7 +331,7 @@ Widget _buildTopViewCards(String value, String name,
           Text(name,
               style: GoogleFonts.openSans(
                   textStyle:
-                      TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400))),
+                      TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w400))),
           SizedBox(height: 16.h),
           CupertinoButton(
               color: Colors.grey.shade300,

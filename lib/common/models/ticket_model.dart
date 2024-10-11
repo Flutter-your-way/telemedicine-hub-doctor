@@ -13,7 +13,6 @@ class TicketModel {
   final DoctorPrescriptionAndNotes? doctorPrescriptionAndNotes;
   final String? forwardedNote;
 
-
   TicketModel({
     this.id,
     this.name,
@@ -31,6 +30,11 @@ class TicketModel {
   });
 
   factory TicketModel.fromJson(Map<String, dynamic> json) {
+    final questionsAndAnswers = json['questionsAndAnswers'] as List<dynamic>?;
+
+    final parsedQuestionsAndAnswers = questionsAndAnswers
+        ?.map((e) => QuestionsAndAnswers.fromJson(e as Map<String, dynamic>))
+        .toList();
     return TicketModel(
       id: json['_id'] as String?,
       name: json['name'] as String?,
@@ -43,9 +47,7 @@ class TicketModel {
       disease: json['disease'] != null
           ? Disease.fromJson(json['disease'] as Map<String, dynamic>)
           : null,
-      questionsAndAnswers: (json['QuestionsAndAnswers'] as List<dynamic>?)
-          ?.map((e) => QuestionsAndAnswers.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      questionsAndAnswers: parsedQuestionsAndAnswers,
       prescriptions: (json['prescriptions'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -67,24 +69,24 @@ class TicketModel {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'name': name,
-      'doctor': doctor?.toJson(),
-      'patient': patient?.toJson(),
-      'disease': disease?.toJson(),
-      'QuestionsAndAnswers':
-          questionsAndAnswers?.map((e) => e.toJson()).toList(),
-      'prescriptions': prescriptions,
-      'scheduleDate': scheduleDate?.toIso8601String(),
-      'status': status,
-      'createdAt': createdAt?.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
-      'doctorPrescriptionAndNotes': doctorPrescriptionAndNotes?.toJson(),
-      'forwardedNote': forwardedNote,
-    };
-  }
+  // Map<String, dynamic> toJson() {
+  //   return {
+  //     '_id': id,
+  //     'name': name,
+  //     'doctor': doctor?.toJson(),
+  //     'patient': patient?.toJson(),
+  //     'disease': disease?.toJson(),
+  //     'QuestionsAndAnswers':
+  //         questionsAndAnswers?.map((e) => e.toJson()).toList(),
+  //     'prescriptions': prescriptions,
+  //     'scheduleDate': scheduleDate?.toIso8601String(),
+  //     'status': status,
+  //     'createdAt': createdAt?.toIso8601String(),
+  //     'updatedAt': updatedAt?.toIso8601String(),
+  //     'doctorPrescriptionAndNotes': doctorPrescriptionAndNotes?.toJson(),
+  //     'forwardedNote': forwardedNote,
+  //   };
+  // }
 }
 
 class Doctor {
@@ -212,26 +214,19 @@ class Disease {
 }
 
 class QuestionsAndAnswers {
-  final String? question;
-  final String? answer;
+  String? question;
+  String? answer;
+  String? id;
 
-  QuestionsAndAnswers({
-    this.question,
-    this.answer,
-  });
+  QuestionsAndAnswers({this.question, this.answer, this.id});
 
-  factory QuestionsAndAnswers.fromJson(Map<String, dynamic> json) {
-    return QuestionsAndAnswers(
-      question: json['question'] as String?,
-      answer: json['answer'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'question': question,
-      'answer': answer,
-    };
+  QuestionsAndAnswers.fromJson(Map<String, dynamic> json) {
+    print('Parsing QuestionsAndAnswers from JSON: $json'); // Debug print
+    question = json['question'];
+    answer = json['answer'];
+    id = json['_id'];
+    print(
+        'Parsed QuestionsAndAnswers: question=$question, answer=$answer, id=$id'); // Debug print
   }
 }
 

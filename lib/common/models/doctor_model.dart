@@ -1,8 +1,7 @@
 class DoctorModel {
   final String? id;
-  final String? nameEnglish;
-  final String? nameArabic;
-  final String? nameKurdish;
+  final String? name;
+
   final String? email;
   final String? password;
   final String? type;
@@ -25,9 +24,7 @@ class DoctorModel {
 
   DoctorModel({
     this.id,
-    this.nameEnglish,
-    this.nameArabic,
-    this.nameKurdish,
+    this.name,
     this.email,
     this.password,
     this.type,
@@ -62,9 +59,7 @@ class DoctorModel {
   factory DoctorModel.fromJson(Map<String, dynamic> json) {
     return DoctorModel(
         id: json['_id'],
-        nameEnglish: json['name_english'],
-        nameArabic: json['name_arabic'],
-        nameKurdish: json['name_kurdish'],
+        name: json['name'],
         email: json['email'],
         password: json['password'],
         type: json['type'],
@@ -104,9 +99,7 @@ class DoctorModel {
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'name_english': nameEnglish,
-      'name_arabic': nameArabic,
-      'name_kurdish': nameKurdish,
+      'name': name,
       'email': email,
       'password': password,
       'type': type,
