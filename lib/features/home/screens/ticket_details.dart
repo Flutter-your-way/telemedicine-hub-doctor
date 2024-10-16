@@ -14,11 +14,13 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/common/models/comment_model.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/forward_case.dart';
+import 'package:telemedicine_hub_doctor/features/home/widget/pdf_viewer_screen.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
 class TicketDetailsScreen extends StatefulWidget {
@@ -36,12 +38,37 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
   TicketModel? ticket;
   bool isLoading = true;
   String? errorMessage;
+  String? currentUserId = '';
+
+  List<CommentModel> commentList = [];
 
   @override
   void initState() {
     super.initState();
     _fetchTicketDetails();
-    print('Questions and Answers: ${ticket?.questionsAndAnswers}');
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) async {
+        // currentUserId = await LocalDataManager.getToken();
+        getComment();
+      },
+    );
+  }
+
+  Future<void> getComment() async {
+    try {
+      var r = await Provider.of<HomeProvider>(context, listen: false)
+          .getComments(ticketid: widget.id.toString());
+      if (r.success) {
+        setState(() {
+          commentList = r.data;
+        });
+      } else {
+        commentList = [];
+        Fluttertoast.showToast(msg: "No Comment till now !");
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> _fetchTicketDetails() async {
@@ -440,36 +467,122 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                     style: TextStyle(
                                         fontSize: 14.sp, color: Colors.grey),
                                   ),
+                                Consumer<HomeProvider>(
+                                    builder: (context, provider, child) {
+                                  if (provider.isLoading) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  }
+                                  return ListView.builder(
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount: commentList.length,
+                                      shrinkWrap: true,
+                                      itemBuilder: (context, index) {
+                                        return CommentBubble(
+                                          comment: commentList[index],
+                                          isCurrentUser:
+                                              commentList[index].user ==
+                                                  currentUserId,
+                                        );
+                                      });
+                                }),
                                 ticket!.status.toString() == "completed" ||
                                         ticket!.status.toString() == "forwarded"
-                                    ? Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12.w, vertical: 10.h),
-                                        child: FractionallySizedBox(
-                                          widthFactor: 1,
-                                          child: FilledButton(
-                                            style: FilledButton.styleFrom(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 12.h),
-                                                backgroundColor: Colors.green,
-                                                foregroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                )),
-                                            onPressed: () {
-                                              Fluttertoast.showToast(
-                                                  msg:
-                                                      "Ticket Completed or Forwaded ");
-                                            },
-                                            child: Text(
-                                              "Ticket Closed",
-                                              style: TextStyle(
-                                                  fontSize: 16.sp,
-                                                  fontWeight: FontWeight.w600),
+                                    ? Column(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12.w,
+                                                vertical: 10.h),
+                                            child: FractionallySizedBox(
+                                              widthFactor: 1,
+                                              child: FilledButton(
+                                                style: FilledButton.styleFrom(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 12.h),
+                                                    backgroundColor:
+                                                        const Color(0xFFEDEDF4),
+                                                    foregroundColor:
+                                                        Colors.black,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                    )),
+                                                onPressed: () {
+                                                  if (ticket?.doctorPrescriptionAndNotes
+                                                              ?.prescriptionUrls !=
+                                                          null &&
+                                                      ticket!
+                                                          .doctorPrescriptionAndNotes!
+                                                          .prescriptionUrls!
+                                                          .isNotEmpty) {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PDFViewerPage(
+                                                          url: ticket!
+                                                              .doctorPrescriptionAndNotes!
+                                                              .prescriptionUrls![0],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "No prescription available +- ");
+                                                  }
+                                                },
+                                                child: Text(
+                                                  "View prescription",
+                                                  style: TextStyle(
+                                                      fontSize: 16.sp,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12.w,
+                                                vertical: 10.h),
+                                            child: FractionallySizedBox(
+                                              widthFactor: 1,
+                                              child: FilledButton(
+                                                style: FilledButton.styleFrom(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 12.h),
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                    )),
+                                                onPressed: () {
+                                                  Fluttertoast.showToast(
+                                                      msg:
+                                                          "Ticket Completed or Forwaded ");
+                                                },
+                                                child: Text(
+                                                  "Ticket Closed",
+                                                  style: TextStyle(
+                                                      fontSize: 16.sp,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       )
                                     : Padding(
                                         padding: EdgeInsets.symmetric(
@@ -1196,5 +1309,168 @@ class ImagePickerHelper {
       );
       return null;
     }
+  }
+}
+
+class CommentBubble extends StatelessWidget {
+  final CommentModel comment;
+  final bool isCurrentUser;
+
+  const CommentBubble({
+    super.key,
+    required this.comment,
+    required this.isCurrentUser,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+      child: Row(
+        mainAxisAlignment:
+            isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!isCurrentUser) _buildAvatar(),
+          SizedBox(width: 8.w),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: isCurrentUser
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                Container(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.sizeOf(context).width *
+                        0.6, // Maximum width constraint
+                  ),
+                  padding: EdgeInsets.all(12.h),
+                  decoration: BoxDecoration(
+                    color:
+                        isCurrentUser ? const Color(0xFFE8F3FF) : Colors.white,
+                    borderRadius: BorderRadius.circular(12.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        comment.message ?? "",
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                      if (comment.fileUrl != null &&
+                          comment.fileUrl!.isNotEmpty)
+                        _buildAttachment(context, comment.fileUrl.toString()),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 8.w),
+          if (isCurrentUser) _buildAvatar(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar() {
+    return CircleAvatar(
+      radius: 16.r,
+      backgroundColor:
+          isCurrentUser ? const Color(0xFF4CAF50) : AppColors.primaryBlue,
+      child: Icon(
+        isCurrentUser ? Icons.person : Icons.medical_services,
+        color: Colors.white,
+        size: 20.r,
+      ),
+    );
+  }
+
+  Widget _buildAttachment(BuildContext context, String attachment) {
+    return Container(
+      width: MediaQuery.sizeOf(context).width * 0.5,
+      height: 45.h,
+      margin: EdgeInsets.only(top: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Icon(Icons.insert_drive_file, color: Colors.blue, size: 20.r),
+          Container(
+            height: 32.h,
+            width: 32.w,
+            decoration: const BoxDecoration(
+                shape: BoxShape.circle, color: Color(0xFF0065FF)),
+            child: const Center(
+              child: Icon(
+                Icons.link_outlined,
+                color: Colors.white,
+              ),
+            ),
+          ),
+
+          SizedBox(width: 8.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    attachment,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.openSans(
+                        textStyle: TextStyle(
+                            fontSize: 14.sp, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                SizedBox(
+                  height: 4.h,
+                ),
+                Text(
+                  "PDF",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.openSans(
+                      textStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w400)),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 4.w,
+          ),
+          IconButton(
+              onPressed: () async {
+                // var res =
+                //     await Provider.of<HomeProvider>(context, listen: false)
+                //         .downloadFile(attachment);
+                // if (res.success) {
+                //   Fluttertoast.showToast(msg: res.msg);
+                // } else {
+                //   Fluttertoast.showToast(msg: res.msg);
+                // }
+              },
+              icon: const Icon(Iconsax.document_download))
+        ],
+      ),
+    );
   }
 }

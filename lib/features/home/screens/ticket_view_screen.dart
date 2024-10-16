@@ -30,43 +30,68 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
   List<TicketModel> ticketList = [];
   List<TicketModel> filteredTicketList = [];
   String status = '';
+  int currentPage = 1;
+  int totalPages = 1;
+  bool isLoading = false;
+
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        if (widget.title != "Complete Ticket") {
-          setState(() {
-            status = 'draft';
-          });
-        } else if (widget.title != "Pending Ticket") {
-          setState(() {
-            status = 'completed';
-          });
-        }
-        getTickets();
-      },
-    );
     super.initState();
+    if (widget.title == "Completed Ticket") {
+      status = 'completed';
+    } else if (widget.title == "Pending Ticket") {
+      status = 'pending';
+    } else {
+      status = '';
+    }
+    getTickets();
   }
 
-  void getTickets() async {
+  Future<void> getTickets({bool refresh = false}) async {
+    if (refresh) {
+      currentPage = 1;
+      ticketList.clear();
+      filteredTicketList.clear();
+    }
+
+    if (currentPage > totalPages) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
     try {
-      var res = await Provider.of<HomeProvider>(context, listen: false)
-          .getTickets(
-              doctorId: Provider.of<AuthProvider>(context, listen: false)
-                  .usermodel!
-                  .id
-                  .toString(),
-              status: status);
+      var res =
+          await Provider.of<HomeProvider>(context, listen: false).getTickets(
+        doctorId: Provider.of<AuthProvider>(context, listen: false)
+            .usermodel!
+            .id
+            .toString(),
+        status: status,
+        page: currentPage,
+        limit: 10,
+      );
+
       if (res.success) {
-        if (mounted) {
-          setState(() {
-            ticketList = res.data;
-            filteredTicketList = ticketList;
-          });
-        }
-      } else {}
-    } catch (e) {}
+        var newTickets = (res.data['tickets'] as List<TicketModel>);
+        var paginationInfo = res.data['pagination'] as Map<String, dynamic>;
+
+        setState(() {
+          ticketList.addAll(newTickets);
+          filteredTicketList = List.from(ticketList);
+          totalPages = paginationInfo['totalPages'];
+          currentPage++;
+        });
+      } else {
+        print("Failed to fetch tickets: ${res.msg}");
+      }
+    } catch (e) {
+      print("Exception occurred while fetching tickets: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void _onSearchChanged(String query) {
@@ -74,14 +99,12 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
       if (query.isEmpty) {
         filteredTicketList = ticketList;
       } else {
-        filteredTicketList = ticketList.where((ticketList) {
-          return ticketList.name!.toLowerCase().contains(query.toLowerCase()) ||
-              ticketList.disease!.name!
+        filteredTicketList = ticketList.where((ticket) {
+          return ticket.name!.toLowerCase().contains(query.toLowerCase()) ||
+              ticket.disease!.name!
                   .toLowerCase()
                   .contains(query.toLowerCase()) ||
-              ticketList.patient!.name!
-                  .toLowerCase()
-                  .contains(query.toLowerCase());
+              ticket.patient!.name!.toLowerCase().contains(query.toLowerCase());
         }).toList();
       }
     });
@@ -117,9 +140,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
         ),
         body: Column(
           children: [
-            SizedBox(
-              height: 20.h,
-            ),
+            SizedBox(height: 20.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: SearchField(
@@ -131,33 +152,28 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
                 sortList: sortList,
               ),
             ),
-            SizedBox(
-              height: 20.h,
-            ),
+            SizedBox(height: 20.h),
             Expanded(
-                child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w),
-                    child: Provider.of<HomeProvider>(context).isLoading
-                        ? TicketShimmer()
-                        : filteredTicketList.isEmpty
-                            ? noDataView(context)
-                            : ListView.builder(
-                                padding: EdgeInsets.zero,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: filteredTicketList.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  var data = filteredTicketList[index];
-                                  return TicketCard(ticket: data);
-                                },
-                              ),
-                  )
-                ],
+              child: Consumer<HomeProvider>(
+                builder: (context, homeProvider, child) {
+                  if (homeProvider.isLoading) {
+                    return TicketShimmer();
+                  } else if (filteredTicketList.isEmpty) {
+                    return noDataView(context);
+                  } else {
+                    return ListView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      itemCount: filteredTicketList.length,
+                      itemBuilder: (context, index) {
+                        var data = filteredTicketList[index];
+
+                        return TicketCard(ticket: data);
+                      },
+                    );
+                  }
+                },
               ),
-            ))
+            ),
           ],
         ),
       ),

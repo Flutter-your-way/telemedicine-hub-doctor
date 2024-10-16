@@ -130,6 +130,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   if (res.success) {
                                     Fluttertoast.showToast(
                                         msg: "Profile Upload Successfully!");
+                                    setState(() {
+                                      authProvider.getUser();
+                                    });
                                   } else {
                                     Fluttertoast.showToast(
                                         msg: "Profile Upload Failed!");

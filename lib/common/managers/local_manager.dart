@@ -4,15 +4,26 @@ class LocalDataManager {
   static const String _loginKey = "LOGINKEY";
   static const String _splashKey = "Splash";
   static const String _refreshToken = "RefershToken";
+  static const String _userId = "USERID";
 
   static Future<bool> storeToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString(_loginKey, token);
   }
 
+  static Future<bool> storeId(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString(_userId, token);
+  }
+
   static Future<String?> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(_loginKey);
+  }
+
+  static Future<String?> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_userId);
   }
 
   static Future<bool> deleteToken() async {

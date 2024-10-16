@@ -20,14 +20,20 @@ class CustomButton extends StatelessWidget {
       onTap: isLoading ? null : onPressed,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(18),
+        height: 56.h, // Set a fixed height
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10000),
-            color: AppColors.primaryBlue),
+          borderRadius: BorderRadius.circular(10000),
+          color: AppColors.primaryBlue,
+        ),
         child: Center(
           child: isLoading
-              ? const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ? SizedBox(
+                  height: 24.h, // Set a fixed size for the loading indicator
+                  width: 24.h,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
                 )
               : Text(
                   name,

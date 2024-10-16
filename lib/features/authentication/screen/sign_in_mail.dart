@@ -200,25 +200,25 @@ class _SignInEmailState extends State<SignInEmail> {
                 // SizedBox(
                 //   height: 16.h,
                 // ),
-                MaterialButton(
-                  onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   CupertinoPageRoute(
-                    //     builder: (context) => const PrivacyPolicyScreen(),
-                    //   ),
-                    // );
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!.privacyPolicyTermsOfService,
-                    style: TextStyle(
-                      fontSize: 14.sp,
+                // MaterialButton(
+                //   onPressed: () {
+                //     // Navigator.push(
+                //     //   context,
+                //     //   CupertinoPageRoute(
+                //     //     builder: (context) => const PrivacyPolicyScreen(),
+                //     //   ),
+                //     // );
+                //   },
+                //   child: Text(
+                //     AppLocalizations.of(context)!.privacyPolicyTermsOfService,
+                //     style: TextStyle(
+                //       fontSize: 14.sp,
 
-                      color: AppColors.grey, // Change color to blue
-                    ),
-                    textAlign: TextAlign.end,
-                  ),
-                ),
+                //       color: AppColors.grey, // Change color to blue
+                //     ),
+                //     textAlign: TextAlign.end,
+                //   ),
+                // ),
                 const SizedBox(height: 0),
               ],
             ),

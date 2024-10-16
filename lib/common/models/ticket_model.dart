@@ -232,24 +232,26 @@ class QuestionsAndAnswers {
 
 class DoctorPrescriptionAndNotes {
   final String? note;
-  final String? prescriptionKey;
+  final List<String>? prescriptionUrls;
 
   DoctorPrescriptionAndNotes({
     this.note,
-    this.prescriptionKey,
+    this.prescriptionUrls,
   });
 
   factory DoctorPrescriptionAndNotes.fromJson(Map<String, dynamic> json) {
     return DoctorPrescriptionAndNotes(
       note: json['note'] as String?,
-      prescriptionKey: json['prescriptionKey'] as String?,
+      prescriptionUrls: (json['prescriptionUrls'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'note': note,
-      'prescriptionKey': prescriptionKey,
+      'prescriptionUrls': prescriptionUrls,
     };
   }
 }

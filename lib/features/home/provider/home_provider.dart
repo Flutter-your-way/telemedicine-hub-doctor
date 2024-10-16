@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:telemedicine_hub_doctor/common/constants/app_constants.dart';
 import 'package:telemedicine_hub_doctor/common/managers/local_manager.dart';
 import 'package:telemedicine_hub_doctor/common/managers/network_manager.dart';
+import 'package:telemedicine_hub_doctor/common/models/comment_model.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
+import 'package:telemedicine_hub_doctor/common/models/ticket_count_model.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:telemedicine_hub_doctor/common/models/doctor_model.dart';
@@ -16,7 +18,7 @@ class HomeProvider extends ChangeNotifier {
   bool isLoading = false;
   final int _completedTickets = 0;
   final int _pendingTickets = 0;
-
+  TicketCountsModel? ticketCounts;
   int get completedTickets => _completedTickets;
   int get pendingTickets => _pendingTickets;
 
@@ -49,10 +51,10 @@ class HomeProvider extends ChangeNotifier {
 
         // Extract pagination information
         var paginationInfo = {
-          'currentPage': responseBody['data']['currentPage'] ?? page,
-          'totalPages': responseBody['data']['totalPages'] ?? 1,
-          'totalTickets':
-              responseBody['data']['totalTickets'] ?? tickets.length,
+          'currentPage':
+              responseBody['data']['pagination']['currentPage'] ?? page,
+          'totalPages': responseBody['data']['pagination']['totalPages'] ?? 1,
+          'totalTickets': tickets.length,
         };
 
         return CustomResponse(
@@ -83,6 +85,53 @@ class HomeProvider extends ChangeNotifier {
     } finally {
       isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<CustomResponse> getTicketCounts() async {
+    String? accessToken = await LocalDataManager.getToken();
+    String? doctorId = await LocalDataManager
+        .getUserId(); // Assuming you have a method to get the doctor's ID
+    print(doctorId);
+    try {
+      var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
+        "${baseAuthUrl}ticket/get-all-tickets-count/$doctorId",
+        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
+      );
+
+      print("API Response Body: ${r.body}");
+      var responseBody = jsonDecode(r.body);
+      print("Decoded Response Body: $responseBody");
+
+      bool success = responseBody['success'] ?? false;
+
+      if (success) {
+        ticketCounts =
+            TicketCountsModel.fromJson(responseBody['data']['counts']);
+        notifyListeners();
+
+        return CustomResponse(
+          success: true,
+          msg: responseBody['msg'],
+          code: r.statusCode,
+          data: ticketCounts,
+        );
+      } else {
+        return CustomResponse(
+          success: false,
+          msg: responseBody['msg'] ?? 'Failed to fetch ticket counts',
+          code: r.statusCode,
+          data: null,
+        );
+      }
+    } catch (e) {
+      print("Error fetching ticket counts: $e");
+      return CustomResponse(
+        success: false,
+        msg: "Failed to fetch ticket counts: $e",
+        code: 400,
+        data: null,
+      );
     }
   }
 
@@ -343,6 +392,54 @@ class HomeProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
       LoadingDialog.hideLoadingDialog(context);
+    }
+  }
+
+  Future<CustomResponse> getComments({
+    required String ticketid,
+  }) async {
+    String? accessToken = await LocalDataManager.getToken();
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
+        "${baseAuthUrl}comment/get-all-comments/$ticketid",
+        headers: {"Authorization": "Bearer $accessToken", "type": "user"},
+      );
+
+      log(r.body);
+
+      var responseBody = jsonDecode(r.body);
+
+      bool success = responseBody['success'] ?? false;
+
+      if (success) {
+        List<CommentModel> commentList = responseBody['data']['comments']
+            .map<CommentModel>((json) => CommentModel.fromJson(json))
+            .toList();
+        return CustomResponse(
+          success: true,
+          msg: responseBody['msg'],
+          code: r.statusCode,
+          data: commentList,
+        );
+      } else {
+        return CustomResponse(
+          success: false,
+          msg: responseBody['msg'] ?? 'Failed to fetch diseases',
+          code: r.statusCode,
+          data: {},
+        );
+      }
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+      return CustomResponse(
+          success: false, msg: "Failed to fetch diseases", code: 400);
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
   }
 }

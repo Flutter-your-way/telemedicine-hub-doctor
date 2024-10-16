@@ -41,6 +41,8 @@ class _SplashScreenState extends State<SplashScreen> {
         Provider.of<AuthProvider>(context, listen: false).authToken = token;
 
         await Provider.of<AuthProvider>(context, listen: false).getUser();
+        if (!mounted) return; // Add this check
+
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(

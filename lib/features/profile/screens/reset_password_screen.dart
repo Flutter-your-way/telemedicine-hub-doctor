@@ -10,6 +10,7 @@ import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/profile/provider/profile_provider.dart';
+import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -34,149 +35,157 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     var profileProvider = Provider.of<ProfileProvider>(context);
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text(
-          AppLocalizations.of(context)!.resetPassword,
-          style: GoogleFonts.openSans(
-              textStyle:
-                  TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
-        ),
-        centerTitle: false,
+    return Container(
+      decoration: BoxDecoration(
+        gradient:
+            Theme.of(context).extension<GradientTheme>()?.backgroundGradient,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.h),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20.h,
-            ),
-            CustomTextFormField(
-              obscureText: oldPass,
-              controller: oldPassword,
-              title: AppLocalizations.of(context)!.setPassword,
-              prefix: const Icon(Iconsax.lock),
-              suffix: IconButton(
-                icon: Icon(
-                  oldPass ? Iconsax.eye : Iconsax.eye_slash,
-                ),
-                onPressed: () {
-                  setState(() {
-                    oldPass = !oldPass;
-                  });
-                },
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          title: Text(
+            AppLocalizations.of(context)!.resetPassword,
+            style: GoogleFonts.openSans(
+                textStyle:
+                    TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
+          ),
+          centerTitle: false,
+        ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.h),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 20.h,
               ),
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            CustomTextFormField(
-              obscureText: newPass,
-              controller: newPassword,
-              title: AppLocalizations.of(context)!.newPassword,
-              prefix: const Icon(Iconsax.lock),
-              suffix: IconButton(
-                icon: Icon(
-                  newPass ? Iconsax.eye : Iconsax.eye_slash,
-                ),
-                onPressed: () {
-                  setState(() {
-                    newPass = !newPass;
-                  });
-                },
-              ),
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            FractionallySizedBox(
-              widthFactor: 1,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  backgroundColor: AppColors.primaryBlue,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              CustomTextFormField(
+                obscureText: oldPass,
+                controller: oldPassword,
+                title: AppLocalizations.of(context)!.setPassword,
+                prefix: const Icon(Iconsax.lock),
+                suffix: IconButton(
+                  icon: Icon(
+                    oldPass ? Iconsax.eye : Iconsax.eye_slash,
                   ),
+                  onPressed: () {
+                    setState(() {
+                      oldPass = !oldPass;
+                    });
+                  },
                 ),
-                onPressed: () async {
-                  if (oldPassword.text.isNotEmpty || oldPassword.text != null) {
-                    if (newPassword.text.isNotEmpty ||
-                        newPassword.text != null) {
-                      var res = await profileProvider.resetPassword(
-                          email:
-                              Provider.of<AuthProvider>(context, listen: false)
-                                  .usermodel!
-                                  .email
-                                  .toString(),
-                          oldPassword: oldPassword.text,
-                          newPassword: newPassword.text);
-                      if (res.success) {
-                        Fluttertoast.showToast(msg: res.msg);
-                        clearcontroller();
+              ),
+              SizedBox(
+                height: 20.h,
+              ),
+              CustomTextFormField(
+                obscureText: newPass,
+                controller: newPassword,
+                title: AppLocalizations.of(context)!.newPassword,
+                prefix: const Icon(Iconsax.lock),
+                suffix: IconButton(
+                  icon: Icon(
+                    newPass ? Iconsax.eye : Iconsax.eye_slash,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      newPass = !newPass;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 20.h,
+              ),
+              FractionallySizedBox(
+                widthFactor: 1,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    backgroundColor: AppColors.primaryBlue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () async {
+                    if (oldPassword.text.isNotEmpty ||
+                        oldPassword.text != null) {
+                      if (newPassword.text.isNotEmpty ||
+                          newPassword.text != null) {
+                        var res = await profileProvider.resetPassword(
+                            email: Provider.of<AuthProvider>(context,
+                                    listen: false)
+                                .usermodel!
+                                .email
+                                .toString(),
+                            oldPassword: oldPassword.text,
+                            newPassword: newPassword.text);
+                        if (res.success) {
+                          Fluttertoast.showToast(msg: res.msg);
+                          clearcontroller();
+                        } else {
+                          Fluttertoast.showToast(msg: res.msg);
+                        }
                       } else {
-                        Fluttertoast.showToast(msg: res.msg);
+                        Fluttertoast.showToast(
+                            msg: "Please enter new password");
                       }
                     } else {
-                      Fluttertoast.showToast(msg: "Please enter new password");
+                      Fluttertoast.showToast(msg: "Please enter old password");
                     }
-                  } else {
-                    Fluttertoast.showToast(msg: "Please enter old password");
-                  }
-                },
-                child: Text(AppLocalizations.of(context)!.setPassword,
-                    style: GoogleFonts.openSans(
-                      textStyle: TextStyle(
-                          fontSize: 16.sp, fontWeight: FontWeight.bold),
-                    )),
+                  },
+                  child: Text(AppLocalizations.of(context)!.setPassword,
+                      style: GoogleFonts.openSans(
+                        textStyle: TextStyle(
+                            fontSize: 16.sp, fontWeight: FontWeight.bold),
+                      )),
+                ),
               ),
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(AppLocalizations.of(context)!.toCreateASecurePassword,
-                      style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            fontSize: 18.sp, fontWeight: FontWeight.w600),
-                      )),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  Text(
-                      ' • ${AppLocalizations.of(context)!.useAtLeastEightCharacters}',
-                      style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            fontSize: 12.sp, fontWeight: FontWeight.w400),
-                      )),
-                  SizedBox(
-                    height: 6.h,
-                  ),
-                  Text(
-                      ''' • ${AppLocalizations.of(context)!.useMixOfLettersNumbers}''',
-                      style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            fontSize: 12.sp, fontWeight: FontWeight.w400),
-                      )),
-                  SizedBox(
-                    height: 6.h,
-                  ),
-                  Text(
-                      ' • ${AppLocalizations.of(context)!.combineWordsAndSymbols}',
-                      style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            fontSize: 12.sp, fontWeight: FontWeight.w400),
-                      )),
-                ],
+              SizedBox(
+                height: 20.h,
               ),
-            ),
-          ],
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(AppLocalizations.of(context)!.toCreateASecurePassword,
+                        style: GoogleFonts.openSans(
+                          textStyle: TextStyle(
+                              fontSize: 18.sp, fontWeight: FontWeight.w600),
+                        )),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Text(
+                        ' • ${AppLocalizations.of(context)!.useAtLeastEightCharacters}',
+                        style: GoogleFonts.openSans(
+                          textStyle: TextStyle(
+                              fontSize: 12.sp, fontWeight: FontWeight.w400),
+                        )),
+                    SizedBox(
+                      height: 6.h,
+                    ),
+                    Text(
+                        ''' • ${AppLocalizations.of(context)!.useMixOfLettersNumbers}''',
+                        style: GoogleFonts.openSans(
+                          textStyle: TextStyle(
+                              fontSize: 12.sp, fontWeight: FontWeight.w400),
+                        )),
+                    SizedBox(
+                      height: 6.h,
+                    ),
+                    Text(
+                        ' • ${AppLocalizations.of(context)!.combineWordsAndSymbols}',
+                        style: GoogleFonts.openSans(
+                          textStyle: TextStyle(
+                              fontSize: 12.sp, fontWeight: FontWeight.w400),
+                        )),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

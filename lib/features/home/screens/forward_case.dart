@@ -204,8 +204,8 @@ class _DoctorCardState extends State<DoctorCard> {
                 width: 60.w,
                 clipBehavior: Clip.antiAlias,
                 decoration: const BoxDecoration(shape: BoxShape.circle),
-                child: Image.asset(
-                  'assets/images/profile.png',
+                child: Image.network(
+                  widget.doctor.imageUrl ?? "",
                   fit: BoxFit.contain,
                 ),
               ),
@@ -254,12 +254,12 @@ void _buildForwardCaseView(
     ),
     builder: (BuildContext context) {
       return DraggableScrollableSheet(
-        initialChildSize: 0.5,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
+        initialChildSize:
+            0.93, // Adjust this value to leave space for the app bar
+        minChildSize: 0.93,
+        maxChildSize: 0.93,
         expand: false,
-        snap: true,
-        snapSizes: const [0.5, 0.95],
+
         builder: (BuildContext context, ScrollController scrollController) {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {

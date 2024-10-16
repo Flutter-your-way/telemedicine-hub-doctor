@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
 class HelpSupportScreen extends StatefulWidget {
   const HelpSupportScreen({super.key});
@@ -15,61 +16,67 @@ class HelpSupportScreen extends StatefulWidget {
 class _HelpSupportScreenState extends State<HelpSupportScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text(
-          AppLocalizations.of(context)!.helpAndSupport,
-          style: GoogleFonts.openSans(
-              textStyle:
-                  TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
-        ),
-        centerTitle: false,
+    return Container(
+      decoration: BoxDecoration(
+        gradient:
+            Theme.of(context).extension<GradientTheme>()?.backgroundGradient,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.h),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20.h,
-            ),
-            _buildOptionBar(
-                icon: Iconsax.call,
-                name: AppLocalizations.of(context)!.customerSupportContact,
-                onPressed: () {
-                  showContactInfoBottomSheet(context);
-                }),
-            SizedBox(
-              height: 20.h,
-            ),
-            _buildOptionBar(
-                icon: Iconsax.message,
-                name: AppLocalizations.of(context)!.supportChat,
-                onPressed: () {
-                  showContactInfoBottomSheet(context);
-                }),
-            SizedBox(
-              height: 20.h,
-            ),
-            _buildOptionBar(
-                icon: Iconsax.note,
-                name: AppLocalizations.of(context)!.submitFeedback,
-                onPressed: () {
-                  showContactInfoBottomSheet(context);
-                }),
-            SizedBox(
-              height: 20.h,
-            ),
-            _buildOptionBar(
-                icon: Iconsax.shield,
-                name: AppLocalizations.of(context)!.privacyPolicy,
-                onPressed: () {
-                  showContactInfoBottomSheet(context);
-                }),
-            SizedBox(
-              height: 20.h,
-            ),
-          ],
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          title: Text(
+            AppLocalizations.of(context)!.helpAndSupport,
+            style: GoogleFonts.openSans(
+                textStyle:
+                    TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
+          ),
+          centerTitle: false,
+        ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.h),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildOptionBar(
+                  icon: Iconsax.call,
+                  name: AppLocalizations.of(context)!.customerSupportContact,
+                  onPressed: () {
+                    showContactInfoBottomSheet(context);
+                  }),
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildOptionBar(
+                  icon: Iconsax.message,
+                  name: AppLocalizations.of(context)!.supportChat,
+                  onPressed: () {
+                    showContactInfoBottomSheet(context);
+                  }),
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildOptionBar(
+                  icon: Iconsax.note,
+                  name: AppLocalizations.of(context)!.submitFeedback,
+                  onPressed: () {
+                    showContactInfoBottomSheet(context);
+                  }),
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildOptionBar(
+                  icon: Iconsax.shield,
+                  name: AppLocalizations.of(context)!.privacyPolicy,
+                  onPressed: () {
+                    showContactInfoBottomSheet(context);
+                  }),
+              SizedBox(
+                height: 20.h,
+              ),
+            ],
+          ),
         ),
       ),
     );

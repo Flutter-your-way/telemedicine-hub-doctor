@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:svg_flutter/svg.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/images/app_images.dart';
+import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
+import 'package:telemedicine_hub_doctor/common/models/ticket_count_model.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
 import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
@@ -33,12 +35,15 @@ class _HomeScreenState extends State<HomeScreen> {
       PagingController(firstPageKey: 1);
   int completedTickets = 0;
   int pendingTickets = 0;
+  late Future<CustomResponse> _ticketCountsFuture;
 
   @override
   void initState() {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+    _ticketCountsFuture = _fetchTicketCounts();
+
     super.initState();
   }
 
@@ -52,10 +57,13 @@ class _HomeScreenState extends State<HomeScreen> {
         final nextPageKey = pageKey + 1;
         _pagingController.appendPage(newItems, nextPageKey);
       }
-      _updateTicketCounts();
     } catch (error) {
       _pagingController.error = error;
     }
+  }
+
+  Future<CustomResponse> _fetchTicketCounts() {
+    return Provider.of<HomeProvider>(context, listen: false).getTicketCounts();
   }
 
   Future<List<TicketModel>> getTickets(int pageKey) async {
@@ -76,21 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _updateTicketCounts() {
-    completedTickets = _pagingController.itemList
-            ?.where((ticket) => ticket.status == 'completed')
-            .length ??
-        0;
-    pendingTickets = _pagingController.itemList
-            ?.where((ticket) =>
-                ticket.status == 'pending' || ticket.status == 'draft')
-            .length ??
-        0;
-    setState(() {});
-  }
-
   Future<void> _refreshData() async {
+    // Refresh both the paging controller and the ticket counts
     _pagingController.refresh();
+    setState(() {
+      _ticketCountsFuture = _fetchTicketCounts();
+    });
   }
 
   @override
@@ -109,40 +108,55 @@ class _HomeScreenState extends State<HomeScreen> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Row(
-                    children: [
-                      _buildTopViewCards(
-                        completedTickets.toString(),
-                        AppLocalizations.of(context)!.completedTickets,
-                        () {
-                          Navigator.push(
-                            context,
-                            CupertinoDialogRoute(
-                              builder: (context) =>
-                                  TicketViewScreen(title: 'Completed Ticket'),
-                              context: context,
+                  child: FutureBuilder<CustomResponse>(
+                    future: _ticketCountsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return StatusStatsShimmer();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.hasData && snapshot.data!.success) {
+                        final ticketCounts =
+                            snapshot.data!.data as TicketCountsModel;
+                        return Row(
+                          children: [
+                            _buildTopViewCards(
+                              ticketCounts.completed.toString(),
+                              AppLocalizations.of(context)!.completedTickets,
+                              () {
+                                Navigator.push(
+                                  context,
+                                  CupertinoDialogRoute(
+                                    builder: (context) => TicketViewScreen(
+                                        title: 'Completed Ticket'),
+                                    context: context,
+                                  ),
+                                );
+                              },
+                              context,
                             ),
-                          );
-                        },
-                        context,
-                      ),
-                      SizedBox(width: 16.h),
-                      _buildTopViewCards(
-                        pendingTickets.toString(),
-                        AppLocalizations.of(context)!.pendingTickets,
-                        () {
-                          Navigator.push(
-                            context,
-                            CupertinoDialogRoute(
-                              builder: (context) =>
-                                  TicketViewScreen(title: 'Pending Ticket'),
-                              context: context,
+                            SizedBox(width: 16.h),
+                            _buildTopViewCards(
+                              ticketCounts.pending.toString(),
+                              AppLocalizations.of(context)!.pendingTickets,
+                              () {
+                                Navigator.push(
+                                  context,
+                                  CupertinoDialogRoute(
+                                    builder: (context) => TicketViewScreen(
+                                        title: 'Pending Ticket'),
+                                    context: context,
+                                  ),
+                                );
+                              },
+                              context,
                             ),
-                          );
-                        },
-                        context,
-                      ),
-                    ],
+                          ],
+                        );
+                      } else {
+                        return Text('Failed to load ticket counts');
+                      }
+                    },
                   ),
                 ),
               ),
@@ -167,7 +181,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fontSize: 18, fontWeight: FontWeight.w500),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            CupertinoDialogRoute(
+                              builder: (context) =>
+                                  TicketViewScreen(title: 'All Ticket'),
+                              context: context,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
