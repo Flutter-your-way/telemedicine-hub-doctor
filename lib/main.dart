@@ -3,6 +3,8 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_kurdish_localization/kurdish_material_localization_delegate.dart';
+import 'package:flutter_kurdish_localization/kurdish_widget_localization_delegate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -62,16 +64,19 @@ class MyApp extends StatelessWidget {
           locale: languageProvider.locale,
           // builder: DevicePreview.appBuilder,
           debugShowCheckedModeBanner: false,
-          localizationsDelegates: const [
-            AppLocalizations.delegate, // Add this line
 
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
+            KurdishMaterialLocalizations.delegate,
+            KurdishWidgetLocalizations.delegate,
           ],
           supportedLocales: const [
             Locale('en'),
             Locale('ar'),
+            Locale('ku'),
           ],
           theme: ThemeData(
             scaffoldBackgroundColor: Colors.transparent,

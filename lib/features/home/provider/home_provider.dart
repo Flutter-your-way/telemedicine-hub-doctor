@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:telemedicine_hub_doctor/common/constants/app_constants.dart';
 import 'package:telemedicine_hub_doctor/common/managers/local_manager.dart';
 import 'package:telemedicine_hub_doctor/common/managers/network_manager.dart';
@@ -225,6 +226,42 @@ class HomeProvider extends ChangeNotifier {
     } finally {
       isLoading = false;
       notifyListeners();
+    }
+  }
+
+   Future<CustomResponse> downloadFile(String url) async {
+    try {
+      var response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        var documentDirectory = await getApplicationDocumentsDirectory();
+
+        String fileName = Uri.parse(url).pathSegments.last;
+
+        File file = File('${documentDirectory.path}/$fileName');
+
+        await file.writeAsBytes(response.bodyBytes);
+
+        return CustomResponse(
+          success: true,
+          msg: "File downloaded successfully",
+          code: response.statusCode,
+          data: {'filePath': file.path},
+        );
+      } else {
+        return CustomResponse(
+          success: false,
+          msg: "Failed to download file. Status code: ${response.statusCode}",
+          code: response.statusCode,
+        );
+      }
+    } catch (e) {
+      print("Error: $e");
+      return CustomResponse(
+        success: false,
+        msg: "Error occurred during file download: $e",
+        code: 500, // General error code
+      );
     }
   }
 

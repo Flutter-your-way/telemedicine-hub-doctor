@@ -163,13 +163,13 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
         body: RefreshIndicator(
           onRefresh: _handleRefresh,
           child: isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : errorMessage != null
                   ? Center(child: Text(errorMessage!))
                   : ticket == null
-                      ? Center(child: Text("No ticket data available"))
+                      ? const Center(child: Text("No ticket data available"))
                       : SingleChildScrollView(
-                          physics: AlwaysScrollableScrollPhysics(),
+                          physics: const AlwaysScrollableScrollPhysics(),
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 12.h),
                             child: Column(
@@ -431,7 +431,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                           if (loadingProgress ==
                                                               null)
                                                             return child;
-                                                          return Center(
+                                                          return const Center(
                                                               child:
                                                                   ImagesShimmer());
                                                         },
@@ -445,9 +445,9 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                   );
                                                 },
                                               )
-                                            : SizedBox.shrink(),
+                                            : const SizedBox.shrink(),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                                 SizedBox(height: 16.h),
                                 if (ticket?.questionsAndAnswers != null &&
                                     ticket!.questionsAndAnswers!.isNotEmpty)
@@ -945,18 +945,18 @@ void _buildPrescribeFeild({
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: Text('Confirm Submission'),
-                                      content: Text(
+                                      title: const Text('Confirm Submission'),
+                                      content: const Text(
                                           'Are you sure you want to submit this prescription?'),
                                       actions: <Widget>[
                                         TextButton(
-                                          child: Text('Cancel'),
+                                          child: const Text('Cancel'),
                                           onPressed: () {
                                             Navigator.of(context).pop(false);
                                           },
                                         ),
                                         TextButton(
-                                          child: Text('Submit'),
+                                          child: const Text('Submit'),
                                           onPressed: () {
                                             Navigator.of(context).pop(true);
                                           },

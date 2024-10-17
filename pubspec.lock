@@ -262,6 +262,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1"
+  flutter_kurdish_localization:
+    dependency: "direct main"
+    description:
+      name: flutter_kurdish_localization
+      sha256: "26b08d4563c1e148664b0f26c2db61f47bf02872645063f4dc3ff2f2073e27b3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.2"
   flutter_lints:
     dependency: "direct main"
     description:
@@ -558,7 +566,7 @@ packages:
     source: hosted
     version: "1.0.1"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       sha256: fec0d61223fba3154d87759e3cc27fe2c8dc498f6386c6d6fc80d1afdd1bf378
@@ -661,6 +669,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.2"
+  photo_view:
+    dependency: "direct main"
+    description:
+      name: photo_view
+      sha256: "1fc3d970a91295fbd1364296575f854c9863f225505c28c46e0a03e48960c75e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.15.0"
   pinput:
     dependency: "direct main"
     description:

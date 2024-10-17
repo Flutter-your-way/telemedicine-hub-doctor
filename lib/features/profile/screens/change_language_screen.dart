@@ -17,7 +17,7 @@ class ChangeLanguageScreen extends StatefulWidget {
 class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
   int selectedIndex = -1; // Initialize with -1 to indicate no selection
   List<String> languageList = ['English', 'Arabic', 'Kurdish (Sorani)'];
-  List<String> languageCodes = ['en', 'ar', 'ar'];
+  List<String> languageCodes = ['en', 'ar', 'ku'];
 
   @override
   void initState() {
