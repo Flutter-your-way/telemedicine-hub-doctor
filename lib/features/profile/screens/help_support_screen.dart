@@ -45,24 +45,24 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                   onPressed: () {
                     showContactInfoBottomSheet(context);
                   }),
-              SizedBox(
-                height: 20.h,
-              ),
-              _buildOptionBar(
-                  icon: Iconsax.message,
-                  name: AppLocalizations.of(context)!.supportChat,
-                  onPressed: () {
-                    showContactInfoBottomSheet(context);
-                  }),
-              SizedBox(
-                height: 20.h,
-              ),
-              _buildOptionBar(
-                  icon: Iconsax.note,
-                  name: AppLocalizations.of(context)!.submitFeedback,
-                  onPressed: () {
-                    showContactInfoBottomSheet(context);
-                  }),
+              // SizedBox(
+              //   height: 20.h,
+              // ),
+              // _buildOptionBar(
+              //     icon: Iconsax.message,
+              //     name: AppLocalizations.of(context)!.supportChat,
+              //     onPressed: () {
+              //       showContactInfoBottomSheet(context);
+              //     }),
+              // SizedBox(
+              //   height: 20.h,
+              // ),
+              // _buildOptionBar(
+              //     icon: Iconsax.note,
+              //     name: AppLocalizations.of(context)!.submitFeedback,
+              //     onPressed: () {
+              //       showContactInfoBottomSheet(context);
+              //     }),
               SizedBox(
                 height: 20.h,
               ),
