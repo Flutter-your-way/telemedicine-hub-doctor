@@ -177,19 +177,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 12.h),
                       child: Column(
                         children: [
-                          _buildOptionBar(
-                              icon: Iconsax.notification,
-                              name: AppLocalizations.of(context)!.notifications,
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                        builder: (context) =>
-                                            const NotificationSettingScreen()));
-                              }),
-                          SizedBox(
-                            height: 20.h,
-                          ),
+                          // _buildOptionBar(
+                          //     icon: Iconsax.notification,
+                          //     name: AppLocalizations.of(context)!.notifications,
+                          //     onPressed: () {
+                          //       Navigator.push(
+                          //           context,
+                          //           CupertinoPageRoute(
+                          //               builder: (context) =>
+                          //                   const NotificationSettingScreen()));
+                          //     }),
+                          // SizedBox(
+                          //   height: 20.h,
+                          // ),
                           _buildOptionBar(
                               icon: Iconsax.language_circle,
                               name:
