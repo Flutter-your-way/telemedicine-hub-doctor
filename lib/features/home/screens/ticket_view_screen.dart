@@ -131,7 +131,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: Text(
-            widget.title,
+           widget.title,
             style: GoogleFonts.openSans(
                 textStyle:
                     TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -157,7 +157,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
               child: Consumer<HomeProvider>(
                 builder: (context, homeProvider, child) {
                   if (homeProvider.isLoading) {
-                    return TicketShimmer();
+                    return const TicketShimmer();
                   } else if (filteredTicketList.isEmpty) {
                     return noDataView(context);
                   } else {

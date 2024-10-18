@@ -229,7 +229,7 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-   Future<CustomResponse> downloadFile(String url) async {
+  Future<CustomResponse> downloadFile(String url) async {
     try {
       var response = await http.get(Uri.parse(url));
 
@@ -442,7 +442,7 @@ class HomeProvider extends ChangeNotifier {
     try {
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
         "${baseAuthUrl}comment/get-all-comments/$ticketid",
-        headers: {"Authorization": "Bearer $accessToken", "type": "user"},
+        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
       );
 
       log(r.body);
@@ -460,6 +460,62 @@ class HomeProvider extends ChangeNotifier {
           msg: responseBody['msg'],
           code: r.statusCode,
           data: commentList,
+        );
+      } else {
+        return CustomResponse(
+          success: false,
+          msg: responseBody['msg'] ?? 'Failed to fetch diseases',
+          code: r.statusCode,
+          data: {},
+        );
+      }
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+      return CustomResponse(
+          success: false, msg: "Failed to fetch diseases", code: 400);
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<CustomResponse> createComment({
+    required String doctorId,
+    required String patientId,
+    required String ticketId,
+    required String message,
+  }) async {
+    String? accessToken = await LocalDataManager.getToken();
+    isLoading = true;
+    notifyListeners();
+
+    Map<String, dynamic> data = {
+      "doctorId": doctorId,
+      "patientId": patientId,
+      "ticketId": ticketId,
+      "message": message,
+    };
+
+    try {
+      var r =
+          await NetworkDataManger(client: http.Client()).postResponseFromUrl(
+        "${baseAuthUrl}comment/create-comment",
+        data: data,
+        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
+      );
+
+      print(r.body);
+      var responseBody = jsonDecode(r.body);
+
+      bool success = responseBody['success'] ?? false;
+
+      if (success) {
+        return CustomResponse(
+          success: true,
+          msg: responseBody['msg'],
+          code: r.statusCode,
+          data: {},
         );
       } else {
         return CustomResponse(

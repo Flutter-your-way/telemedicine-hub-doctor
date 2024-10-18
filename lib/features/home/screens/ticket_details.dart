@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +38,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
   bool isLoading = true;
   String? errorMessage;
   String? currentUserId = '';
+  final TextEditingController _controller = TextEditingController();
 
   List<CommentModel> commentList = [];
 
@@ -153,7 +153,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: Text(
-            ticket?.name.toString() ?? "",
+            "Ticket No.${ticket?.name}" ?? "",
             style: GoogleFonts.openSans(
                 textStyle:
                     TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -467,26 +467,53 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                     style: TextStyle(
                                         fontSize: 14.sp, color: Colors.grey),
                                   ),
-                                Consumer<HomeProvider>(
-                                    builder: (context, provider, child) {
-                                  if (provider.isLoading) {
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  }
-                                  return ListView.builder(
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount: commentList.length,
-                                      shrinkWrap: true,
-                                      itemBuilder: (context, index) {
-                                        return CommentBubble(
-                                          comment: commentList[index],
-                                          isCurrentUser:
-                                              commentList[index].user ==
-                                                  currentUserId,
-                                        );
-                                      });
-                                }),
+                                // if (commentList.isNotEmpty)
+                                //   Consumer<HomeProvider>(
+                                //     builder: (context, provider, child) {
+                                //       if (provider.isLoading) {
+                                //         return const Center(
+                                //             child: CircularProgressIndicator());
+                                //       }
+                                //       return ListView.builder(
+                                //         physics:
+                                //             const NeverScrollableScrollPhysics(),
+                                //         itemCount: commentList.length,
+                                //         shrinkWrap: true,
+                                //         itemBuilder: (context, index) {
+                                //           return CommentBubble(
+                                //             comment: commentList[index],
+                                //             isCurrentUser:
+                                //                 commentList[index].user ==
+                                //                     currentUserId,
+                                //           );
+                                //         },
+                                //       );
+                                //     },
+                                //   ),
+                                SizedBox(
+                                  height: 20.h,
+                                ),
+                                if (commentList.isNotEmpty)
+                                  Consumer<HomeProvider>(
+                                      builder: (context, provider, child) {
+                                    if (provider.isLoading) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                    return ListView.builder(
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: commentList.length,
+                                        shrinkWrap: true,
+                                        itemBuilder: (context, index) {
+                                          return CommentBubble(
+                                            comment: commentList[index],
+                                            isCurrentUser:
+                                                commentList[index].user ==
+                                                    currentUserId,
+                                          );
+                                        });
+                                  }),
                                 ticket!.status.toString() == "completed" ||
                                         ticket!.status.toString() == "forwarded"
                                     ? Column(
@@ -547,41 +574,124 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                             ),
                                           ),
                                           Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12.w,
-                                                vertical: 10.h),
-                                            child: FractionallySizedBox(
-                                              widthFactor: 1,
-                                              child: FilledButton(
-                                                style: FilledButton.styleFrom(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 12.h),
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                    )),
-                                                onPressed: () {
-                                                  Fluttertoast.showToast(
-                                                      msg:
-                                                          "Ticket Completed or Forwaded ");
-                                                },
-                                                child: Text(
-                                                  "Ticket Closed",
-                                                  style: TextStyle(
-                                                      fontSize: 16.sp,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12.w,
+                                                  vertical: 10.h),
+                                              child: TextFormField(
+                                                controller: _controller,
+                                                decoration: InputDecoration(
+                                                    hintText: "Add Comment",
+                                                    hintStyle: GoogleFonts.openSans(
+                                                        textStyle: TextStyle(
+                                                            color: const Color(
+                                                                0xFFD0D2D5),
+                                                            fontSize: 14.sp,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500)),
+                                                    suffixIcon: IconButton(
+                                                        onPressed: () async {
+                                                          if (_controller.text
+                                                              .trim()
+                                                              .isNotEmpty) {
+                                                            var r = await Provider
+                                                                    .of<
+                                                                            HomeProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                .createComment(
+                                                                    doctorId:
+                                                                        ticket!
+                                                                            .doctor!
+                                                                            .id
+                                                                            .toString(),
+                                                                    patientId: ticket!
+                                                                        .patient!
+                                                                        .id
+                                                                        .toString(),
+                                                                    ticketId:
+                                                                        ticket!
+                                                                            .id
+                                                                            .toString(),
+                                                                    message: _controller
+                                                                        .text
+                                                                        .trim());
+
+                                                            if (r.success) {
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                      msg: r
+                                                                          .msg);
+                                                              getComment();
+                                                              setState(() {
+                                                                _controller
+                                                                    .text = "";
+                                                              });
+                                                            } else {
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                      msg: r
+                                                                          .msg);
+                                                            }
+                                                          } else if (_controller
+                                                                  .text
+                                                                  .trim()
+                                                                  .length <
+                                                              2) {
+                                                            Fluttertoast.showToast(
+                                                                msg:
+                                                                    "Please write your comment!");
+                                                          } else {
+                                                            Fluttertoast.showToast(
+                                                                msg:
+                                                                    "Please write your comment!");
+                                                          }
+                                                        },
+                                                        icon: const Icon(
+                                                            Iconsax.send_2)),
+                                                    border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    8.h)),
+                                                        borderSide: BorderSide(
+                                                            color: const Color(
+                                                                0xFFD0D2D5),
+                                                            width: 1.h,
+                                                            strokeAlign: 1.h))),
+                                              )),
+                                          // FractionallySizedBox(
+                                          //   widthFactor: 1,
+                                          //   child: FilledButton(
+                                          //     style: FilledButton.styleFrom(
+                                          //         padding:
+                                          //             EdgeInsets.symmetric(
+                                          //                 vertical: 12.h),
+                                          //         backgroundColor:
+                                          //             Colors.green,
+                                          //         foregroundColor:
+                                          //             Colors.white,
+                                          //         shape:
+                                          //             RoundedRectangleBorder(
+                                          //           borderRadius:
+                                          //               BorderRadius.circular(
+                                          //                   12),
+                                          //         )),
+                                          //     onPressed: () {
+                                          //       Fluttertoast.showToast(
+                                          //           msg:
+                                          //               "Ticket Completed or Forwaded ");
+                                          //     },
+                                          //     child: Text(
+                                          //       "Ticket Closed",
+                                          //       style: TextStyle(
+                                          //           fontSize: 16.sp,
+                                          //           fontWeight:
+                                          //               FontWeight.w600),
+                                          //     ),
+                                          //   ),
+                                          // ),
                                         ],
                                       )
                                     : Padding(
@@ -1328,10 +1438,10 @@ class CommentBubble extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
       child: Row(
         mainAxisAlignment:
-            isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            isCurrentUser ? MainAxisAlignment.start : MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!isCurrentUser) _buildAvatar(),
+          if (isCurrentUser) _buildAvatar(),
           SizedBox(width: 8.w),
           Flexible(
             child: Column(
@@ -1377,7 +1487,7 @@ class CommentBubble extends StatelessWidget {
             ),
           ),
           SizedBox(width: 8.w),
-          if (isCurrentUser) _buildAvatar(),
+          if (!isCurrentUser) _buildAvatar(),
         ],
       ),
     );
