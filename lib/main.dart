@@ -3,6 +3,7 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_kurdish_localization/kurdish_material_localization_delegate.dart';
 import 'package:flutter_kurdish_localization/kurdish_widget_localization_delegate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -29,6 +30,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final languageProvider = LanguageProvider();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   await languageProvider.initPrefs();
   runApp(
     MultiProvider(

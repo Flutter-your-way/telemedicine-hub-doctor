@@ -8,7 +8,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
-import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
@@ -131,7 +130,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: Text(
-           widget.title,
+            widget.title,
             style: GoogleFonts.openSans(
                 textStyle:
                     TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),

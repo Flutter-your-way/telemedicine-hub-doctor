@@ -24,18 +24,20 @@ import 'package:telemedicine_hub_doctor/features/home/screens/forward_case.dart'
 import 'package:telemedicine_hub_doctor/features/home/widget/pdf_viewer_screen.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
-class TicketDetailsScreen extends StatefulWidget {
+class PsychologyTicketDetailsScreen extends StatefulWidget {
   String? id;
-  TicketDetailsScreen({
+  PsychologyTicketDetailsScreen({
     super.key,
     required this.id,
   });
 
   @override
-  State<TicketDetailsScreen> createState() => _TicketDetailsScreenState();
+  State<PsychologyTicketDetailsScreen> createState() =>
+      _PsychologyTicketDetailsScreenState();
 }
 
-class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
+class _PsychologyTicketDetailsScreenState
+    extends State<PsychologyTicketDetailsScreen> {
   TicketModel? ticket;
   bool isLoading = true;
   String? errorMessage;
@@ -50,6 +52,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
     _fetchTicketDetails();
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
+        // currentUserId = await LocalDataManager.getToken();
         currentUserId = Provider.of<AuthProvider>(context, listen: false)
             .usermodel!
             .id
@@ -94,7 +97,6 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
         setState(() {
           ticket = response.data;
           isLoading = false;
-          // currentUserId = response.data;
         });
       } else {
         setState(() {
@@ -456,6 +458,70 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                       )
                                     : const SizedBox.shrink(),
                                 SizedBox(height: 16.h),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Iconsax.menu_board,
+                                      color: AppColors.primaryBlue,
+                                    ),
+                                    SizedBox(
+                                      width: 6.h,
+                                    ),
+                                    Text(
+                                      "Notes",
+                                      style: GoogleFonts.openSans(
+                                          textStyle: TextStyle(
+                                        fontSize: 18.h,
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                    ),
+                                    const Spacer(),
+                                    GestureDetector(
+                                      onTap: () {
+                                        _buildPrescribeFeild(
+                                          context: context,
+                                          id: ticket!.id.toString(),
+                                          refreshTicketDetails: () async {
+                                            await _fetchTicketDetails();
+                                            setState(
+                                                () {}); // This will rebuild the widget with the new data
+                                          },
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(8.h),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12.h),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Iconsax.add_square,
+                                              size: 24.h,
+                                              color: AppColors.primaryBlue,
+                                            ),
+                                            SizedBox(
+                                              width: 6.h,
+                                            ),
+                                            Text(
+                                              "Add Notes",
+                                              style: GoogleFonts.openSans(
+                                                  textStyle: TextStyle(
+                                                color: AppColors.primaryBlue,
+                                                fontSize: 18.h,
+                                                fontWeight: FontWeight.w600,
+                                              )),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 50.h,
+                                ),
                                 if (ticket?.questionsAndAnswers != null &&
                                     ticket!.questionsAndAnswers!.isNotEmpty)
                                   Column(
@@ -961,7 +1027,7 @@ void _buildPrescribeFeild({
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "Prescribe the patient by adding notes ",
+                        "Add Notes for the patient ",
                         style: GoogleFonts.openSans(
                             textStyle: TextStyle(
                                 fontSize: 12.sp, fontWeight: FontWeight.w600)),
@@ -976,7 +1042,7 @@ void _buildPrescribeFeild({
                       },
                       autocorrect: true,
                       decoration: InputDecoration(
-                          hintText: "Prescribe the patient",
+                          hintText: "Share anything important with the patient",
                           hintFadeDuration: const Duration(milliseconds: 350),
                           hintStyle: GoogleFonts.openSans(
                               textStyle: TextStyle(
@@ -1119,7 +1185,7 @@ void _buildPrescribeFeild({
                                 }
                               },
                               child: Text(
-                                "Continue",
+                                "Add Note",
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                 ),
@@ -1514,85 +1580,6 @@ class CommentBubble extends StatelessWidget {
       ),
     );
   }
-
-//   Widget _buildAttachment(BuildContext context, String attachment) {
-//     return Container(
-//       width: MediaQuery.sizeOf(context).width * 0.5,
-//       height: 45.h,
-//       margin: EdgeInsets.only(top: 8.h),
-//       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-//       decoration: BoxDecoration(
-//         color: Colors.grey.shade200,
-//         borderRadius: BorderRadius.circular(8.r),
-//       ),
-//       child: Row(
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           // Icon(Icons.insert_drive_file, color: Colors.blue, size: 20.r),
-//           Container(
-//             height: 32.h,
-//             width: 32.w,
-//             decoration: const BoxDecoration(
-//                 shape: BoxShape.circle, color: Color(0xFF0065FF)),
-//             child: const Center(
-//               child: Icon(
-//                 Icons.link_outlined,
-//                 color: Colors.white,
-//               ),
-//             ),
-//           ),
-
-//           SizedBox(width: 8.w),
-//           Expanded(
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Expanded(
-//                   child: Text(
-//                     attachment,
-//                     maxLines: 1,
-//                     overflow: TextOverflow.ellipsis,
-//                     style: GoogleFonts.openSans(
-//                         textStyle: TextStyle(
-//                             fontSize: 14.sp, fontWeight: FontWeight.w600)),
-//                   ),
-//                 ),
-//                 SizedBox(
-//                   height: 4.h,
-//                 ),
-//                 Text(
-//                   "PDF",
-//                   maxLines: 1,
-//                   overflow: TextOverflow.ellipsis,
-//                   style: GoogleFonts.openSans(
-//                       textStyle: TextStyle(
-//                           color: Colors.grey,
-//                           fontSize: 12.sp,
-//                           fontWeight: FontWeight.w400)),
-//                 ),
-//               ],
-//             ),
-//           ),
-//           SizedBox(
-//             width: 4.w,
-//           ),
-//           IconButton(
-//               onPressed: () async {
-//                 // var res =
-//                 //     await Provider.of<HomeProvider>(context, listen: false)
-//                 //         .downloadFile(attachment);
-//                 // if (res.success) {
-//                 //   Fluttertoast.showToast(msg: res.msg);
-//                 // } else {
-//                 //   Fluttertoast.showToast(msg: res.msg);
-//                 // }
-//               },
-//               icon: const Icon(Iconsax.document_download))
-//         ],
-//       ),
-//     );
-//   }
-// }
 
   Widget buildAttachment(
       BuildContext context, String attachment, bool isCurrentUser) {
