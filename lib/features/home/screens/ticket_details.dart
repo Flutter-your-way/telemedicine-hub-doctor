@@ -296,7 +296,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                             FontWeight.bold,
                                                       ),
                                                     ),
-                                                    SizedBox(height: 12.h),
+                                                    SizedBox(height: 8.h),
                                                     Row(
                                                       children: [
                                                         Text(
@@ -335,7 +335,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                           left: 0,
                                           right: 0,
                                           child: Container(
-                                            padding: EdgeInsets.all(12.w),
+                                            padding: EdgeInsets.all(10.w),
                                             decoration: BoxDecoration(
                                                 color: AppColors.bluishWhite,
                                                 borderRadius:
@@ -574,8 +574,13 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                         ),
                                                       );
                                                     } else
-                                                      showImageDialog(
-                                                          context, fileUrl);
+                                                      print(fileExtension);
+                                                    showImageDialog(
+                                                        context, fileUrl);
+                                                  } else {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "No prescription uploaded");
                                                   }
                                                 },
                                                 child: Text(

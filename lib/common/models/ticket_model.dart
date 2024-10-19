@@ -12,22 +12,23 @@ class TicketModel {
   final DateTime? updatedAt;
   final DoctorPrescriptionAndNotes? doctorPrescriptionAndNotes;
   final String? forwardedNote;
+  final String? meetLink;
 
-  TicketModel({
-    this.id,
-    this.name,
-    this.doctor,
-    this.patient,
-    this.disease,
-    this.questionsAndAnswers,
-    this.prescriptions,
-    this.scheduleDate,
-    this.status,
-    this.createdAt,
-    this.updatedAt,
-    this.doctorPrescriptionAndNotes,
-    this.forwardedNote,
-  });
+  TicketModel(
+      {this.id,
+      this.name,
+      this.doctor,
+      this.patient,
+      this.disease,
+      this.questionsAndAnswers,
+      this.prescriptions,
+      this.scheduleDate,
+      this.status,
+      this.createdAt,
+      this.updatedAt,
+      this.doctorPrescriptionAndNotes,
+      this.forwardedNote,
+      this.meetLink});
 
   factory TicketModel.fromJson(Map<String, dynamic> json) {
     final questionsAndAnswers = json['questionsAndAnswers'] as List<dynamic>?;
@@ -37,6 +38,7 @@ class TicketModel {
         .toList();
     return TicketModel(
       id: json['_id'] as String?,
+      meetLink: json['meetLink'] as String?,
       name: json['name'] as String?,
       doctor: json['doctor'] != null
           ? Doctor.fromJson(json['doctor'] as Map<String, dynamic>)

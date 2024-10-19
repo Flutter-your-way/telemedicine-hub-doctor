@@ -150,7 +150,7 @@ class _TicketCardState extends State<TicketCard> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 12.h),
+                          SizedBox(height: 8.h),
                           Row(
                             children: [
                               Text("ETA - $timeUntilAppointment  • ",
@@ -180,7 +180,7 @@ class _TicketCardState extends State<TicketCard> {
                 left: 0,
                 right: 0,
                 child: Container(
-                  padding: EdgeInsets.all(12.w),
+                  padding: EdgeInsets.all(10.w),
                   decoration: BoxDecoration(
                       color: AppColors.bluishWhite,
                       borderRadius: const BorderRadius.vertical(

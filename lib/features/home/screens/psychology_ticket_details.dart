@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,6 +24,7 @@ import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dar
 import 'package:telemedicine_hub_doctor/features/home/screens/forward_case.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/pdf_viewer_screen.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PsychologyTicketDetailsScreen extends StatefulWidget {
   String? id;
@@ -162,7 +164,7 @@ class _PsychologyTicketDetailsScreenState
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: Text(
-            "Ticket No.${ticket?.name}" ?? "",
+            ticket?.name != null ? "Ticket No.${ticket!.name}" : "Loading...",
             style: GoogleFonts.openSans(
                 textStyle:
                     TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -829,19 +831,14 @@ class _PsychologyTicketDetailsScreenState
                                                               12),
                                                     )),
                                                 onPressed: () {
-                                                  _buildPrescribeFeild(
+                                                  _buildJoinSessionFeild(
                                                     context: context,
-                                                    id: ticket!.id.toString(),
-                                                    refreshTicketDetails:
-                                                        () async {
-                                                      await _fetchTicketDetails();
-                                                      setState(
-                                                          () {}); // This will rebuild the widget with the new data
-                                                    },
+                                                    meetLink: ticket!.meetLink
+                                                        .toString(),
                                                   );
                                                 },
                                                 child: Text(
-                                                  "Prescribe",
+                                                  "Join Session",
                                                   style: TextStyle(
                                                     fontSize: 16.sp,
                                                   ),
@@ -1198,6 +1195,166 @@ void _buildPrescribeFeild({
                     SizedBox(
                       height: MediaQuery.paddingOf(context).bottom,
                     ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+    },
+  );
+}
+
+void _buildJoinSessionFeild({
+  required BuildContext context,
+  required String meetLink,
+}) {
+  var homeProvider = Provider.of<HomeProvider>(context, listen: false);
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20),
+      ),
+    ),
+    builder: (BuildContext context) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.4,
+        minChildSize: 0.4,
+        maxChildSize: 0.4,
+        expand: false,
+        snap: true,
+        builder: (BuildContext context, ScrollController scrollController) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  left: 16.h,
+                  right: 16.h,
+                  top: 16.h,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFFAFAFC),
+                          borderRadius: BorderRadius.circular(12)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Image.asset(
+                                'assets/icons/meetLink.png',
+                                height: 40.h,
+                                width: 40.w,
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Meeting Link",
+                                    style: TextStyle(
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Use this link in order to join the meeting",
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 24.h),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12.w, vertical: 8.h),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    meetLink,
+                                    style: TextStyle(fontSize: 14.sp),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.copy, size: 20),
+                                  onPressed: () {
+                                    Clipboard.setData(
+                                        ClipboardData(text: meetLink));
+
+                                    Fluttertoast.showToast(
+                                        msg: "Link copied to clipboard");
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 24.h),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 16.h,
+                    ),
+
+                    FractionallySizedBox(
+                      widthFactor: 1,
+                      child: FilledButton(
+                        style: FilledButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            backgroundColor: AppColors.primaryBlue,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            )),
+                        onPressed: () async {
+                          launchUrl(Uri.parse(meetLink));
+                        },
+                        child: Text(
+                          "Join Session",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // ElevatedButton(
+                    //   onPressed: () async {
+                    //     if (await canLaunch(meetLink)) {
+                    //       await launch(meetLink);
+                    //     }
+                    //   },
+                    //   child: Text(
+                    //     "Join Session",
+                    //     style: TextStyle(fontSize: 16.sp),
+                    //   ),
+                    // ),
+                    SizedBox(
+                      height: MediaQuery.paddingOf(context).bottom,
+                    )
                   ],
                 ),
               );
