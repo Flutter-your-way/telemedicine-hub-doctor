@@ -30,6 +30,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final languageProvider = LanguageProvider();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   await languageProvider.initPrefs();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {

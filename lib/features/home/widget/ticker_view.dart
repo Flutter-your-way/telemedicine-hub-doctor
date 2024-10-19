@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
+import 'package:telemedicine_hub_doctor/features/home/screens/psychology_ticket_details.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/ticket_details.dart';
 
 class TicketCard extends StatefulWidget {
@@ -68,11 +69,20 @@ class _TicketCardState extends State<TicketCard> {
     String timeUntilAppointment = getTimeUntilAppointment(dateTime);
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => TicketDetailsScreen(id: widget.ticket.id),
-            ));
+        if (widget.ticket.disease?.name == "mental") {
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) =>
+                    PsychologyTicketDetailsScreen(id: widget.ticket.id),
+              ));
+        } else {
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => TicketDetailsScreen(id: widget.ticket.id),
+              ));
+        }
       },
       child: SizedBox(
         height: 200.h,
