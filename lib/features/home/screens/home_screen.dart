@@ -320,7 +320,7 @@ class HomeAppBar extends StatelessWidget {
                         color: AppColors.primaryBlue,
                       )),
                   child: const Icon(
-                    Iconsax.notification_1,
+                    Iconsax.notification,
                     size: 24,
                   ),
                 ),

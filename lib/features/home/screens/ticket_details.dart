@@ -21,6 +21,7 @@ import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dar
 import 'package:telemedicine_hub_doctor/features/home/screens/forward_case.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/pdf_viewer_screen.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
+import 'package:path/path.dart' as path;
 
 class TicketDetailsScreen extends StatefulWidget {
   String? id;
@@ -153,7 +154,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: Text(
-            "Ticket No.${ticket?.name}" ?? "",
+            ticket?.name != null ? "Ticket No.${ticket!.name}" : "Loading...",
             style: GoogleFonts.openSans(
                 textStyle:
                     TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -514,8 +515,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                           );
                                         });
                                   }),
-                                ticket!.status.toString() == "completed" ||
-                                        ticket!.status.toString() == "forwarded"
+                                ticket!.status.toString() == "completed"
                                     ? Column(
                                         children: [
                                           Padding(
@@ -547,20 +547,28 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                           .doctorPrescriptionAndNotes!
                                                           .prescriptionUrls!
                                                           .isNotEmpty) {
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            PDFViewerPage(
-                                                          url: ticket!
-                                                              .doctorPrescriptionAndNotes!
-                                                              .prescriptionUrls![0],
+                                                    final String fileUrl = ticket!
+                                                        .doctorPrescriptionAndNotes!
+                                                        .prescriptionUrls![0];
+                                                    final String fileExtension =
+                                                        path
+                                                            .extension(fileUrl)
+                                                            .toLowerCase();
+                                                    print(fileExtension);
+                                                    if (fileExtension ==
+                                                        '.pdf') {
+                                                      Navigator.of(context)
+                                                          .push(
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              PDFViewerPage(
+                                                            url: fileUrl,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    );
-                                                  } else {
-                                                    Fluttertoast.showToast(
-                                                        msg:
-                                                            "No prescription available +- ");
+                                                      );
+                                                    } else
+                                                      showImageDialog(
+                                                          context, fileUrl);
                                                   }
                                                 },
                                                 child: Text(

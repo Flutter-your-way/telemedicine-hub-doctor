@@ -111,13 +111,8 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
   }
 
   List<String> sortList = [
-    'Vaginal Yeast Infection',
-    'UTI',
-    'Stomach Issues',
-    'Heart Burns',
-    'Cold Sore',
-    'Canker Sore',
-    'COVID-19',
+    'sort by latest',
+    'sort by oldest',
   ];
 
   @override
@@ -131,7 +126,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: Text(
-           widget.title,
+            widget.title,
             style: GoogleFonts.openSans(
                 textStyle:
                     TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -142,7 +137,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
           children: [
             SizedBox(height: 20.h),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              padding: EdgeInsets.symmetric(horizontal: 24),
               child: SearchField(
                 function: (value) {
                   setState(() {
@@ -162,7 +157,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
                     return noDataView(context);
                   } else {
                     return ListView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      padding: EdgeInsets.symmetric(horizontal: 24),
                       itemCount: filteredTicketList.length,
                       itemBuilder: (context, index) {
                         var data = filteredTicketList[index];
@@ -206,11 +201,11 @@ class SearchField extends StatelessWidget {
           color: AppColors.captionColor,
           fontWeight: FontWeight.bold,
         ),
-        suffixIcon: IconButton(
-            onPressed: () {
-              showSortBottomSheet(context, sortList);
-            },
-            icon: const Icon(Icons.filter_list_rounded)),
+        // suffixIcon: IconButton(
+        //     onPressed: () {
+        //       showSortBottomSheet(context, sortList);
+        //     },
+        //     icon: const Icon(Icons.filter_list_rounded)),
         filled: true,
         border: OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.captionColor),
