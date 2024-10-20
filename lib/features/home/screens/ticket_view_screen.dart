@@ -136,7 +136,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
           children: [
             SizedBox(height: 20.h),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: SearchField(
                 function: (value) {
                   setState(() {
@@ -156,7 +156,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
                     return noDataView(context);
                   } else {
                     return ListView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
                       itemCount: filteredTicketList.length,
                       itemBuilder: (context, index) {
                         var data = filteredTicketList[index];
