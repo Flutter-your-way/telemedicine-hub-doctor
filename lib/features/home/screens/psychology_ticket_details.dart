@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
+import 'package:path/path.dart' as path;
 
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/models/comment_model.dart';
@@ -622,20 +623,33 @@ class _PsychologyTicketDetailsScreenState
                                                           .doctorPrescriptionAndNotes!
                                                           .prescriptionUrls!
                                                           .isNotEmpty) {
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            PDFViewerPage(
-                                                          url: ticket!
-                                                              .doctorPrescriptionAndNotes!
-                                                              .prescriptionUrls![0],
+                                                    final String fileUrl = ticket!
+                                                        .doctorPrescriptionAndNotes!
+                                                        .prescriptionUrls![0];
+                                                    final String fileExtension =
+                                                        path
+                                                            .extension(fileUrl)
+                                                            .toLowerCase();
+                                                    print(fileExtension);
+                                                    if (fileExtension ==
+                                                        '.pdf') {
+                                                      Navigator.of(context)
+                                                          .push(
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              PDFViewerPage(
+                                                            url: fileUrl,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    );
+                                                      );
+                                                    } else
+                                                      print(fileExtension);
+                                                    showImageDialog(
+                                                        context, fileUrl);
                                                   } else {
                                                     Fluttertoast.showToast(
                                                         msg:
-                                                            "No prescription available +- ");
+                                                            "No prescription uploaded ");
                                                   }
                                                 },
                                                 child: Text(
@@ -1093,6 +1107,19 @@ void _buildPrescribeFeild({
                                       );
 
                                       if (result != null) {
+                                        final fileSize =
+                                            result.files.first.size /
+                                                (1024 * 1024); // Convert to MB
+
+                                        if (fileSize > 5) {
+                                          Fluttertoast.showToast(
+                                            msg:
+                                                "File size must be less than 5MB",
+                                            backgroundColor: Colors.red,
+                                          );
+                                          return;
+                                        }
+
                                         setState(() {
                                           selectedFile = result.files.first;
                                         });
@@ -1513,7 +1540,7 @@ void _buildPatientProfile(
                             SizedBox(
                               width: 10.w,
                             ),
-                            infoBox(key: "Age", value: formattedDate),
+                            infoBox(key: "DOB", value: formattedDate),
                           ],
                         ),
                         SizedBox(height: 20.h),
@@ -1528,9 +1555,7 @@ void _buildPatientProfile(
                         infoRow(key: 'Chronic Disease:', value: disease),
                         SizedBox(height: 20.h),
                         infoRow(
-                            key: 'Address:',
-                            value:
-                                "Mollit mollit id quis adipisicing minim amet tempor enim. Cillum nisi enim ea nisi aute. Sunt veniam quis eu fugiat ipsum."),
+                            key: 'Address:', value: patient.address.toString()),
                         SizedBox(height: 20.h),
                         SizedBox(
                           height: MediaQuery.paddingOf(context).bottom,

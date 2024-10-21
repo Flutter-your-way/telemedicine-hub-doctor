@@ -1,11 +1,14 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
@@ -33,9 +36,22 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
   int totalPages = 1;
   bool isLoading = false;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   getTickets();
+  // }
+
+  static const _pageSize = 5;
+  final PagingController<int, TicketModel> _pagingController =
+      PagingController(firstPageKey: 1);
+  int completedTickets = 0;
+  int pendingTickets = 0;
+  late Future<CustomResponse> _ticketCountsFuture;
+
   @override
   void initState() {
-    super.initState();
     if (widget.title == "Completed Ticket") {
       status = 'completed';
     } else if (widget.title == "Pending Ticket") {
@@ -43,71 +59,81 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
     } else {
       status = '';
     }
-    getTickets();
-  }
 
-  Future<void> getTickets({bool refresh = false}) async {
-    if (refresh) {
-      currentPage = 1;
-      ticketList.clear();
-      filteredTicketList.clear();
-    }
-
-    if (currentPage > totalPages) return;
-
-    setState(() {
-      isLoading = true;
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
     });
 
+    super.initState();
+  }
+
+  String searchQuery = '';
+
+  Future<void> _fetchPage(int pageKey) async {
     try {
-      var res =
-          await Provider.of<HomeProvider>(context, listen: false).getTickets(
-        doctorId: Provider.of<AuthProvider>(context, listen: false)
-            .usermodel!
-            .id
-            .toString(),
-        status: status,
-        page: currentPage,
-        limit: 10,
-      );
-
-      if (res.success) {
-        var newTickets = (res.data['tickets'] as List<TicketModel>);
-        var paginationInfo = res.data['pagination'] as Map<String, dynamic>;
-
-        setState(() {
-          ticketList.addAll(newTickets);
-          filteredTicketList = List.from(ticketList);
-          totalPages = paginationInfo['totalPages'];
-          currentPage++;
-        });
+      final newItems = await getTickets(pageKey, status, searchQuery);
+      final isLastPage = newItems.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(newItems);
       } else {
-        print("Failed to fetch tickets: ${res.msg}");
+        final nextPageKey = pageKey + 1;
+        _pagingController.appendPage(newItems, nextPageKey);
       }
-    } catch (e) {
-      print("Exception occurred while fetching tickets: $e");
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
+    } catch (error) {
+      _pagingController.error = error;
+    }
+  }
+
+  Future<List<TicketModel>> getTickets(int pageKey, String status,
+      [String search = '']) async {
+    var homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    var authProvider = Provider.of<AuthProvider>(context, listen: false);
+    print("server searching 0");
+    var res = await homeProvider.getTickets(
+      doctorId: authProvider.usermodel!.id.toString(),
+      status: status,
+      search: search,
+      page: pageKey,
+      limit: _pageSize,
+    );
+
+    if (res.success) {
+      return res.data['tickets'];
+    } else {
+      throw Exception(res.msg ?? 'Failed to fetch tickets');
     }
   }
 
   void _onSearchChanged(String query) {
     setState(() {
-      if (query.isEmpty) {
-        filteredTicketList = ticketList;
-      } else {
-        filteredTicketList = ticketList.where((ticket) {
-          return ticket.name!.toLowerCase().contains(query.toLowerCase()) ||
-              ticket.disease!.name!
-                  .toLowerCase()
-                  .contains(query.toLowerCase()) ||
-              ticket.patient!.name!.toLowerCase().contains(query.toLowerCase());
-        }).toList();
-      }
+      searchQuery = query;
+      _pagingController.refresh(); // Refresh the list with new search query
     });
   }
+
+  Future<void> _refreshData() async {
+    // Refresh both the paging controller and the ticket counts
+    _pagingController.refresh();
+    // setState(() {
+    //   _ticketCountsFuture = _fetchTicketCounts();
+    // });
+  }
+
+  // void _onSearchChanged(String query) {
+  //   setState(() {
+  //     if (query.isEmpty) {
+  //       filteredTicketList = ticketList;
+  //     } else {
+  //       filteredTicketList = ticketList.where((ticket) {
+  //         return ticket.name!.toLowerCase().contains(query.toLowerCase()) ||
+  //             ticket.disease!.name!
+  //                 .toLowerCase()
+  //                 .contains(query.toLowerCase()) ||
+  //             ticket.patient!.name!.toLowerCase().contains(query.toLowerCase());
+  //       }).toList();
+  //     }
+  //   });
+  // }
 
   List<String> sortList = [
     'sort by latest',
@@ -132,43 +158,48 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
           ),
           centerTitle: false,
         ),
-        body: Column(
-          children: [
-            SizedBox(height: 20.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: SearchField(
-                function: (value) {
-                  setState(() {
-                    _onSearchChanged(value);
-                  });
-                },
-                sortList: sortList,
+        body: RefreshIndicator(
+          onRefresh: _refreshData,
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: SizedBox(height: 20.h),
               ),
-            ),
-            SizedBox(height: 20.h),
-            Expanded(
-              child: Consumer<HomeProvider>(
-                builder: (context, homeProvider, child) {
-                  if (homeProvider.isLoading) {
-                    return const TicketShimmer();
-                  } else if (filteredTicketList.isEmpty) {
-                    return noDataView(context);
-                  } else {
-                    return ListView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
-                      itemCount: filteredTicketList.length,
-                      itemBuilder: (context, index) {
-                        var data = filteredTicketList[index];
-
-                        return TicketCard(ticket: data);
-                      },
-                    );
-                  }
-                },
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: SearchField(
+                    function: (value) {
+                      setState(() {
+                        _onSearchChanged(value);
+                      });
+                    },
+                    sortList: sortList,
+                  ),
+                ),
               ),
-            ),
-          ],
+              SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                sliver: PagedSliverList<int, TicketModel>(
+                  pagingController: _pagingController,
+                  builderDelegate: PagedChildBuilderDelegate<TicketModel>(
+                    itemBuilder: (context, item, index) =>
+                        TicketCard(ticket: item),
+                    firstPageErrorIndicatorBuilder: (context) => Center(
+                      child: Text('Error loading tickets. Tap to retry.'),
+                    ),
+                    firstPageProgressIndicatorBuilder: (context) => Column(
+                      children: List.generate(3, (index) => TicketShimmer()),
+                    ),
+                    newPageProgressIndicatorBuilder: (context) =>
+                        TicketShimmer(),
+                    noItemsFoundIndicatorBuilder: (context) =>
+                        noDataView(context),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

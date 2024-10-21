@@ -244,26 +244,20 @@ class _ForwardedCasesViewState extends State<ForwardedCasesView> {
       child: Column(
         children: [
           SizedBox(
-            height: 20.h,
+            height: 4.h,
           ),
           Provider.of<HomeProvider>(context).isLoading
-              ? Padding(
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.sizeOf(context).height * 0.3),
-                  child: TicketShimmer(),
-                )
-              : ticketList.isEmpty
-                  ? noDataView(context)
-                  : ListView.builder(
-                      padding: EdgeInsets.symmetric(vertical: 20.h),
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: ticketList.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        var data = ticketList[index];
-                        return TicketCard(ticket: data);
-                      },
-                    ),
+              ? TicketShimmer()
+              : ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: ticketList.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    var data = ticketList[index];
+                    return TicketCard(ticket: data);
+                  },
+                ),
           SizedBox(
             height: MediaQuery.paddingOf(context).bottom,
           ),

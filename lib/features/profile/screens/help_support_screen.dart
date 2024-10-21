@@ -1,9 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:telemedicine_hub_doctor/features/profile/screens/privacy_policy_screen.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
 class HelpSupportScreen extends StatefulWidget {
@@ -67,10 +68,25 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                 height: 20.h,
               ),
               _buildOptionBar(
-                  icon: Iconsax.shield,
+                  icon: Iconsax.shield_tick,
+                  name: AppLocalizations.of(context)!.termsAndConditions,
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => const PrivacyPolicyScreen()));
+                  }),
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildOptionBar(
+                  icon: Iconsax.shield_tick,
                   name: AppLocalizations.of(context)!.privacyPolicy,
                   onPressed: () {
-                    showContactInfoBottomSheet(context);
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => const PrivacyPolicyScreen()));
                   }),
               SizedBox(
                 height: 20.h,
@@ -155,14 +171,10 @@ void showContactInfoBottomSheet(BuildContext context) {
                   ),
                 ),
                 _buildContactInfo(
-                    Icons.phone,
-                    AppLocalizations.of(context)!.contactNumber,
-                    '+1 332 335 6767'),
+                    Icons.phone, 'Contact Number', '+1 332 335 6767'),
                 const SizedBox(height: 16),
                 _buildContactInfo(
-                    Icons.email_outlined,
-                    AppLocalizations.of(context)!.email,
-                    'hospitalname@domain.com'),
+                    Icons.email_outlined, 'Email', 'hospitalname@domain.com'),
               ],
             ),
           ),

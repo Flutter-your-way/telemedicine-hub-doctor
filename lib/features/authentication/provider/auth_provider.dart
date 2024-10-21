@@ -113,9 +113,9 @@ class AuthProvider extends ChangeNotifier {
         },
       );
       return CustomResponse(
-        msg: "Logged out Successfully !",
+        msg: "Logged out !",
         code: 200,
-        data: "Logged out successfully",
+        data: "Logged out ",
         success: true,
       );
     } catch (e) {

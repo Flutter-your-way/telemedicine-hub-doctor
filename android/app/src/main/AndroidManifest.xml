@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     
     <application
-        android:label="telemedicine_hub_doctor"
+        android:label="Telemedicine hub doctor"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

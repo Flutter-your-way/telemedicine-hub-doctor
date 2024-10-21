@@ -257,6 +257,33 @@ Widget noDataView(BuildContext context) {
   );
 }
 
+Widget noDataViewForwardCase(BuildContext context) {
+  return Container(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 100.h,
+        ),
+        Text(
+          AppLocalizations.of(context)!.noDoctorFound,
+          style: GoogleFonts.openSans(
+              textStyle:
+                  TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
+        ),
+        SizedBox(
+          height: 40.h,
+        ),
+        SizedBox(
+            height: 160.h,
+            width: 160.w,
+            child: SvgPicture.asset(AppImages.no_data)),
+      ],
+    ),
+  );
+}
+
 class HomeAppBar extends StatelessWidget {
   const HomeAppBar({
     super.key,
@@ -264,14 +291,14 @@ class HomeAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String getGreeting() {
+    String getGreeting(BuildContext context) {
       final hour = DateTime.now().hour;
       if (hour < 12) {
-        return 'Good Morning';
+        return AppLocalizations.of(context)!.goodMorning;
       } else if (hour < 17) {
-        return 'Good Afternoon';
+        return AppLocalizations.of(context)!.goodAfternoon;
       } else {
-        return 'Good Evening';
+        return AppLocalizations.of(context)!.goodEvening;
       }
     }
 
@@ -290,7 +317,7 @@ class HomeAppBar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    getGreeting(),
+                    getGreeting(context),
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: AppColors.captionColor,
@@ -356,18 +383,20 @@ Widget _buildTopViewCards(String value, String name,
                   textStyle:
                       TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w400))),
           SizedBox(height: 16.h),
-          CupertinoButton(
-              color: Colors.grey.shade300,
-              alignment: Alignment.center,
-              borderRadius: BorderRadius.circular(12.h),
-              padding: EdgeInsets.symmetric(horizontal: 35.h),
-              onPressed: onPressed,
-              child: Text(AppLocalizations.of(context)!.viewAll,
-                  style: GoogleFonts.openSans(
-                      textStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600)))),
+          Center(
+            child: CupertinoButton(
+                color: Colors.grey.shade300,
+                alignment: Alignment.center,
+                borderRadius: BorderRadius.circular(12.h),
+                padding: EdgeInsets.symmetric(horizontal: 36.h),
+                onPressed: onPressed,
+                child: Text(AppLocalizations.of(context)!.viewAll,
+                    style: GoogleFonts.openSans(
+                        textStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600)))),
+          ),
           // Container(
           //   height: 32.h,
           //   decoration: BoxDecoration(

@@ -151,9 +151,8 @@ class _SignInEmailState extends State<SignInEmail> {
                                 (route) => false,
                               );
                             } else {
-                              log(" ${res.msg} getting ");
-                              Fluttertoast.showToast(
-                                  msg: " ${res.msg} getting ");
+                              log(" ${res.msg}  ");
+                              Fluttertoast.showToast(msg: " ${res.msg}  ");
                             }
                           } else {
                             Fluttertoast.showToast(msg: "Please enter email");

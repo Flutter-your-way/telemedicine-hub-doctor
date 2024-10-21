@@ -388,8 +388,7 @@ void _buildLogoutview(BuildContext context) {
                         onPressed: () async {
                           var res = await authProvider.logOut(context);
                           if (res.success) {
-                            Fluttertoast.showToast(
-                                msg: "Logged out succeddfully! ");
+                            Fluttertoast.showToast(msg: "Logged out ! ");
                             Navigator.pushAndRemoveUntil(
                               context,
                               CupertinoPageRoute(

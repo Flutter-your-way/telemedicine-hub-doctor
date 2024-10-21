@@ -18,7 +18,11 @@
   "ticket": "تیکەتەکان",
   "save": "پاشەکەوتکردن",
     "ticket": "التذكرة",
-
+  "noDoctorFound": "لم يتم العثور على طبيب",
+  "termsAndConditions" : "بُحِث مؤخرا",
+  "goodMorning": "صباح الخير",
+  "goodAfternoon": "مساء الخير",
+  "goodEvening": "مساء الخير",
 
   "goodMorning": "بەیانی باش",
   "goodAfternoon": "ئێوارە باش",

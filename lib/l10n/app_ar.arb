@@ -26,15 +26,17 @@
   "forgetPassword": "نسيت كلمة المرور",
   "enterYourEmailToSendResetLink": "أدخل بريدك الإلكتروني لإرسال رابط إعادة تعيين كلمة المرور",
   "sendLink": "إرسال الرابط",
-   "noTicketFound": "لم يتم العثور على تذكرة",
-
+  "noTicketFound": "لم يتم العثور على تذكرة",
+  "termsAndConditions" : "بُحِث مؤخرا",
   "useAtLeastEightCharacters": "استخدم 8 أحرف على الأقل",
   "useMixOfLettersNumbers": "استخدم مزيجًا من الأحرف والأرقام والرموز الخاصة (مثل: #$!%)",
   "combineWordsAndSymbols": "حاول دمج الكلمات والرموز في عبارة فريدة",
-
+  "goodMorning": "صباح الخير",
+  "goodAfternoon": "مساء الخير",
+  "goodEvening": "مساء الخير",
   "pendingTickets": "التذاكر قيد الانتظار",
   "forwarded": "محول",
-
+  "noDoctorFound": "لم يتم العثور على طبيب",
   "forwardCase": "تحويل الحالة",
   "prescribe": "وصف",
   "viewPrescription": "عرض الوصفة الطبية",

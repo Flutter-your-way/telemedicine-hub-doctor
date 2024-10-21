@@ -27,6 +27,8 @@ class HomeProvider extends ChangeNotifier {
     required String doctorId,
     required String status,
     int page = 1,
+    String search = '', // Add search parameter
+
     int limit = 10,
   }) async {
     String? accessToken = await LocalDataManager.getToken();
@@ -35,10 +37,9 @@ class HomeProvider extends ChangeNotifier {
 
     try {
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
-        "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=$status&page=$page&limit=$limit",
+        "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=$status&page=$page&limit=$limit&search=$search",
         headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
       );
-
       log(r.body);
       var responseBody = jsonDecode(r.body);
       print(responseBody);

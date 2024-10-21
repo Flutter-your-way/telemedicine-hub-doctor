@@ -139,7 +139,7 @@ class _ForwardCaseScreenState extends State<ForwardCaseScreen> {
                   child: Provider.of<HomeProvider>(context).isLoading
                       ? TicketShimmer()
                       : filteredDoctorList.isEmpty
-                          ? noDataView(context)
+                          ? noDataViewForwardCase(context)
                           : ListView.builder(
                               padding: EdgeInsets.zero,
                               physics: const NeverScrollableScrollPhysics(),
