@@ -8,11 +8,8 @@ import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
-import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
-import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/common/models/doctor_model.dart';
 import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
-import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
 import 'package:telemedicine_hub_doctor/features/navigation/bottom_nav_bar.dart';

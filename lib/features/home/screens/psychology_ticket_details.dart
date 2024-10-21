@@ -1269,7 +1269,7 @@ void _buildJoinSessionFeild({
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      padding: EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                           color: const Color(0xFFFAFAFC),
                           borderRadius: BorderRadius.circular(12)),
@@ -1286,7 +1286,7 @@ void _buildJoinSessionFeild({
                                 height: 40.h,
                                 width: 40.w,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 8,
                               ),
                               Column(
@@ -1327,7 +1327,7 @@ void _buildJoinSessionFeild({
                                   ),
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.copy, size: 20),
+                                  icon: const Icon(Icons.copy, size: 20),
                                   onPressed: () {
                                     Clipboard.setData(
                                         ClipboardData(text: meetLink));
