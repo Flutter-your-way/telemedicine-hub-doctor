@@ -10,6 +10,7 @@ import 'package:telemedicine_hub_doctor/common/managers/network_manager.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 
 import 'package:telemedicine_hub_doctor/common/models/doctor_model.dart';
+import 'package:telemedicine_hub_doctor/features/profile/provider/language_provider.dart';
 import 'package:telemedicine_hub_doctor/features/splash/screen/splash_screen.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -208,10 +209,15 @@ class AuthProvider extends ChangeNotifier {
 
   Future<CustomResponse> getUser() async {
     try {
+      String currentLang =
+          LanguageProvider.getCurrentLanguage; // Get language directly
       String? accessToken = await LocalDataManager.getToken();
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
           "${baseAuthUrl}doctor/get-doctor-by-id",
-          headers: {"Authorization": "Bearer $accessToken"});
+          headers: {
+            "Authorization": "Bearer $accessToken",
+            "Language": currentLang
+          });
 
       var responseBody = jsonDecode(r.body);
       bool success = responseBody['success'] ?? false;

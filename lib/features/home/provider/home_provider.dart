@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:telemedicine_hub_doctor/common/constants/app_constants.dart';
 import 'package:telemedicine_hub_doctor/common/managers/local_manager.dart';
 import 'package:telemedicine_hub_doctor/common/managers/network_manager.dart';
@@ -13,6 +14,7 @@ import 'package:telemedicine_hub_doctor/common/models/ticket_count_model.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:telemedicine_hub_doctor/common/models/doctor_model.dart';
+import 'package:telemedicine_hub_doctor/features/profile/provider/language_provider.dart';
 import 'package:telemedicine_hub_doctor/features/profile/widget/loading_dialog.dart';
 
 class HomeProvider extends ChangeNotifier {
@@ -31,6 +33,9 @@ class HomeProvider extends ChangeNotifier {
 
     int limit = 10,
   }) async {
+    String currentLang =
+        LanguageProvider.getCurrentLanguage; // Get language directly
+    print(currentLang);
     String? accessToken = await LocalDataManager.getToken();
     isLoading = true;
     notifyListeners();
@@ -38,7 +43,11 @@ class HomeProvider extends ChangeNotifier {
     try {
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
         "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=$status&page=$page&limit=$limit&search=$search",
-        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
+        headers: {
+          "Authorization": "Bearer $accessToken",
+          "type": "doctor",
+          "Language": currentLang,
+        },
       );
       log(r.body);
       var responseBody = jsonDecode(r.body);
@@ -142,10 +151,16 @@ class HomeProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     print(ticketId);
+    String currentLang =
+        LanguageProvider.getCurrentLanguage; // Get language directly
     try {
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
         "${baseAuthUrl}ticket/get-ticket-by-id/$ticketId",
-        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
+        headers: {
+          "Authorization": "Bearer $accessToken",
+          "type": "doctor",
+          "Language": currentLang,
+        },
       );
       log(r.body);
       var responseBody = jsonDecode(r.body);
@@ -188,11 +203,16 @@ class HomeProvider extends ChangeNotifier {
     String? accessToken = await LocalDataManager.getToken();
     isLoading = true;
     notifyListeners();
-
+    String currentLang =
+        LanguageProvider.getCurrentLanguage; // Get language directly
     try {
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
         "${baseAuthUrl}doctor/get-all-general-doctors",
-        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
+        headers: {
+          "Authorization": "Bearer $accessToken",
+          "type": "doctor",
+          "Language": currentLang
+        },
       );
 
       log(r.body);

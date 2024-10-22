@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
+import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/profile/provider/language_provider.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
@@ -28,6 +29,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
           Provider.of<LanguageProvider>(context, listen: false);
       await languageProvider
           .loadLanguagePreference(); // Load the preferred language
+
       setState(() {
         selectedIndex =
             languageCodes.indexOf(languageProvider.locale.languageCode);
@@ -37,6 +39,8 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var authProvider = Provider.of<AuthProvider>(context);
+
     final languageProvider =
         Provider.of<LanguageProvider>(context, listen: false);
     return Container(
@@ -139,6 +143,9 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                     if (selectedIndex != -1) {
                       await languageProvider
                           .setLocale(languageCodes[selectedIndex]);
+                      setState(() {
+                        authProvider.getUser();
+                      });
                       if (mounted) {
                         Navigator.of(context)
                             .pop(); // Close the language selection screen

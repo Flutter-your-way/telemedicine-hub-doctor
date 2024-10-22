@@ -6,6 +6,7 @@ import 'package:telemedicine_hub_doctor/common/managers/network_manager.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:telemedicine_hub_doctor/features/profile/provider/language_provider.dart';
 
 class AppointmentProvider extends ChangeNotifier {
   bool isLoading = false;
@@ -18,11 +19,17 @@ class AppointmentProvider extends ChangeNotifier {
     String? accessToken = await LocalDataManager.getToken();
     isLoading = true;
     notifyListeners();
+    String currentLang =
+        LanguageProvider.getCurrentLanguage; // Get language directly
 
     try {
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
         "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId",
-        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
+        headers: {
+          "Authorization": "Bearer $accessToken",
+          "type": "doctor",
+          "Language": currentLang
+        },
       );
 
       var responseBody = jsonDecode(r.body);
@@ -65,11 +72,16 @@ class AppointmentProvider extends ChangeNotifier {
     String? accessToken = await LocalDataManager.getToken();
     isLoading = true;
     notifyListeners();
-
+    String currentLang =
+        LanguageProvider.getCurrentLanguage; // Get language directly
     try {
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
         "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=forwarded",
-        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
+        headers: {
+          "Authorization": "Bearer $accessToken",
+          "type": "doctor",
+          "Language": currentLang
+        },
       );
 
       var responseBody = jsonDecode(r.body);
