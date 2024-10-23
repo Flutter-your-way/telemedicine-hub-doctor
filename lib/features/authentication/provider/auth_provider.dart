@@ -88,6 +88,7 @@ class AuthProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
+      print(e.toString());
       isLoading = false;
       notifyListeners();
       return CustomResponse(success: false, msg: "Failed to verify", code: 400);
