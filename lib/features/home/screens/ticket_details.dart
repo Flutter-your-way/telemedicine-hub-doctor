@@ -151,7 +151,6 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('Questions and Answers: ${ticket?.questionsAndAnswers}');
     return Container(
       decoration: BoxDecoration(
         gradient:
@@ -553,196 +552,269 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 12.w,
                                                     vertical: 10.h),
-                                                child: FractionallySizedBox(
-                                                  widthFactor: 1,
-                                                  child: FilledButton(
-                                                    style:
-                                                        FilledButton.styleFrom(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    vertical:
-                                                                        12.h),
-                                                            backgroundColor:
-                                                                const Color(
-                                                                    0xFFEDEDF4),
-                                                            foregroundColor:
-                                                                Colors.black,
-                                                            shape:
-                                                                RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12),
-                                                            )),
-                                                    onPressed: () {
-                                                      if (ticket?.doctorPrescriptionAndNotes
-                                                                  ?.prescriptionUrls !=
-                                                              null &&
-                                                          ticket!
-                                                              .doctorPrescriptionAndNotes!
-                                                              .prescriptionUrls!
-                                                              .isNotEmpty) {
-                                                        final String fileUrl = ticket!
-                                                            .doctorPrescriptionAndNotes!
-                                                            .prescriptionUrls![0];
-                                                        final String
-                                                            fileExtension = path
-                                                                .extension(
-                                                                    fileUrl)
-                                                                .toLowerCase();
-                                                        print(fileExtension);
-                                                        if (fileExtension ==
-                                                            '.pdf') {
-                                                          Navigator.of(context)
-                                                              .push(
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  PDFViewerPage(
-                                                                url: fileUrl,
-                                                              ),
-                                                            ),
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: FilledButton.icon(
+                                                        style: FilledButton
+                                                            .styleFrom(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical:
+                                                                      12.h),
+                                                          backgroundColor:
+                                                              const Color(
+                                                                  0xFFEDEDF4),
+                                                          foregroundColor:
+                                                              Colors.black,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                          ),
+                                                        ),
+                                                        icon: const Icon(
+                                                            Iconsax.document_1),
+                                                        onPressed: () {
+                                                          if (ticket?.doctorPrescriptionAndNotes
+                                                                      ?.prescriptionUrls !=
+                                                                  null &&
+                                                              ticket!
+                                                                  .doctorPrescriptionAndNotes!
+                                                                  .prescriptionUrls!
+                                                                  .isNotEmpty) {
+                                                            final String
+                                                                fileUrl =
+                                                                ticket!
+                                                                    .doctorPrescriptionAndNotes!
+                                                                    .prescriptionUrls![0];
+                                                            final String
+                                                                fileExtension =
+                                                                path
+                                                                    .extension(
+                                                                        fileUrl)
+                                                                    .toLowerCase();
+                                                            print(
+                                                                fileExtension);
+                                                            if (fileExtension ==
+                                                                '.pdf') {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .push(
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          PDFViewerPage(
+                                                                    url:
+                                                                        fileUrl,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            } else {
+                                                              print(
+                                                                  fileExtension);
+                                                              showImageDialog(
+                                                                  context,
+                                                                  fileUrl);
+                                                            }
+                                                          } else {
+                                                            Fluttertoast.showToast(
+                                                                msg:
+                                                                    "No prescription uploaded");
+                                                          }
+                                                        },
+                                                        label: Text(
+                                                          "Prescription",
+                                                          style: TextStyle(
+                                                            fontSize: 16.sp,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 12.w),
+                                                    Expanded(
+                                                      child: FilledButton.icon(
+                                                        style: FilledButton
+                                                            .styleFrom(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical:
+                                                                      12.h),
+                                                          backgroundColor:
+                                                              const Color(
+                                                                  0xFFEDEDF4),
+                                                          foregroundColor:
+                                                              Colors.black,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                          ),
+                                                        ),
+                                                        icon: const Icon(
+                                                            Iconsax.note_1),
+                                                        onPressed: () {
+                                                          if (ticket?.doctorPrescriptionAndNotes
+                                                                      ?.note !=
+                                                                  null &&
+                                                              ticket!
+                                                                  .doctorPrescriptionAndNotes!
+                                                                  .note!
+                                                                  .isNotEmpty) {
+                                                            final String
+                                                                notesString =
+                                                                ticket!.doctorPrescriptionAndNotes!
+                                                                        .note ??
+                                                                    "No notes available";
+                                                            _showNotesBottomSheet(
+                                                              context: context,
+                                                              notesString:
+                                                                  notesString,
+                                                            );
+                                                          }
+                                                        },
+                                                        label: Text(
+                                                          "Notes",
+                                                          style: TextStyle(
+                                                            fontSize: 16.sp,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.w,
+                                                    vertical: 10.h),
+                                                child: TextFormField(
+                                                  controller: _controller,
+                                                  decoration: InputDecoration(
+                                                    fillColor: Colors.white,
+                                                    hintText: "Add Comment",
+                                                    hintStyle:
+                                                        GoogleFonts.openSans(
+                                                      textStyle: TextStyle(
+                                                        color: const Color(
+                                                            0xFFD0D2D5),
+                                                        fontSize: 14.sp,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    suffixIcon: IconButton(
+                                                      onPressed: () async {
+                                                        if (_controller.text
+                                                            .trim()
+                                                            .isNotEmpty) {
+                                                          var r = await Provider.of<
+                                                                      HomeProvider>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .createComment(
+                                                            doctorId: ticket!
+                                                                .doctor!.id
+                                                                .toString(),
+                                                            patientId: ticket!
+                                                                .patient!.id
+                                                                .toString(),
+                                                            ticketId: ticket!.id
+                                                                .toString(),
+                                                            message: _controller
+                                                                .text
+                                                                .trim(),
                                                           );
-                                                        } else
-                                                          print(fileExtension);
-                                                        showImageDialog(
-                                                            context, fileUrl);
-                                                      } else {
-                                                        Fluttertoast.showToast(
-                                                            msg:
-                                                                "No prescription uploaded");
-                                                      }
-                                                    },
-                                                    child: Text(
-                                                      "View prescription",
-                                                      style: TextStyle(
-                                                          fontSize: 16.sp,
-                                                          fontWeight:
-                                                              FontWeight.w600),
+
+                                                          if (r.success) {
+                                                            Fluttertoast
+                                                                .showToast(
+                                                                    msg: r.msg);
+                                                            getComment();
+                                                            setState(() {
+                                                              _controller.text =
+                                                                  "";
+                                                            });
+                                                          } else {
+                                                            Fluttertoast
+                                                                .showToast(
+                                                                    msg: r.msg);
+                                                          }
+                                                        } else if (_controller
+                                                                .text
+                                                                .trim()
+                                                                .length <
+                                                            2) {
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Please write your comment!");
+                                                        } else {
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Please write your comment!");
+                                                        }
+                                                      },
+                                                      icon: const Icon(
+                                                          Iconsax.send_2),
+                                                    ),
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  8.h)),
+                                                      borderSide: BorderSide(
+                                                        color: const Color(
+                                                            0xFFD0D2D5),
+                                                        width: 1.h,
+                                                        strokeAlign: 1.h,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                              Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 12.w,
-                                                      vertical: 10.h),
-                                                  child: TextFormField(
-                                                    controller: _controller,
-                                                    decoration: InputDecoration(
-                                                        fillColor: Colors.white,
-                                                        hintText: "Add Comment",
-                                                        hintStyle: GoogleFonts.openSans(
-                                                            textStyle: TextStyle(
-                                                                color: const Color(
-                                                                    0xFFD0D2D5),
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500)),
-                                                        suffixIcon: IconButton(
-                                                            onPressed:
-                                                                () async {
-                                                              if (_controller
-                                                                  .text
-                                                                  .trim()
-                                                                  .isNotEmpty) {
-                                                                var r = await Provider.of<HomeProvider>(context, listen: false).createComment(
-                                                                    doctorId: ticket!
-                                                                        .doctor!
-                                                                        .id
-                                                                        .toString(),
-                                                                    patientId: ticket!
-                                                                        .patient!
-                                                                        .id
-                                                                        .toString(),
-                                                                    ticketId:
-                                                                        ticket!
-                                                                            .id
-                                                                            .toString(),
-                                                                    message: _controller
-                                                                        .text
-                                                                        .trim());
-
-                                                                if (r.success) {
-                                                                  Fluttertoast
-                                                                      .showToast(
-                                                                          msg: r
-                                                                              .msg);
-                                                                  getComment();
-                                                                  setState(() {
-                                                                    _controller
-                                                                        .text = "";
-                                                                  });
-                                                                } else {
-                                                                  Fluttertoast
-                                                                      .showToast(
-                                                                          msg: r
-                                                                              .msg);
-                                                                }
-                                                              } else if (_controller
-                                                                      .text
-                                                                      .trim()
-                                                                      .length <
-                                                                  2) {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Please write your comment!");
-                                                              } else {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Please write your comment!");
-                                                              }
-                                                            },
-                                                            icon: const Icon(
-                                                                Iconsax
-                                                                    .send_2)),
-                                                        border: OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius.all(
-                                                                    Radius.circular(
-                                                                        8.h)),
-                                                            borderSide: BorderSide(
-                                                                color: const Color(
-                                                                    0xFFD0D2D5),
-                                                                width: 1.h,
-                                                                strokeAlign: 1.h))),
-                                                  )),
-
-                                              // FractionallySizedBox(
-                                              //   widthFactor: 1,
-                                              //   child: FilledButton(
-                                              //     style: FilledButton.styleFrom(
-                                              //         padding:
-                                              //             EdgeInsets.symmetric(
-                                              //                 vertical: 12.h),
-                                              //         backgroundColor:
-                                              //             Colors.green,
-                                              //         foregroundColor:
-                                              //             Colors.white,
-                                              //         shape:
-                                              //             RoundedRectangleBorder(
-                                              //           borderRadius:
-                                              //               BorderRadius.circular(
-                                              //                   12),
-                                              //         )),
-                                              //     onPressed: () {
-                                              //       Fluttertoast.showToast(
-                                              //           msg:
-                                              //               "Ticket Completed or Forwaded ");
-                                              //     },
-                                              //     child: Text(
-                                              //       "Ticket Closed",
-                                              //       style: TextStyle(
-                                              //           fontSize: 16.sp,
-                                              //           fontWeight:
-                                              //               FontWeight.w600),
-                                              //     ),
-                                              //   ),
-                                              // ),
                                             ],
                                           )
+
+                                        // FractionallySizedBox(
+                                        //   widthFactor: 1,
+                                        //   child: FilledButton(
+                                        //     style: FilledButton.styleFrom(
+                                        //         padding:
+                                        //             EdgeInsets.symmetric(
+                                        //                 vertical: 12.h),
+                                        //         backgroundColor:
+                                        //             Colors.green,
+                                        //         foregroundColor:
+                                        //             Colors.white,
+                                        //         shape:
+                                        //             RoundedRectangleBorder(
+                                        //           borderRadius:
+                                        //               BorderRadius.circular(
+                                        //                   12),
+                                        //         )),
+                                        //     onPressed: () {
+                                        //       Fluttertoast.showToast(
+                                        //           msg:
+                                        //               "Ticket Completed or Forwaded ");
+                                        //     },
+                                        //     child: Text(
+                                        //       "Ticket Closed",
+                                        //       style: TextStyle(
+                                        //           fontSize: 16.sp,
+                                        //           fontWeight:
+                                        //               FontWeight.w600),
+                                        //     ),
+                                        //   ),
+                                        // ),
+
                                         : Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 12.w),
@@ -960,6 +1032,112 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget>
       ),
     );
   }
+}
+
+void _showNotesBottomSheet({
+  required BuildContext context,
+  required String notesString,
+}) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20),
+      ),
+    ),
+    builder: (BuildContext context) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.93,
+        minChildSize: 0.93,
+        maxChildSize: 0.93,
+        expand: false,
+        snap: true,
+        builder: (BuildContext context, ScrollController scrollController) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 16.h,
+              right: 16.h,
+              top: 16.h,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 32.h,
+                  height: 4.h,
+                  margin: const EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF79747E),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Prescription Notes",
+                    style: GoogleFonts.openSans(
+                        textStyle: TextStyle(
+                            fontSize: 12.sp, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16.h),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.grey.withOpacity(0.2),
+                    ),
+                    borderRadius: BorderRadius.circular(8.h),
+                  ),
+                  child: Text(
+                    notesString,
+                    style: GoogleFonts.openSans(
+                      textStyle: TextStyle(
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  child: FractionallySizedBox(
+                    widthFactor: 1,
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        backgroundColor: AppColors.primaryBlue,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        "Close",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.paddingOf(context).bottom,
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
 }
 
 void _buildPrescribeFeild({
