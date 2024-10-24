@@ -37,6 +37,8 @@
   "pendingTickets": "التذاكر قيد الانتظار",
   "forwarded": "محول",
   "noDoctorFound": "لم يتم العثور على طبيب",
+    "noNotificationsAvailable": "لا توجد إخطارات متاحة",
+
   "forwardCase": "تحويل الحالة",
   "prescribe": "وصف",
   "viewPrescription": "عرض الوصفة الطبية",

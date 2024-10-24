@@ -284,6 +284,30 @@ Widget noDataViewForwardCase(BuildContext context) {
   );
 }
 
+Widget noNotificationsAvailable(BuildContext context) {
+  return Container(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.noNotificationsAvailable,
+          style: GoogleFonts.openSans(
+              textStyle:
+                  TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
+        ),
+        SizedBox(
+          height: 40.h,
+        ),
+        SizedBox(
+            height: 160.h,
+            width: 160.w,
+            child: SvgPicture.asset(AppImages.no_data)),
+      ],
+    ),
+  );
+}
+
 class HomeAppBar extends StatelessWidget {
   const HomeAppBar({
     super.key,
