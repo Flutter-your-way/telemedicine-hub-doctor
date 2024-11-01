@@ -134,7 +134,7 @@ class _ForwardCaseScreenState extends State<ForwardCaseScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12.h),
                   child: Provider.of<HomeProvider>(context).isLoading
-                      ? TicketShimmer()
+                      ? const TicketShimmer()
                       : filteredDoctorList.isEmpty
                           ? noDataViewForwardCase(context)
                           : ListView.builder(
@@ -209,23 +209,27 @@ class _DoctorCardState extends State<DoctorCard> {
               SizedBox(
                 width: 12.w,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    widget.doctor.name.toString(),
-                    style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            fontSize: 16.sp, fontWeight: FontWeight.w600)),
-                  ),
-                  Text(
-                    widget.doctor.specialization!.name.toString(),
-                    style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            fontSize: 12.sp, fontWeight: FontWeight.w400)),
-                  )
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      widget.doctor.name.toString(),
+                      style: GoogleFonts.openSans(
+                          textStyle: TextStyle(
+                              fontSize: 16.sp, fontWeight: FontWeight.w600)),
+                    ),
+                    Text(
+                      widget.doctor.specialization!.name.toString(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.openSans(
+                          textStyle: TextStyle(
+                              fontSize: 12.sp, fontWeight: FontWeight.w400)),
+                    )
+                  ],
+                ),
               )
             ],
           ),

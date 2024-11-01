@@ -108,10 +108,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     ),
                   ),
                   onPressed: () async {
-                    if (oldPassword.text.isNotEmpty ||
-                        oldPassword.text != null) {
-                      if (newPassword.text.isNotEmpty ||
-                          newPassword.text != null) {
+                    if (oldPassword.text.trim().isNotEmpty ||
+                        oldPassword.text.trim() != null) {
+                      if (newPassword.text.trim().isNotEmpty ||
+                          newPassword.text.trim() != null) {
                         var res = await profileProvider.resetPassword(
                             email: Provider.of<AuthProvider>(context,
                                     listen: false)

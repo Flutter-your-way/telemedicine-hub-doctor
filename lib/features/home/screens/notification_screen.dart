@@ -6,6 +6,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/home_screen.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -31,7 +32,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: Text(
-            "Notifications",
+            AppLocalizations.of(context)!.notifications,
             style: GoogleFonts.openSans(
               textStyle: TextStyle(
                 fontSize: 18.sp,

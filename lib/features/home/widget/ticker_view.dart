@@ -153,7 +153,7 @@ class _TicketCardState extends State<TicketCard> {
                           SizedBox(height: 8.h),
                           Row(
                             children: [
-                              Text("ETA - $timeUntilAppointment  • ",
+                              Text("$timeUntilAppointment  • ",
                                   style: GoogleFonts.openSans(
                                       textStyle: TextStyle(
                                           fontSize: 14.sp,

@@ -215,8 +215,6 @@ class HomeProvider extends ChangeNotifier {
         },
       );
 
-      
-
       log(r.body);
       var responseBody = jsonDecode(r.body);
 
@@ -369,7 +367,7 @@ class HomeProvider extends ChangeNotifier {
         headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
       );
 
-      log(r.body);
+      log("Forward case :  ${r.body}");
       var responseBody = jsonDecode(r.body);
 
       bool success = responseBody['success'] ?? false;

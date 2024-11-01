@@ -180,676 +180,455 @@ class _PsychologyTicketDetailsScreenState
                   ? Center(child: Text(errorMessage!))
                   : ticket == null
                       ? const Center(child: Text("No ticket data available"))
-                      : SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.h),
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: 200.h,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 8.w,
-                                      vertical: 16.h,
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Container(
-                                          width:
-                                              MediaQuery.sizeOf(context).width -
+                      : Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12.h),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  child: Column(children: [
+                                    SizedBox(
+                                      height: 200.h,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 8.w,
+                                          vertical: 16.h,
+                                        ),
+                                        child: Stack(
+                                          children: [
+                                            Container(
+                                              width: MediaQuery.sizeOf(context)
+                                                      .width -
                                                   56,
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFFAFAFC),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            border: Border.all(
-                                              color: const Color(0xFFF4F4F6),
-                                              width: 2,
-                                              strokeAlign:
-                                                  BorderSide.strokeAlignInside,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(.15),
-                                                blurRadius: 8,
-                                                offset: const Offset(0, 2),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFFAFAFC),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                border: Border.all(
+                                                  color:
+                                                      const Color(0xFFF4F4F6),
+                                                  width: 2,
+                                                  strokeAlign: BorderSide
+                                                      .strokeAlignInside,
+                                                ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(.15),
+                                                    blurRadius: 8,
+                                                    offset: const Offset(0, 2),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 16.w,
-                                                    vertical: 20.h),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 16.w,
+                                                            vertical: 20.h),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
-                                                        Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(6),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: getStatusColor(
-                                                                ticket!.status
-                                                                    .toString()),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        4),
-                                                          ),
-                                                          child: Text(
-                                                            capitalizeFirstLetter(
-                                                                ticket!.status
-                                                                    .toString()),
-                                                            style: TextStyle(
-                                                              color: AppColors
-                                                                  .greenishWhite,
-                                                              fontSize: 12.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const Spacer(),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            _buildPatientProfile(
-                                                                context:
-                                                                    context,
-                                                                patient: ticket!
-                                                                    .patient,
-                                                                disease: ticket!
-                                                                    .disease!
-                                                                    .name
-                                                                    .toString());
-                                                          },
-                                                          child: Text(
-                                                            "Patient Profile",
-                                                            style: GoogleFonts.openSans(
-                                                                textStyle: TextStyle(
-                                                                    fontSize:
-                                                                        14.sp,
-                                                                    color: AppColors
-                                                                        .primaryBlue,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    decoration:
-                                                                        TextDecoration
-                                                                            .underline)),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: 8.h),
-                                                    Text(
-                                                      ticket!.name.toString(),
-                                                      style: TextStyle(
-                                                        fontSize: 20.sp,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 12.h),
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                            "ETA - ${getTimeUntilAppointment(ticket!.scheduleDate!)}  • ",
-                                                            style: GoogleFonts.openSans(
-                                                                textStyle: TextStyle(
-                                                                    fontSize:
-                                                                        14.sp,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400))),
-                                                        Text(
-                                                          ticket!.disease!.name
-                                                              .toString(),
-                                                          style: GoogleFonts.openSans(
-                                                              textStyle: TextStyle(
+                                                        Row(
+                                                          children: [
+                                                            Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(6),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: getStatusColor(
+                                                                    ticket!
+                                                                        .status
+                                                                        .toString()),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            4),
+                                                              ),
+                                                              child: Text(
+                                                                capitalizeFirstLetter(
+                                                                    ticket!
+                                                                        .status
+                                                                        .toString()),
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: AppColors
+                                                                      .greenishWhite,
                                                                   fontSize:
                                                                       12.sp,
-                                                                  color: const Color(
-                                                                      0xFF015988),
                                                                   fontWeight:
                                                                       FontWeight
-                                                                          .w600)),
+                                                                          .w600,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const Spacer(),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                _buildPatientProfile(
+                                                                    context:
+                                                                        context,
+                                                                    patient: ticket!
+                                                                        .patient,
+                                                                    disease: ticket!
+                                                                        .disease!
+                                                                        .name
+                                                                        .toString());
+                                                              },
+                                                              child: Text(
+                                                                "Patient Profile",
+                                                                style: GoogleFonts.openSans(
+                                                                    textStyle: TextStyle(
+                                                                        fontSize: 14
+                                                                            .sp,
+                                                                        color: AppColors
+                                                                            .primaryBlue,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w600,
+                                                                        decoration:
+                                                                            TextDecoration.underline)),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 8.h),
+                                                        Text(
+                                                          ticket!.name
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                            fontSize: 20.sp,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 12.h),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                                "${getTimeUntilAppointment(ticket!.scheduleDate!)}  • ",
+                                                                style: GoogleFonts.openSans(
+                                                                    textStyle: TextStyle(
+                                                                        fontSize: 14
+                                                                            .sp,
+                                                                        fontWeight:
+                                                                            FontWeight.w400))),
+                                                            Text(
+                                                              ticket!
+                                                                  .disease!.name
+                                                                  .toString(),
+                                                              style: GoogleFonts.openSans(
+                                                                  textStyle: TextStyle(
+                                                                      fontSize:
+                                                                          12.sp,
+                                                                      color: const Color(
+                                                                          0xFF015988),
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600)),
+                                                            )
+                                                          ],
                                                         )
                                                       ],
-                                                    )
+                                                    ),
+                                                  ),
+                                                  const Spacer(),
+                                                ],
+                                              ),
+                                            ),
+                                            Positioned(
+                                              bottom: 0,
+                                              left: 0,
+                                              right: 0,
+                                              child: Container(
+                                                padding: EdgeInsets.all(12.w),
+                                                decoration: BoxDecoration(
+                                                    color:
+                                                        AppColors.bluishWhite,
+                                                    borderRadius:
+                                                        const BorderRadius
+                                                            .vertical(
+                                                      bottom:
+                                                          Radius.circular(12),
+                                                    )),
+                                                child: Row(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Icon(
+                                                          Iconsax.calendar,
+                                                          color: AppColors.grey,
+                                                        ),
+                                                        SizedBox(width: 4.w),
+                                                        Text(
+                                                          DateFormat(
+                                                                  'd MMM yyyy')
+                                                              .format(ticket!
+                                                                  .scheduleDate!),
+                                                          style: TextStyle(
+                                                            color:
+                                                                AppColors.grey,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const Spacer(),
+                                                    Row(
+                                                      children: [
+                                                        Icon(
+                                                          Iconsax.clock,
+                                                          color: AppColors.grey,
+                                                        ),
+                                                        SizedBox(width: 4.w),
+                                                        Text(
+                                                          DateFormat('h:mm a')
+                                                              .format(ticket!
+                                                                  .scheduleDate!),
+                                                          style: TextStyle(
+                                                            color:
+                                                                AppColors.grey,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ],
                                                 ),
                                               ),
-                                              const Spacer(),
-                                            ],
-                                          ),
-                                        ),
-                                        Positioned(
-                                          bottom: 0,
-                                          left: 0,
-                                          right: 0,
-                                          child: Container(
-                                            padding: EdgeInsets.all(12.w),
-                                            decoration: BoxDecoration(
-                                                color: AppColors.bluishWhite,
-                                                borderRadius:
-                                                    const BorderRadius.vertical(
-                                                  bottom: Radius.circular(12),
-                                                )),
-                                            child: Row(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Icon(
-                                                      Iconsax.calendar,
-                                                      color: AppColors.grey,
-                                                    ),
-                                                    SizedBox(width: 4.w),
-                                                    Text(
-                                                      DateFormat('d MMM yyyy')
-                                                          .format(ticket!
-                                                              .scheduleDate!),
-                                                      style: TextStyle(
-                                                        color: AppColors.grey,
-                                                      ),
-                                                    ),
-                                                  ],
+                                            ),
+                                            Positioned(
+                                              left: 0,
+                                              top: 12.h,
+                                              child: Container(
+                                                height: 129.h,
+                                                width: 1.5.h,
+                                                decoration: BoxDecoration(
+                                                  color: getStatusColor(ticket!
+                                                      .status
+                                                      .toString()),
                                                 ),
-                                                const Spacer(),
-                                                Row(
-                                                  children: [
-                                                    Icon(
-                                                      Iconsax.clock,
-                                                      color: AppColors.grey,
-                                                    ),
-                                                    SizedBox(width: 4.w),
-                                                    Text(
-                                                      DateFormat('h:mm a')
-                                                          .format(ticket!
-                                                              .scheduleDate!),
-                                                      style: TextStyle(
-                                                        color: AppColors.grey,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          left: 0,
-                                          top: 12.h,
-                                          child: Container(
-                                            height: 129.h,
-                                            width: 1.5.h,
-                                            decoration: BoxDecoration(
-                                              color: getStatusColor(
-                                                  ticket!.status.toString()),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 16.h),
-                                ticket!.prescriptions != null &&
-                                        ticket!.prescriptions!.isNotEmpty
-                                    ? SizedBox(
-                                        height: 120,
-                                        child: ticket!.prescriptions != null &&
-                                                ticket!
-                                                    .prescriptions!.isNotEmpty
-                                            ? ListView.builder(
-                                                itemCount: ticket!
-                                                    .prescriptions!.length,
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                itemBuilder: (context, index) {
-                                                  return Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8),
-                                                    child: GestureDetector(
-                                                      onTap: () {
-                                                        showImageDialog(
-                                                            context,
-                                                            ticket!.prescriptions![
-                                                                index]);
-                                                      },
-                                                      child: Image.network(
-                                                        ticket!.prescriptions![
-                                                            index],
-                                                        height: 90,
-                                                        width: 115,
-                                                        fit: BoxFit.cover,
-                                                        loadingBuilder:
-                                                            (BuildContext
-                                                                    context,
-                                                                Widget child,
-                                                                ImageChunkEvent?
-                                                                    loadingProgress) {
-                                                          if (loadingProgress ==
-                                                              null)
-                                                            return child;
-                                                          return const Center(
-                                                              child:
-                                                                  ImagesShimmer());
-                                                        },
-                                                        errorBuilder: (context,
-                                                            error, stackTrace) {
-                                                          return const Icon(
-                                                              Icons.error);
-                                                        },
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              )
-                                            : const SizedBox.shrink(),
-                                      )
-                                    : const SizedBox.shrink(),
-                                SizedBox(height: 16.h),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Iconsax.menu_board,
-                                      color: AppColors.primaryBlue,
-                                    ),
-                                    SizedBox(
-                                      width: 6.h,
-                                    ),
-                                    Text(
-                                      "Notes",
-                                      style: GoogleFonts.openSans(
-                                          textStyle: TextStyle(
-                                        fontSize: 18.h,
-                                        fontWeight: FontWeight.bold,
-                                      )),
-                                    ),
-                                    const Spacer(),
-                                    GestureDetector(
-                                      onTap: () {
-                                        _buildPrescribeFeild(
-                                          context: context,
-                                          id: ticket!.id.toString(),
-                                          refreshTicketDetails: () async {
-                                            await _fetchTicketDetails();
-                                            setState(
-                                                () {}); // This will rebuild the widget with the new data
-                                          },
-                                        );
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(8.h),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12.h),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Iconsax.add_square,
-                                              size: 24.h,
-                                              color: AppColors.primaryBlue,
-                                            ),
-                                            SizedBox(
-                                              width: 6.h,
-                                            ),
-                                            Text(
-                                              "Add Notes",
-                                              style: GoogleFonts.openSans(
-                                                  textStyle: TextStyle(
-                                                color: AppColors.primaryBlue,
-                                                fontSize: 18.h,
-                                                fontWeight: FontWeight.w600,
-                                              )),
+                                              ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 50.h,
-                                ),
-                                if (ticket?.questionsAndAnswers != null &&
-                                    ticket!.questionsAndAnswers!.isNotEmpty)
-                                  Column(
-                                    children:
-                                        ticket!.questionsAndAnswers!.map((qa) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(bottom: 8.h),
-                                        child: QuestionAnswerWidget(
-                                            questionAnswer: qa),
-                                      );
-                                    }).toList(),
-                                  )
-                                else
-                                  Text(
-                                    "No questions and answers available",
-                                    style: TextStyle(
-                                        fontSize: 14.sp, color: Colors.grey),
-                                  ),
-                                // if (commentList.isNotEmpty)
-                                //   Consumer<HomeProvider>(
-                                //     builder: (context, provider, child) {
-                                //       if (provider.isLoading) {
-                                //         return const Center(
-                                //             child: CircularProgressIndicator());
-                                //       }
-                                //       return ListView.builder(
-                                //         physics:
-                                //             const NeverScrollableScrollPhysics(),
-                                //         itemCount: commentList.length,
-                                //         shrinkWrap: true,
-                                //         itemBuilder: (context, index) {
-                                //           return CommentBubble(
-                                //             comment: commentList[index],
-                                //             isCurrentUser:
-                                //                 commentList[index].user ==
-                                //                     currentUserId,
-                                //           );
-                                //         },
-                                //       );
-                                //     },
-                                //   ),
-                                SizedBox(
-                                  height: 20.h,
-                                ),
-                                if (commentList.isNotEmpty)
-                                  Consumer<HomeProvider>(
-                                      builder: (context, provider, child) {
-                                    if (provider.isLoading) {
-                                      return const Center(
-                                          child: CircularProgressIndicator());
-                                    }
-                                    return ListView.builder(
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount: commentList.length,
-                                        shrinkWrap: true,
-                                        itemBuilder: (context, index) {
-                                          return CommentBubble(
-                                            comment: commentList[index],
-                                            isCurrentUser:
-                                                commentList[index].user ==
-                                                    currentUserId,
-                                          );
-                                        });
-                                  }),
-                                ticket!.status.toString() == "completed"
-                                    ? Column(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12.w,
-                                                vertical: 10.h),
+                                    ),
+                                    SizedBox(height: 16.h),
+                                    ticket!.prescriptions != null &&
+                                            ticket!.prescriptions!.isNotEmpty
+                                        ? SizedBox(
+                                            height: 120,
+                                            child: ticket!.prescriptions !=
+                                                        null &&
+                                                    ticket!.prescriptions!
+                                                        .isNotEmpty
+                                                ? ListView.builder(
+                                                    itemCount: ticket!
+                                                        .prescriptions!.length,
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    itemBuilder:
+                                                        (context, index) {
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 8),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            showImageDialog(
+                                                                context,
+                                                                ticket!.prescriptions![
+                                                                    index]);
+                                                          },
+                                                          child: Image.network(
+                                                            ticket!.prescriptions![
+                                                                index],
+                                                            height: 90,
+                                                            width: 115,
+                                                            fit: BoxFit.cover,
+                                                            loadingBuilder:
+                                                                (BuildContext
+                                                                        context,
+                                                                    Widget
+                                                                        child,
+                                                                    ImageChunkEvent?
+                                                                        loadingProgress) {
+                                                              if (loadingProgress ==
+                                                                  null)
+                                                                return child;
+                                                              return const Center(
+                                                                  child:
+                                                                      ImagesShimmer());
+                                                            },
+                                                            errorBuilder:
+                                                                (context, error,
+                                                                    stackTrace) {
+                                                              return const Icon(
+                                                                  Icons.error);
+                                                            },
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  )
+                                                : const SizedBox.shrink(),
+                                          )
+                                        : const SizedBox.shrink(),
+                                    SizedBox(height: 16.h),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Iconsax.menu_board,
+                                          color: AppColors.primaryBlue,
+                                        ),
+                                        SizedBox(
+                                          width: 6.h,
+                                        ),
+                                        Text(
+                                          "Notes",
+                                          style: GoogleFonts.openSans(
+                                              textStyle: TextStyle(
+                                            fontSize: 18.h,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                        ),
+                                        const Spacer(),
+                                        GestureDetector(
+                                          onTap: () {
+                                            _buildPrescribeFeild(
+                                              context: context,
+                                              id: ticket!.id.toString(),
+                                              refreshTicketDetails: () async {
+                                                await _fetchTicketDetails();
+                                                setState(
+                                                    () {}); // This will rebuild the widget with the new data
+                                              },
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(8.h),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.h),
+                                            ),
                                             child: Row(
                                               children: [
-                                                Expanded(
-                                                  child: FilledButton.icon(
-                                                    style:
-                                                        FilledButton.styleFrom(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              vertical: 12.h),
-                                                      backgroundColor:
-                                                          const Color(
-                                                              0xFFEDEDF4),
-                                                      foregroundColor:
-                                                          Colors.black,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                      ),
-                                                    ),
-                                                    icon: const Icon(
-                                                        Iconsax.document_1),
-                                                    onPressed: () {
-                                                      if (ticket?.doctorPrescriptionAndNotes
-                                                                  ?.prescriptionUrls !=
-                                                              null &&
-                                                          ticket!
-                                                              .doctorPrescriptionAndNotes!
-                                                              .prescriptionUrls!
-                                                              .isNotEmpty) {
-                                                        final String fileUrl = ticket!
-                                                            .doctorPrescriptionAndNotes!
-                                                            .prescriptionUrls![0];
-                                                        final String
-                                                            fileExtension = path
-                                                                .extension(
-                                                                    fileUrl)
-                                                                .toLowerCase();
-                                                        print(fileExtension);
-                                                        if (fileExtension ==
-                                                            '.pdf') {
-                                                          Navigator.of(context)
-                                                              .push(
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  PDFViewerPage(
-                                                                url: fileUrl,
-                                                              ),
-                                                            ),
-                                                          );
-                                                        } else {
-                                                          print(fileExtension);
-                                                          showImageDialog(
-                                                              context, fileUrl);
-                                                        }
-                                                      } else {
-                                                        Fluttertoast.showToast(
-                                                            msg:
-                                                                "No prescription uploaded");
-                                                      }
-                                                    },
-                                                    label: Text(
-                                                      "Prescription",
-                                                      style: TextStyle(
-                                                        fontSize: 16.sp,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                  ),
+                                                Icon(
+                                                  Iconsax.add_square,
+                                                  size: 24.h,
+                                                  color: AppColors.primaryBlue,
                                                 ),
-                                                SizedBox(width: 12.w),
-                                                Expanded(
-                                                  child: FilledButton.icon(
-                                                    style:
-                                                        FilledButton.styleFrom(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              vertical: 12.h),
-                                                      backgroundColor:
-                                                          const Color(
-                                                              0xFFEDEDF4),
-                                                      foregroundColor:
-                                                          Colors.black,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                      ),
-                                                    ),
-                                                    icon: const Icon(
-                                                        Iconsax.note_1),
-                                                    onPressed: () {
-                                                      if (ticket?.doctorPrescriptionAndNotes
-                                                                  ?.note !=
-                                                              null &&
-                                                          ticket!
-                                                              .doctorPrescriptionAndNotes!
-                                                              .note!
-                                                              .isNotEmpty) {
-                                                        final String
-                                                            notesString =
-                                                            ticket!.doctorPrescriptionAndNotes!
-                                                                    .note ??
-                                                                "No notes available";
-                                                        _showNotesBottomSheet(
-                                                          context: context,
-                                                          notesString:
-                                                              notesString,
-                                                        );
-                                                      }
-                                                    },
-                                                    label: Text(
-                                                      "Notes",
-                                                      style: TextStyle(
-                                                        fontSize: 16.sp,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                  ),
+                                                SizedBox(
+                                                  width: 6.h,
+                                                ),
+                                                Text(
+                                                  "Add Notes",
+                                                  style: GoogleFonts.openSans(
+                                                      textStyle: TextStyle(
+                                                    color:
+                                                        AppColors.primaryBlue,
+                                                    fontSize: 18.h,
+                                                    fontWeight: FontWeight.w600,
+                                                  )),
                                                 ),
                                               ],
                                             ),
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12.w,
-                                                vertical: 10.h),
-                                            child: TextFormField(
-                                              controller: _controller,
-                                              decoration: InputDecoration(
-                                                fillColor: Colors.white,
-                                                hintText: "Add Comment",
-                                                hintStyle: GoogleFonts.openSans(
-                                                  textStyle: TextStyle(
-                                                    color:
-                                                        const Color(0xFFD0D2D5),
-                                                    fontSize: 14.sp,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                suffixIcon: IconButton(
-                                                  onPressed: () async {
-                                                    if (_controller.text
-                                                        .trim()
-                                                        .isNotEmpty) {
-                                                      var r = await Provider.of<
-                                                                  HomeProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .createComment(
-                                                        doctorId: ticket!
-                                                            .doctor!.id
-                                                            .toString(),
-                                                        patientId: ticket!
-                                                            .patient!.id
-                                                            .toString(),
-                                                        ticketId: ticket!.id
-                                                            .toString(),
-                                                        message: _controller
-                                                            .text
-                                                            .trim(),
-                                                      );
-
-                                                      if (r.success) {
-                                                        Fluttertoast.showToast(
-                                                            msg: r.msg);
-                                                        getComment();
-                                                        setState(() {
-                                                          _controller.text = "";
-                                                        });
-                                                      } else {
-                                                        Fluttertoast.showToast(
-                                                            msg: r.msg);
-                                                      }
-                                                    } else if (_controller.text
-                                                            .trim()
-                                                            .length <
-                                                        2) {
-                                                      Fluttertoast.showToast(
-                                                          msg:
-                                                              "Please write your comment!");
-                                                    } else {
-                                                      Fluttertoast.showToast(
-                                                          msg:
-                                                              "Please write your comment!");
-                                                    }
-                                                  },
-                                                  icon: const Icon(
-                                                      Iconsax.send_2),
-                                                ),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8.h)),
-                                                  borderSide: BorderSide(
-                                                    color:
-                                                        const Color(0xFFD0D2D5),
-                                                    width: 1.h,
-                                                    strokeAlign: 1.h,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 50.h,
+                                    ),
+                                    if (ticket?.questionsAndAnswers != null &&
+                                        ticket!.questionsAndAnswers!.isNotEmpty)
+                                      Column(
+                                        children: ticket!.questionsAndAnswers!
+                                            .map((qa) {
+                                          return Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 8.h),
+                                            child: QuestionAnswerWidget(
+                                                questionAnswer: qa),
+                                          );
+                                        }).toList(),
                                       )
-
-                                    // FractionallySizedBox(
-                                    //   widthFactor: 1,
-                                    //   child: FilledButton(
-                                    //     style: FilledButton.styleFrom(
-                                    //         padding:
-                                    //             EdgeInsets.symmetric(
-                                    //                 vertical: 12.h),
-                                    //         backgroundColor:
-                                    //             Colors.green,
-                                    //         foregroundColor:
-                                    //             Colors.white,
-                                    //         shape:
-                                    //             RoundedRectangleBorder(
-                                    //           borderRadius:
-                                    //               BorderRadius.circular(
-                                    //                   12),
-                                    //         )),
-                                    //     onPressed: () {
-                                    //       Fluttertoast.showToast(
-                                    //           msg:
-                                    //               "Ticket Completed or Forwaded ");
+                                    else
+                                      Text(
+                                        "No questions and answers available",
+                                        style: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: Colors.grey),
+                                      ),
+                                    // if (commentList.isNotEmpty)
+                                    //   Consumer<HomeProvider>(
+                                    //     builder: (context, provider, child) {
+                                    //       if (provider.isLoading) {
+                                    //         return const Center(
+                                    //             child: CircularProgressIndicator());
+                                    //       }
+                                    //       return ListView.builder(
+                                    //         physics:
+                                    //             const NeverScrollableScrollPhysics(),
+                                    //         itemCount: commentList.length,
+                                    //         shrinkWrap: true,
+                                    //         itemBuilder: (context, index) {
+                                    //           return CommentBubble(
+                                    //             comment: commentList[index],
+                                    //             isCurrentUser:
+                                    //                 commentList[index].user ==
+                                    //                     currentUserId,
+                                    //           );
+                                    //         },
+                                    //       );
                                     //     },
-                                    //     child: Text(
-                                    //       "Ticket Closed",
-                                    //       style: TextStyle(
-                                    //           fontSize: 16.sp,
-                                    //           fontWeight:
-                                    //               FontWeight.w600),
-                                    //     ),
                                     //   ),
-                                    // ),
 
-                                    : Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12.w),
-                                        child: Column(
-                                          children: [
-                                            SizedBox(height: 16.h),
-                                            FractionallySizedBox(
-                                              widthFactor: 1,
-                                              child: FilledButton(
-                                                style: FilledButton.styleFrom(
+                                    SizedBox(
+                                      height: 20.h,
+                                    ),
+                                    if (commentList.isNotEmpty)
+                                      Consumer<HomeProvider>(
+                                          builder: (context, provider, child) {
+                                        if (provider.isLoading) {
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        }
+                                        return ListView.builder(
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemCount: commentList.length,
+                                            shrinkWrap: true,
+                                            itemBuilder: (context, index) {
+                                              return CommentBubble(
+                                                comment: commentList[index],
+                                                isCurrentUser:
+                                                    commentList[index].user ==
+                                                        currentUserId,
+                                              );
+                                            });
+                                      }),
+                                  ]),
+                                ),
+                              ),
+                              ticket!.status.toString() == "completed"
+                                  ? Column(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12.w, vertical: 10.h),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: FilledButton.icon(
+                                                  style: FilledButton.styleFrom(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                             vertical: 12.h),
@@ -862,68 +641,300 @@ class _PsychologyTicketDetailsScreenState
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               12),
-                                                    )),
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      CupertinoPageRoute(
-                                                        builder: (context) =>
-                                                            ForwardCaseScreen(
-                                                                ticketId: ticket!
-                                                                    .id
-                                                                    .toString()),
-                                                      ));
-                                                },
-                                                child: Text(
-                                                  "Forward Case",
-                                                  style: TextStyle(
-                                                    fontSize: 16.sp,
+                                                    ),
+                                                  ),
+                                                  icon: const Icon(
+                                                      Iconsax.document_1),
+                                                  onPressed: () {
+                                                    if (ticket?.doctorPrescriptionAndNotes
+                                                                ?.prescriptionUrls !=
+                                                            null &&
+                                                        ticket!
+                                                            .doctorPrescriptionAndNotes!
+                                                            .prescriptionUrls!
+                                                            .isNotEmpty) {
+                                                      final String fileUrl = ticket!
+                                                          .doctorPrescriptionAndNotes!
+                                                          .prescriptionUrls![0];
+                                                      final String
+                                                          fileExtension = path
+                                                              .extension(
+                                                                  fileUrl)
+                                                              .toLowerCase();
+                                                      print(fileExtension);
+                                                      if (fileExtension ==
+                                                          '.pdf') {
+                                                        Navigator.of(context)
+                                                            .push(
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                PDFViewerPage(
+                                                              url: fileUrl,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      } else {
+                                                        print(fileExtension);
+                                                        showImageDialog(
+                                                            context, fileUrl);
+                                                      }
+                                                    } else {
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                              "No prescription uploaded");
+                                                    }
+                                                  },
+                                                  label: Text(
+                                                    "Prescription",
+                                                    style: TextStyle(
+                                                      fontSize: 16.sp,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            SizedBox(height: 16.h),
-                                            FractionallySizedBox(
-                                              widthFactor: 1,
-                                              child: FilledButton(
-                                                style: FilledButton.styleFrom(
+                                              SizedBox(width: 12.w),
+                                              Expanded(
+                                                child: FilledButton.icon(
+                                                  style: FilledButton.styleFrom(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                             vertical: 12.h),
                                                     backgroundColor:
-                                                        AppColors.primaryBlue,
+                                                        const Color(0xFFEDEDF4),
                                                     foregroundColor:
-                                                        Colors.white,
+                                                        Colors.black,
                                                     shape:
                                                         RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               12),
-                                                    )),
-                                                onPressed: () {
-                                                  _buildJoinSessionFeild(
-                                                    context: context,
-                                                    meetLink: ticket!.meetLink
-                                                        .toString(),
-                                                  );
-                                                },
-                                                child: Text(
-                                                  "Join Session",
-                                                  style: TextStyle(
-                                                    fontSize: 16.sp,
+                                                    ),
+                                                  ),
+                                                  icon: const Icon(
+                                                      Iconsax.note_1),
+                                                  onPressed: () {
+                                                    if (ticket?.doctorPrescriptionAndNotes
+                                                                ?.note !=
+                                                            null &&
+                                                        ticket!
+                                                            .doctorPrescriptionAndNotes!
+                                                            .note!
+                                                            .isNotEmpty) {
+                                                      final String notesString =
+                                                          ticket!.doctorPrescriptionAndNotes!
+                                                                  .note ??
+                                                              "No notes available";
+                                                      _showNotesBottomSheet(
+                                                        context: context,
+                                                        notesString:
+                                                            notesString,
+                                                      );
+                                                    }
+                                                  },
+                                                  label: Text(
+                                                    "Notes",
+                                                    style: TextStyle(
+                                                      fontSize: 16.sp,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12.w, vertical: 10.h),
+                                          child: TextFormField(
+                                            controller: _controller,
+                                            decoration: InputDecoration(
+                                              fillColor: Colors.white,
+                                              hintText: "Add Comment",
+                                              hintStyle: GoogleFonts.openSans(
+                                                textStyle: TextStyle(
+                                                  color:
+                                                      const Color(0xFFD0D2D5),
+                                                  fontSize: 14.sp,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              suffixIcon: IconButton(
+                                                onPressed: () async {
+                                                  if (_controller.text
+                                                      .trim()
+                                                      .isNotEmpty) {
+                                                    var r = await Provider.of<
+                                                                HomeProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .createComment(
+                                                      doctorId: ticket!
+                                                          .doctor!.id
+                                                          .toString(),
+                                                      patientId: ticket!
+                                                          .patient!.id
+                                                          .toString(),
+                                                      ticketId:
+                                                          ticket!.id.toString(),
+                                                      message: _controller.text
+                                                          .trim(),
+                                                    );
+
+                                                    if (r.success) {
+                                                      Fluttertoast.showToast(
+                                                          msg: r.msg);
+                                                      getComment();
+                                                      setState(() {
+                                                        _controller.text = "";
+                                                      });
+                                                    } else {
+                                                      Fluttertoast.showToast(
+                                                          msg: r.msg);
+                                                    }
+                                                  } else if (_controller.text
+                                                          .trim()
+                                                          .length <
+                                                      2) {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Please write your comment!");
+                                                  } else {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Please write your comment!");
+                                                  }
+                                                },
+                                                icon:
+                                                    const Icon(Iconsax.send_2),
+                                              ),
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(8.h)),
+                                                borderSide: BorderSide(
+                                                  color:
+                                                      const Color(0xFFD0D2D5),
+                                                  width: 1.h,
+                                                  strokeAlign: 1.h,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+
+                                  // FractionallySizedBox(
+                                  //   widthFactor: 1,
+                                  //   child: FilledButton(
+                                  //     style: FilledButton.styleFrom(
+                                  //         padding:
+                                  //             EdgeInsets.symmetric(
+                                  //                 vertical: 12.h),
+                                  //         backgroundColor:
+                                  //             Colors.green,
+                                  //         foregroundColor:
+                                  //             Colors.white,
+                                  //         shape:
+                                  //             RoundedRectangleBorder(
+                                  //           borderRadius:
+                                  //               BorderRadius.circular(
+                                  //                   12),
+                                  //         )),
+                                  //     onPressed: () {
+                                  //       Fluttertoast.showToast(
+                                  //           msg:
+                                  //               "Ticket Completed or Forwaded ");
+                                  //     },
+                                  //     child: Text(
+                                  //       "Ticket Closed",
+                                  //       style: TextStyle(
+                                  //           fontSize: 16.sp,
+                                  //           fontWeight:
+                                  //               FontWeight.w600),
+                                  //     ),
+                                  //   ),
+                                  // ),
+
+                                  : Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 12.w),
+                                      child: Column(
+                                        children: [
+                                          SizedBox(height: 16.h),
+                                          FractionallySizedBox(
+                                            widthFactor: 1,
+                                            child: FilledButton(
+                                              style: FilledButton.styleFrom(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 12.h),
+                                                  backgroundColor:
+                                                      const Color(0xFFEDEDF4),
+                                                  foregroundColor: Colors.black,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  )),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    CupertinoPageRoute(
+                                                      builder: (context) =>
+                                                          ForwardCaseScreen(
+                                                              ticketId: ticket!
+                                                                  .id
+                                                                  .toString()),
+                                                    ));
+                                              },
+                                              child: Text(
+                                                "Forward Case",
+                                                style: TextStyle(
+                                                  fontSize: 16.sp,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 16.h),
+                                          FractionallySizedBox(
+                                            widthFactor: 1,
+                                            child: FilledButton(
+                                              style: FilledButton.styleFrom(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 12.h),
+                                                  backgroundColor:
+                                                      AppColors.primaryBlue,
+                                                  foregroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  )),
+                                              onPressed: () {
+                                                _buildJoinSessionFeild(
+                                                  context: context,
+                                                  meetLink: ticket!.meetLink
+                                                      .toString(),
+                                                );
+                                              },
+                                              child: Text(
+                                                "Join Session",
+                                                style: TextStyle(
+                                                  fontSize: 16.sp,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                SizedBox(
-                                    height:
-                                        MediaQuery.paddingOf(context).bottom +
-                                            10),
-                              ],
-                            ),
+                                    ),
+                              SizedBox(
+                                  height: MediaQuery.paddingOf(context).bottom +
+                                      10),
+                            ],
                           ),
                         ),
         ),
@@ -1295,8 +1306,26 @@ void _buildPrescribeFeild({
                                     ),
                                   ),
                                 )
-                              : Text(
-                                  selectedFile!.name.toString(),
+                              : Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        selectedFile!.name.toString(),
+                                      ),
+                                    ),
+                                    IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            selectedFile = null;
+                                          });
+                                        },
+                                        icon: const Icon(Icons.close))
+                                  ],
                                 ),
                           SizedBox(height: 16.h),
                           FractionallySizedBox(
@@ -1311,6 +1340,16 @@ void _buildPrescribeFeild({
                                   )),
                               onPressed: () async {
                                 // Show confirmation dialog
+
+                                if (controller.text.trim().isEmpty &&
+                                    selectedFile == null) {
+                                  Fluttertoast.showToast(
+                                    msg:
+                                        "Please add a note or attach a prescription file",
+                                  );
+                                  return;
+                                }
+
                                 bool? confirm = await showDialog<bool>(
                                   context: context,
                                   builder: (BuildContext context) {
@@ -1353,9 +1392,13 @@ void _buildPrescribeFeild({
                                         : 'pdf';
                                   }
 
+                                  var noteText = controller.text.trim().isEmpty
+                                      ? "No note added"
+                                      : controller.text;
+
                                   var r = await homeProvider.MarkAsComplete(
                                     id: id,
-                                    note: controller.text,
+                                    note: noteText,
                                     file: fileToUpload,
                                     directoryType: directoryType,
                                     context: context,
@@ -1399,8 +1442,6 @@ void _buildJoinSessionFeild({
   required BuildContext context,
   required String meetLink,
 }) {
-  var homeProvider = Provider.of<HomeProvider>(context, listen: false);
-
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -1484,7 +1525,11 @@ void _buildJoinSessionFeild({
                               children: [
                                 Expanded(
                                   child: Text(
-                                    meetLink,
+                                    meetLink.isNotEmpty
+                                        ? meetLink
+                                        : "Not Assigned Yet",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: TextStyle(fontSize: 14.sp),
                                   ),
                                 ),
@@ -1596,21 +1641,50 @@ void _buildPatientProfile(
     {required BuildContext context,
     required Patient? patient,
     required String disease}) {
-  String formattedDate = '';
+  // // Ensure patient and patient.age are not null before parsing
+  // if (patient != null && patient.age != null) {
+  //   try {
+  //     print("Dob${patient.age.toString()}");
+  //     // Assuming patient.age is in a proper date format. Adjust as necessary.
+  //     formattedDate = DateTime.parse(patient.age.toString())
+  //         .toIso8601String()
+  //         .substring(0, 10);
+  //   } catch (e) {
+  //     print('Error parsing date: $e');
+  //     formattedDate = 'Invalid date'; // Default value or handle it accordingly
+  //   }
+  // } else {
+  //   formattedDate = 'N/A'; // Handle the case when patient or age is null
+  // }
 
-  // Ensure patient and patient.age are not null before parsing
-  if (patient != null && patient.age != null) {
-    try {
-      // Assuming patient.age is in a proper date format. Adjust as necessary.
-      formattedDate = DateTime.parse(patient.age.toString())
-          .toIso8601String()
-          .substring(0, 10);
-    } catch (e) {
-      print('Error parsing date: $e');
-      formattedDate = 'Invalid date'; // Default value or handle it accordingly
+  String calculateAge(DateTime? birthDate) {
+    if (birthDate == null) {
+      return 'N/A'; // Handle null birthdate case
     }
-  } else {
-    formattedDate = 'N/A'; // Handle the case when patient or age is null
+
+    DateTime currentDate = DateTime.now();
+    int years = currentDate.year - birthDate.year;
+    int months = currentDate.month - birthDate.month;
+    int days = currentDate.day - birthDate.day;
+
+    // Adjust for cases where the month/day hasn’t occurred yet this year/month
+    if (days < 0) {
+      months -= 1;
+      days += DateTime(currentDate.year, currentDate.month, 0)
+          .day; // days in previous month
+    }
+    if (months < 0) {
+      years -= 1;
+      months += 12;
+    }
+
+    if (years > 0) {
+      return "$years ${years == 1 ? 'year' : 'years'}";
+    } else if (months > 0) {
+      return "$months ${months == 1 ? 'month' : 'months'}";
+    } else {
+      return "$days ${days == 1 ? 'day' : 'days'}";
+    }
   }
 
   showModalBottomSheet(
@@ -1702,7 +1776,8 @@ void _buildPatientProfile(
                             SizedBox(
                               width: 10.w,
                             ),
-                            infoBox(key: "DOB", value: formattedDate),
+                            infoBox(
+                                key: "DOB", value: calculateAge(patient.age)),
                           ],
                         ),
                         SizedBox(height: 20.h),

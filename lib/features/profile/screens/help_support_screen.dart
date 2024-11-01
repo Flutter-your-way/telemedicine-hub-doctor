@@ -6,6 +6,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/features/profile/screens/privacy_policy_screen.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HelpSupportScreen extends StatefulWidget {
   const HelpSupportScreen({super.key});
@@ -170,11 +171,11 @@ void showContactInfoBottomSheet(BuildContext context) {
                     ),
                   ),
                 ),
-                _buildContactInfo(
-                    Icons.phone, 'Contact Number', '+1 332 335 6767'),
+                 _buildContactInfo(
+                    Icons.phone, 'Contact Number', '+1 332 335 6767', 'phone'),
                 const SizedBox(height: 16),
-                _buildContactInfo(
-                    Icons.email_outlined, 'Email', 'hospitalname@domain.com'),
+                _buildContactInfo(Icons.email_outlined, 'Email',
+                    'hospitalname@domain.com', 'email'),
               ],
             ),
           ),
@@ -184,32 +185,50 @@ void showContactInfoBottomSheet(BuildContext context) {
   );
 }
 
-Widget _buildContactInfo(IconData icon, String title, String value) {
-  return Row(
-    children: [
-      Container(
-        height: 78.h,
-        padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.h),
-        decoration: BoxDecoration(
-          color: Colors.green[100],
-          shape: BoxShape.circle,
+
+Future<void> _launchUrl(String url, String urlType) async {
+  try {
+    final Uri uri = urlType == 'phone'
+        ? Uri.parse('tel:${url.replaceAll(' ', '')}')
+        : Uri.parse('mailto:$url');
+
+    if (!await launchUrl(uri)) {
+      throw Exception('Could not launch $url');
+    }
+  } catch (e) {
+    debugPrint('Error launching URL: $e');
+  }
+}
+
+Widget _buildContactInfo(IconData icon, String title, String value, String type) {
+  return GestureDetector(
+    onTap: () => _launchUrl(value, type),
+    child: Row(
+      children: [
+        Container(
+          height: 78.h,
+          padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.h),
+          decoration: BoxDecoration(
+            color: Colors.green[100],
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: Colors.black, size: 24),
         ),
-        child: Icon(icon, color: Colors.black, size: 24),
-      ),
-      SizedBox(width: 16.h),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: GoogleFonts.openSans(
-                  textStyle:
-                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600))),
-          Text(value,
-              style: GoogleFonts.openSans(
-                  textStyle:
-                      TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w400))),
-        ],
-      ),
-    ],
+        SizedBox(width: 16.h),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+                style: GoogleFonts.openSans(
+                    textStyle:
+                        TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600))),
+            Text(value,
+                style: GoogleFonts.openSans(
+                    textStyle:
+                        TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w400))),
+          ],
+        ),
+      ],
+    ),
   );
 }

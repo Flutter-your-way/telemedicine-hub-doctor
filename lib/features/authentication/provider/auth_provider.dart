@@ -51,14 +51,15 @@ class AuthProvider extends ChangeNotifier {
 
       if (success) {
         print("happending");
-        String? fcmToken = await FirebaseMessaging.instance.getToken();
+        // String? fcmToken = await FirebaseMessaging.instance.getToken();
+        String? fcmToken = " ";
         String token = responseBody['data']['accessToken'];
         String userId = responseBody['data']['doctor']['_id'];
 
         String refreshToken = responseBody['data']['accessToken'];
-        print("refreshToken ${refreshToken}");
-        print("token ${token}");
-        print("token ${userId}");
+        print("refreshToken $refreshToken");
+        print("token $token");
+        print("token $userId");
 
         await LocalDataManager.storeToken(token);
         await LocalDataManager.storeRefreshToken(refreshToken);

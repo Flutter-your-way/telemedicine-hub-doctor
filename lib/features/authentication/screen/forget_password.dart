@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
@@ -53,97 +52,95 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           // ),
           // centerTitle: false,
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            height: MediaQuery.sizeOf(context).height,
-            decoration: BoxDecoration(
-              gradient: AppColors.backgroundGradient,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(90, 32, 90, 0),
-                        child: Image.asset(
-                          // height: 100.h,
-                          // width: 100.w,
-                          AppImages.main_logo,
-                          // fit: BoxFit.contain,
-                        ),
+        body: Container(
+          height: MediaQuery.sizeOf(context).height,
+          decoration: BoxDecoration(
+            gradient: AppColors.backgroundGradient,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(90, 32, 90, 0),
+                      child: Image.asset(
+                        // height: 100.h,
+                        // width: 100.w,
+                        AppImages.main_logo,
+                        // fit: BoxFit.contain,
                       ),
-                      Text(
-                        AppLocalizations.of(context)!.forgotPassword,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 32.sp,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 8.h,
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!
-                            .enterYourEmailToSendResetLink,
-                        style: TextStyle(
-                          color: AppColors.grey,
-                          fontSize: 16.sp,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(
-                        height: 24.h,
-                      ),
-                      CustomTextFormField(
-                        controller: email,
-                        title: AppLocalizations.of(context)!.enterEmail,
-                        prefix: const Icon(
-                          Iconsax.sms,
+                    ),
+                    Text(
+                      AppLocalizations.of(context)!.forgotPassword,
+                      style: TextStyle(
                           color: Colors.black,
-                        ),
-                        // prefix: const Icon(
-                        //   Iconsax.call,
-                        //   color: Colors.black,
-                        // ),
+                          fontSize: 32.sp,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 8.h,
+                    ),
+                    Text(
+                      AppLocalizations.of(context)!
+                          .enterYourEmailToSendResetLink,
+                      style: TextStyle(
+                        color: AppColors.grey,
+                        fontSize: 16.sp,
                       ),
-                      SizedBox(
-                        height: 16.h,
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(
+                      height: 24.h,
+                    ),
+                    CustomTextFormField(
+                      controller: email,
+                      title: AppLocalizations.of(context)!.enterEmail,
+                      prefix: const Icon(
+                        Iconsax.sms,
+                        color: Colors.black,
                       ),
-                      CustomButton(
-                        name: AppLocalizations.of(context)!.sendLink,
-                        onPressed: () async {
-                          if (email.text.isNotEmpty) {
-                            var res = await authProvider.forgetPassword(
-                                email: email.text.trim());
-                            if (res.success) {
-                              Fluttertoast.showToast(msg: " ${res.msg}");
-                              Navigator.of(context).pop();
-                            } else {
-                              Fluttertoast.showToast(msg: "${res.msg} ");
-                            }
+                      // prefix: const Icon(
+                      //   Iconsax.call,
+                      //   color: Colors.black,
+                      // ),
+                    ),
+                    SizedBox(
+                      height: 16.h,
+                    ),
+                    CustomButton(
+                      name: AppLocalizations.of(context)!.sendLink,
+                      onPressed: () async {
+                        if (email.text.isNotEmpty) {
+                          var res = await authProvider.forgetPassword(
+                              email: email.text.trim());
+                          if (res.success) {
+                            Fluttertoast.showToast(msg: " ${res.msg}");
+                            Navigator.of(context).pop();
                           } else {
-                            Fluttertoast.showToast(
-                                msg: "Please enter your email");
+                            Fluttertoast.showToast(msg: "${res.msg} ");
                           }
-                        },
-                        isLoading: authProvider.isLoading,
-                      ),
-                      SizedBox(
-                        height: 16.h,
-                      ),
-                    ],
-                  ),
-                  // SizedBox(
-                  //   height: 16.h,
-                  // ),
-                  const Spacer(flex: 3),
-                ],
-              ),
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: "Please enter your email");
+                        }
+                      },
+                      isLoading: authProvider.isLoading,
+                    ),
+                    SizedBox(
+                      height: 16.h,
+                    ),
+                  ],
+                ),
+                // SizedBox(
+                //   height: 16.h,
+                // ),
+                const Spacer(flex: 3),
+              ],
             ),
           ),
         ),

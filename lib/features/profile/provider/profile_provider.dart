@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
-
+import 'package:image/image.dart' as img;
 import 'package:http/http.dart' as http;
 import 'package:telemedicine_hub_doctor/common/constants/app_constants.dart';
 import 'package:telemedicine_hub_doctor/common/managers/local_manager.dart';
@@ -76,6 +76,7 @@ class ProfileProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     LoadingDialog.showLoadingDialog(context);
+    File compressedFile = await compressImage(file);
 
     try {
       var uri = Uri.parse("${baseAuthUrl}doctor/upload-profile-image");
@@ -84,8 +85,8 @@ class ProfileProvider extends ChangeNotifier {
         ..headers['type'] = 'doctor'
         ..headers['Authorization'] = 'Bearer $accessToken';
 
-      var stream = http.ByteStream(file.openRead());
-      var length = await file.length();
+      var stream = http.ByteStream(compressedFile.openRead());
+      var length = await compressedFile.length();
       var multipartFile = http.MultipartFile('file', stream, length,
           filename: 'profile_image.jpg');
       request.files.add(multipartFile);
@@ -119,5 +120,20 @@ class ProfileProvider extends ChangeNotifier {
       notifyListeners();
       LoadingDialog.hideLoadingDialog(context);
     }
+  }
+
+  Future<File> compressImage(File file) async {
+    // Read the original image
+    final originalImage = img.decodeImage(file.readAsBytesSync());
+
+    // Resize and compress the image
+    final compressedImage =
+        img.copyResize(originalImage!, width: 800); // Resize to a smaller width
+
+    // Save the compressed image
+    final compressedFile = File(file.path)
+      ..writeAsBytesSync(img.encodeJpg(compressedImage, quality: 85));
+
+    return compressedFile;
   }
 }

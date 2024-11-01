@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
@@ -167,7 +168,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: SearchField(
                     function: (value) {
                       setState(() {
@@ -185,14 +186,15 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
                   builderDelegate: PagedChildBuilderDelegate<TicketModel>(
                     itemBuilder: (context, item, index) =>
                         TicketCard(ticket: item),
-                    firstPageErrorIndicatorBuilder: (context) => Center(
+                    firstPageErrorIndicatorBuilder: (context) => const Center(
                       child: Text('Error loading tickets. Tap to retry.'),
                     ),
                     firstPageProgressIndicatorBuilder: (context) => Column(
-                      children: List.generate(3, (index) => TicketShimmer()),
+                      children:
+                          List.generate(3, (index) => const TicketShimmer()),
                     ),
                     newPageProgressIndicatorBuilder: (context) =>
-                        TicketShimmer(),
+                        const TicketShimmer(),
                     noItemsFoundIndicatorBuilder: (context) =>
                         noDataView(context),
                   ),
@@ -215,10 +217,22 @@ class SearchField extends StatelessWidget {
     this.function,
   });
 
+  bool hasSpecialCharacters(String input) {
+    final RegExp allowedPattern = RegExp(r'^[a-zA-Z0-9\s]*$');
+    return !allowedPattern.hasMatch(input);
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      onChanged: function,
+      onChanged: (value) {
+        if (!hasSpecialCharacters(value)) {
+          function?.call(value);
+        }
+      },
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s]')),
+      ],
       onTapOutside: (_) {
         FocusManager.instance.primaryFocus?.unfocus();
       },
@@ -231,11 +245,6 @@ class SearchField extends StatelessWidget {
           color: AppColors.captionColor,
           fontWeight: FontWeight.bold,
         ),
-        // suffixIcon: IconButton(
-        //     onPressed: () {
-        //       showSortBottomSheet(context, sortList);
-        //     },
-        //     icon: const Icon(Icons.filter_list_rounded)),
         filled: true,
         border: OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.captionColor),
@@ -247,6 +256,10 @@ class SearchField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.captionColor),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.red),
           borderRadius: BorderRadius.circular(12),
         ),
       ),
