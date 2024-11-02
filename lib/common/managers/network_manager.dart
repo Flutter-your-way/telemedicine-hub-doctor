@@ -88,7 +88,6 @@ class NetworkDataManger {
   }
 
   Future<CustomResponse> _refreshToken() async {
-    String? accessToken = await LocalDataManager.getToken();
     try {
       String? refreshToken = await LocalDataManager.getRefreshToken();
       if (refreshToken == null) {

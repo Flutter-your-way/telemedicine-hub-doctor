@@ -239,7 +239,7 @@ class SearchField extends StatelessWidget {
       decoration: InputDecoration(
         fillColor: Colors.white,
         contentPadding: EdgeInsets.symmetric(horizontal: 25.h, vertical: 15.w),
-        hintText: "Search for tickets",
+        hintText: AppLocalizations.of(context)!.searchForTickets,
         prefixIcon: const Icon(Iconsax.search_normal),
         hintStyle: TextStyle(
           color: AppColors.captionColor,

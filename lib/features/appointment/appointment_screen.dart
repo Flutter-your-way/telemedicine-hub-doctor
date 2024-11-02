@@ -180,14 +180,15 @@ class _RecentTapViewState extends State<RecentTapView> {
                   builderDelegate: PagedChildBuilderDelegate<TicketModel>(
                     itemBuilder: (context, item, index) =>
                         TicketCard(ticket: item),
-                    firstPageErrorIndicatorBuilder: (context) => Center(
+                    firstPageErrorIndicatorBuilder: (context) => const Center(
                       child: Text('Error loading tickets. Tap to retry.'),
                     ),
                     firstPageProgressIndicatorBuilder: (context) => Column(
-                      children: List.generate(3, (index) => TicketShimmer()),
+                      children:
+                          List.generate(3, (index) => const TicketShimmer()),
                     ),
                     newPageProgressIndicatorBuilder: (context) =>
-                        TicketShimmer(),
+                        const TicketShimmer(),
                     noItemsFoundIndicatorBuilder: (context) =>
                         noDataView(context),
                   ),
@@ -201,6 +202,7 @@ class _RecentTapViewState extends State<RecentTapView> {
   }
 }
 
+
 class ForwardedCasesView extends StatefulWidget {
   const ForwardedCasesView({super.key});
 
@@ -209,59 +211,95 @@ class ForwardedCasesView extends StatefulWidget {
 }
 
 class _ForwardedCasesViewState extends State<ForwardedCasesView> {
-  List<TicketModel> ticketList = [];
+  static const _pageSize = 5;
+  final PagingController<int, TicketModel> _pagingController =
+      PagingController(firstPageKey: 1);
+  int completedTickets = 0;
+  int pendingTickets = 0;
+
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        getTickets();
-      },
-    );
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
     super.initState();
   }
 
-  void getTickets() async {
+  Future<void> _fetchPage(int pageKey) async {
     try {
-      var res = await Provider.of<AppointmentProvider>(context, listen: false)
-          .getForwardedTickets(
-              doctorId: Provider.of<AuthProvider>(context, listen: false)
-                  .usermodel!
-                  .id
-                  .toString());
-      if (res.success) {
-        if (mounted) {
-          setState(() {
-            ticketList = res.data;
-          });
-        }
-      } else {}
-    } catch (e) {}
+      final newItems = await getTickets(pageKey);
+      final isLastPage = newItems.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(newItems);
+      } else {
+        final nextPageKey = pageKey + 1;
+        _pagingController.appendPage(newItems, nextPageKey);
+      }
+      // _updateTicketCounts();
+    } catch (error) {
+      _pagingController.error = error;
+    }
+  }
+
+  Future<List<TicketModel>> getTickets(int pageKey) async {
+    var appoointmentProvider =
+        Provider.of<AppointmentProvider>(context, listen: false);
+    var authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    var res = await appoointmentProvider.getForwardedTickets(
+      doctorId: authProvider.usermodel!.id.toString(),
+      status: 'forwarded',
+      page: pageKey,
+      limit: _pageSize,
+    );
+
+    if (res.success) {
+      return res.data;
+    } else {
+      throw Exception(res.msg ?? 'Failed to fetch tickets');
+    }
+  }
+
+  Future<void> _refreshData() async {
+    _pagingController.refresh();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(
-            height: 4.h,
-          ),
-          Provider.of<HomeProvider>(context).isLoading
-              ? TicketShimmer()
-              : ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: ticketList.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    var data = ticketList[index];
-                    return TicketCard(ticket: data);
-                  },
+    return Container(
+      decoration: BoxDecoration(
+        gradient:
+            Theme.of(context).extension<GradientTheme>()?.backgroundGradient,
+      ),
+      child: Scaffold(
+        body: RefreshIndicator(
+          onRefresh: _refreshData,
+          child: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                sliver: PagedSliverList<int, TicketModel>(
+                  pagingController: _pagingController,
+                  builderDelegate: PagedChildBuilderDelegate<TicketModel>(
+                    itemBuilder: (context, item, index) =>
+                        TicketCard(ticket: item),
+                    firstPageErrorIndicatorBuilder: (context) => const Center(
+                      child: Text('Error loading tickets. Tap to retry.'),
+                    ),
+                    firstPageProgressIndicatorBuilder: (context) => Column(
+                      children:
+                          List.generate(3, (index) => const TicketShimmer()),
+                    ),
+                    newPageProgressIndicatorBuilder: (context) =>
+                        const TicketShimmer(),
+                    noItemsFoundIndicatorBuilder: (context) =>
+                        noDataView(context),
+                  ),
                 ),
-          SizedBox(
-            height: MediaQuery.paddingOf(context).bottom,
+              )
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

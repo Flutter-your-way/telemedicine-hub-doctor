@@ -68,6 +68,11 @@ class AppointmentProvider extends ChangeNotifier {
 
   Future<CustomResponse> getForwardedTickets({
     required String doctorId,
+    required String status,
+    int page = 1,
+    String search = '', // Add search parameter
+
+    int limit = 10,
   }) async {
     String? accessToken = await LocalDataManager.getToken();
     isLoading = true;
@@ -76,15 +81,16 @@ class AppointmentProvider extends ChangeNotifier {
         LanguageProvider.getCurrentLanguage; // Get language directly
     try {
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
-        "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=forwarded",
+        "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=$status&page=$page&limit=$limit",
         headers: {
           "Authorization": "Bearer $accessToken",
           "type": "doctor",
-          "Language": currentLang
+          "Language": currentLang,
         },
       );
 
       var responseBody = jsonDecode(r.body);
+      print("Bodt: ${r.body}");
 
       bool success = responseBody['success'] ?? false;
 

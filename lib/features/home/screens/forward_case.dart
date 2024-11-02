@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/models/doctor_model.dart';
 import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
@@ -82,7 +82,7 @@ class _ForwardCaseScreenState extends State<ForwardCaseScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: Text(
-            "Forward Case",
+            AppLocalizations.of(context)!.forwardCase,
             style: GoogleFonts.openSans(
                 textStyle:
                     TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -107,7 +107,7 @@ class _ForwardCaseScreenState extends State<ForwardCaseScreen> {
                     fillColor: Colors.white,
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 25.h, vertical: 15.w),
-                    hintText: "Search for doctors",
+                    hintText: AppLocalizations.of(context)!.searchForDoctors,
                     prefixIcon: const Icon(Iconsax.search_normal),
                     hintStyle: TextStyle(
                       color: AppColors.captionColor,
@@ -287,7 +287,7 @@ void _buildForwardCaseView(
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "Add Notes for the doctor ",
+                        AppLocalizations.of(context)!.addNotesForTheDoctor,
                         style: GoogleFonts.openSans(
                             textStyle: TextStyle(
                                 fontSize: 12.sp, fontWeight: FontWeight.w600)),
@@ -299,8 +299,8 @@ void _buildForwardCaseView(
                       controller: controller,
                       autocorrect: true,
                       decoration: InputDecoration(
-                          hintText:
-                              "Anything specific you would like to share with the doctor",
+                          hintText: AppLocalizations.of(context)!
+                              .anythingSpecificYouWouldLikeToShareWithTheDoctor,
                           hintFadeDuration: const Duration(milliseconds: 350),
                           hintStyle: GoogleFonts.openSans(
                               textStyle: TextStyle(
@@ -361,7 +361,7 @@ void _buildForwardCaseView(
                                 }
                               },
                               child: Text(
-                                "Forward Case",
+                                AppLocalizations.of(context)!.forwardCase,
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                 ),

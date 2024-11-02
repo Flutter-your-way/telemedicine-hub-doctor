@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -509,6 +509,7 @@ class _PsychologyTicketDetailsScreenState
                                                 setState(
                                                     () {}); // This will rebuild the widget with the new data
                                               },
+                                              meetTime: ticket!.scheduleDate,
                                             );
                                           },
                                           child: Container(
@@ -528,7 +529,8 @@ class _PsychologyTicketDetailsScreenState
                                                   width: 6.h,
                                                 ),
                                                 Text(
-                                                  "Add Notes",
+                                                  AppLocalizations.of(context)!
+                                                      .addNote,
                                                   style: GoogleFonts.openSans(
                                                       textStyle: TextStyle(
                                                     color:
@@ -891,7 +893,8 @@ class _PsychologyTicketDetailsScreenState
                                                     ));
                                               },
                                               child: Text(
-                                                "Forward Case",
+                                                AppLocalizations.of(context)!
+                                                    .forwardCase,
                                                 style: TextStyle(
                                                   fontSize: 16.sp,
                                                 ),
@@ -921,7 +924,8 @@ class _PsychologyTicketDetailsScreenState
                                                 );
                                               },
                                               child: Text(
-                                                "Join Session",
+                                                AppLocalizations.of(context)!
+                                                    .joinSession,
                                                 style: TextStyle(
                                                   fontSize: 16.sp,
                                                 ),
@@ -1163,10 +1167,13 @@ void _buildPrescribeFeild({
   required BuildContext context,
   required String id,
   required Function refreshTicketDetails,
+  required DateTime? meetTime,
 }) {
   var homeProvider = Provider.of<HomeProvider>(context, listen: false);
   TextEditingController controller = TextEditingController();
-
+  print(
+    meetTime.toString(),
+  );
   PlatformFile? selectedFile;
   showModalBottomSheet(
     context: context,
@@ -1211,7 +1218,7 @@ void _buildPrescribeFeild({
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "Add Notes for the patient ",
+                        AppLocalizations.of(context)!.addNotesForThePatient,
                         style: GoogleFonts.openSans(
                             textStyle: TextStyle(
                                 fontSize: 12.sp, fontWeight: FontWeight.w600)),
@@ -1226,7 +1233,8 @@ void _buildPrescribeFeild({
                       },
                       autocorrect: true,
                       decoration: InputDecoration(
-                          hintText: "Share anything important with the patient",
+                          hintText: AppLocalizations.of(context)!
+                              .shareAnythingImportantWithThePatient,
                           hintFadeDuration: const Duration(milliseconds: 350),
                           hintStyle: GoogleFonts.openSans(
                               textStyle: TextStyle(
@@ -1299,7 +1307,7 @@ void _buildPrescribeFeild({
                                       }
                                     },
                                     child: Text(
-                                      "Attach File",
+                                      AppLocalizations.of(context)!.attachFile,
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                       ),
@@ -1338,9 +1346,82 @@ void _buildPrescribeFeild({
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   )),
-                              onPressed: () async {
-                                // Show confirmation dialog
+                              // onPressed: () async {
+                              //   // Show confirmation dialog
 
+                              //   if (controller.text.trim().isEmpty &&
+                              //       selectedFile == null) {
+                              //     Fluttertoast.showToast(
+                              //       msg:
+                              //           "Please add a note or attach a prescription file",
+                              //     );
+                              //     return;
+                              //   }
+
+                              //   bool? confirm = await showDialog<bool>(
+                              //     context: context,
+                              //     builder: (BuildContext context) {
+                              //       return AlertDialog(
+                              //         title: const Text('Confirm Submission'),
+                              //         content: const Text(
+                              //             'Are you sure you want to submit this prescription?'),
+                              //         actions: <Widget>[
+                              //           TextButton(
+                              //             child: const Text('Cancel'),
+                              //             onPressed: () {
+                              //               Navigator.of(context).pop(false);
+                              //             },
+                              //           ),
+                              //           TextButton(
+                              //             child: const Text('Submit'),
+                              //             onPressed: () {
+                              //               Navigator.of(context).pop(true);
+                              //             },
+                              //           ),
+                              //         ],
+                              //       );
+                              //     },
+                              //   );
+
+                              //   // If user confirms, proceed with submission
+                              //   if (confirm == true) {
+                              //     File? fileToUpload;
+                              //     String? directoryType;
+
+                              //     if (selectedFile != null &&
+                              //         selectedFile!.path != null) {
+                              //       fileToUpload = File(selectedFile!.path!);
+                              //       String fileType = selectedFile!.extension
+                              //               ?.toLowerCase() ??
+                              //           '';
+                              //       directoryType = ['jpg', 'jpeg', 'png']
+                              //               .contains(fileType)
+                              //           ? 'image'
+                              //           : 'pdf';
+                              //     }
+
+                              //     var noteText = controller.text.trim().isEmpty
+                              //         ? "No note added"
+                              //         : controller.text;
+
+                              //     var r = await homeProvider.MarkAsComplete(
+                              //       id: id,
+                              //       note: noteText,
+                              //       file: fileToUpload,
+                              //       directoryType: directoryType,
+                              //       context: context,
+                              //     );
+
+                              //     if (r.success) {
+                              //       Fluttertoast.showToast(msg: r.msg);
+                              //       Navigator.of(context).pop();
+                              //       await refreshTicketDetails();
+                              //     } else {
+                              //       Fluttertoast.showToast(msg: r.msg);
+                              //     }
+                              //   }
+                              // },
+                              onPressed: () async {
                                 if (controller.text.trim().isEmpty &&
                                     selectedFile == null) {
                                   Fluttertoast.showToast(
@@ -1350,22 +1431,79 @@ void _buildPrescribeFeild({
                                   return;
                                 }
 
+                                bool? attendMeet = await showDialog<bool>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title:  Text(AppLocalizations.of(context)!.quickReminder),
+                                      content:  Text(AppLocalizations.of(context)!.haveYouAttendedTheMeetingWithPatient),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child:  Text(AppLocalizations.of(context)!.no),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(false);
+                                            Navigator.of(context).pop(false);
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    "Please attend meeting first!");
+                                          },
+                                        ),
+                                        TextButton(
+                                          child:  Text(AppLocalizations.of(context)!.yes),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(true);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                if (attendMeet == false) {
+                                  return;
+                                }
+
+                                // Check if the current time is past the scheduled time
+                                DateTime now = DateTime.now();
+                                if (meetTime != null &&
+                                    now.isBefore(meetTime)) {
+                                  // Show dialog if the current time is before the scheduled time
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text(AppLocalizations.of(context)!.actionRestricted),
+                                        content:  Text(AppLocalizations.of(context)!.thisTicketCanOnlyBeMarkedAsCompleteAfterTheAttendingMeeting),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text('OK'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                  return;
+                                }
+
+                                // Show confirmation dialog
                                 bool? confirm = await showDialog<bool>(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text('Confirm Submission'),
-                                      content: const Text(
+                                      title:  Text('Confirm Submission'),
+                                      content:  Text(
                                           'Are you sure you want to submit this prescription?'),
                                       actions: <Widget>[
                                         TextButton(
-                                          child: const Text('Cancel'),
+                                          child: Text(AppLocalizations.of(context)!.cancel),
                                           onPressed: () {
                                             Navigator.of(context).pop(false);
                                           },
                                         ),
                                         TextButton(
-                                          child: const Text('Submit'),
+                                          child:  Text(AppLocalizations.of(context)!.submit),
                                           onPressed: () {
                                             Navigator.of(context).pop(true);
                                           },
@@ -1413,8 +1551,9 @@ void _buildPrescribeFeild({
                                   }
                                 }
                               },
+
                               child: Text(
-                                "Add Note",
+                                AppLocalizations.of(context)!.addNote,
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                 ),
@@ -1497,14 +1636,15 @@ void _buildJoinSessionFeild({
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Meeting Link",
+                                    AppLocalizations.of(context)!.meetingLink,
                                     style: TextStyle(
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Text(
-                                    "Use this link in order to join the meeting",
+                                    AppLocalizations.of(context)!
+                                        .useThisLinkInOrderToJoinTheMeeting,
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                     ),
@@ -1553,7 +1693,6 @@ void _buildJoinSessionFeild({
                     SizedBox(
                       height: 16.h,
                     ),
-
                     FractionallySizedBox(
                       widthFactor: 1,
                       child: FilledButton(
@@ -1568,24 +1707,13 @@ void _buildJoinSessionFeild({
                           launchUrl(Uri.parse(meetLink));
                         },
                         child: Text(
-                          "Join Session",
+                          AppLocalizations.of(context)!.joinSession,
                           style: TextStyle(
                             fontSize: 16.sp,
                           ),
                         ),
                       ),
                     ),
-                    // ElevatedButton(
-                    //   onPressed: () async {
-                    //     if (await canLaunch(meetLink)) {
-                    //       await launch(meetLink);
-                    //     }
-                    //   },
-                    //   child: Text(
-                    //     "Join Session",
-                    //     style: TextStyle(fontSize: 16.sp),
-                    //   ),
-                    // ),
                     SizedBox(
                       height: MediaQuery.paddingOf(context).bottom,
                     )
@@ -1729,7 +1857,7 @@ void _buildPatientProfile(
                       children: [
                         SizedBox(height: 20.h),
                         Text(
-                          "Patient’s Profile",
+                          AppLocalizations.of(context)!.patientsProfile,
                           style: GoogleFonts.openSans(
                               textStyle: TextStyle(
                                   fontSize: 20.sp,
@@ -1737,7 +1865,8 @@ void _buildPatientProfile(
                         ),
                         SizedBox(height: 10.h),
                         Text(
-                          "Here’s all required information that you need in order to provide medication to the patient.",
+                          AppLocalizations.of(context)!
+                              .heresAllRequiredInformationThatYouNeedInOrderToProvideMedicationToThePatient,
                           style: GoogleFonts.openSans(
                               textStyle: TextStyle(
                                   fontSize: 14.sp,
@@ -1745,54 +1874,60 @@ void _buildPatientProfile(
                         ),
                         SizedBox(height: 20.h),
                         infoRow(
-                            key: 'Patient Name:',
-                            value: patient!.name.toString()),
+                            key: AppLocalizations.of(context)!.patientName,
+                            value: patient?.name.toString() ?? "N/A"),
                         SizedBox(height: 20.h),
                         Row(
                           children: [
                             infoBox(
-                                key: "Gender",
-                                value: patient.gender.toString()),
+                                key: AppLocalizations.of(context)!.gender,
+                                value: patient?.gender.toString() ?? "N/A"),
                             SizedBox(
                               width: 10.w,
                             ),
                             infoBox(
-                                key: "Blood Group",
-                                value: patient.bloodGroup.toString()),
+                                key: AppLocalizations.of(context)!.bloodGroup,
+                                value: patient?.bloodGroup.toString() ?? "N/A"),
                           ],
                         ),
                         SizedBox(height: 20.h),
                         Row(
                           children: [
                             infoBox(
-                                key: "Height",
-                                value: patient.height.toString()),
+                                key: AppLocalizations.of(context)!.height,
+                                value: patient?.height.toString() ?? "N/A"),
                             SizedBox(
                               width: 10.w,
                             ),
                             infoBox(
-                                key: "Weight",
-                                value: "${patient.weight.toString()}kg"),
+                                key: AppLocalizations.of(context)!.weight,
+                                value:
+                                    "${patient?.weight.toString() ?? 'N/A '}kg"),
                             SizedBox(
                               width: 10.w,
                             ),
                             infoBox(
-                                key: "DOB", value: calculateAge(patient.age)),
+                                key: AppLocalizations.of(context)!.dob,
+                                value: calculateAge(patient?.age)),
                           ],
                         ),
                         SizedBox(height: 20.h),
                         infoRow(
-                            key: "Father's Name:",
-                            value: patient.fatherName.toString()),
+                            key: AppLocalizations.of(context)!.fathersName,
+                            value: patient?.fatherName.toString() ?? "N/A"),
                         SizedBox(height: 20.h),
                         infoRow(
-                            key: "Grandfather’s Name:",
-                            value: patient.grandFatherName.toString()),
-                        SizedBox(height: 20.h),
-                        infoRow(key: 'Chronic Disease:', value: disease),
+                            key: AppLocalizations.of(context)!.grandfathersName,
+                            value:
+                                patient?.grandFatherName.toString() ?? "N/A"),
                         SizedBox(height: 20.h),
                         infoRow(
-                            key: 'Address:', value: patient.address.toString()),
+                            key: AppLocalizations.of(context)!.chronicDisease,
+                            value: disease),
+                        SizedBox(height: 20.h),
+                        infoRow(
+                            key: AppLocalizations.of(context)!.address,
+                            value: patient?.address.toString() ?? 'N/A'),
                         SizedBox(height: 20.h),
                         SizedBox(
                           height: MediaQuery.paddingOf(context).bottom,

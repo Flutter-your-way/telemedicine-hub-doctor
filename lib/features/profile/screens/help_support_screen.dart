@@ -171,11 +171,17 @@ void showContactInfoBottomSheet(BuildContext context) {
                     ),
                   ),
                 ),
-                 _buildContactInfo(
-                    Icons.phone, 'Contact Number', '+1 332 335 6767', 'phone'),
+                _buildContactInfo(
+                    Icons.phone,
+                    AppLocalizations.of(context)!.contactNumber,
+                    '+1 332 335 6767',
+                    'phone'),
                 const SizedBox(height: 16),
-                _buildContactInfo(Icons.email_outlined, 'Email',
-                    'hospitalname@domain.com', 'email'),
+                _buildContactInfo(
+                    Icons.email_outlined,
+                    AppLocalizations.of(context)!.email,
+                    'hospitalname@domain.com',
+                    'email'),
               ],
             ),
           ),
@@ -184,7 +190,6 @@ void showContactInfoBottomSheet(BuildContext context) {
     },
   );
 }
-
 
 Future<void> _launchUrl(String url, String urlType) async {
   try {
@@ -200,7 +205,8 @@ Future<void> _launchUrl(String url, String urlType) async {
   }
 }
 
-Widget _buildContactInfo(IconData icon, String title, String value, String type) {
+Widget _buildContactInfo(
+    IconData icon, String title, String value, String type) {
   return GestureDetector(
     onTap: () => _launchUrl(value, type),
     child: Row(
@@ -220,12 +226,12 @@ Widget _buildContactInfo(IconData icon, String title, String value, String type)
           children: [
             Text(title,
                 style: GoogleFonts.openSans(
-                    textStyle:
-                        TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600))),
+                    textStyle: TextStyle(
+                        fontSize: 16.sp, fontWeight: FontWeight.w600))),
             Text(value,
                 style: GoogleFonts.openSans(
-                    textStyle:
-                        TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w400))),
+                    textStyle: TextStyle(
+                        fontSize: 12.sp, fontWeight: FontWeight.w400))),
           ],
         ),
       ],

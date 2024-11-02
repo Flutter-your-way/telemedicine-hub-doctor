@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onRefresh: _refreshData,
           child: CustomScrollView(
             slivers: [
-              SliverToBoxAdapter(child: HomeAppBar()),
+              const SliverToBoxAdapter(child: HomeAppBar()),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     future: _ticketCountsFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return StatusStatsShimmer();
+                        return const StatusStatsShimmer();
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else if (snapshot.hasData && snapshot.data!.success) {
@@ -128,7 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context,
                                   CupertinoDialogRoute(
                                     builder: (context) => TicketViewScreen(
-                                        title: 'Completed Ticket'),
+                                        title: AppLocalizations.of(context)!
+                                            .completedTickets),
                                     context: context,
                                   ),
                                 );
@@ -144,7 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context,
                                   CupertinoDialogRoute(
                                     builder: (context) => TicketViewScreen(
-                                        title: 'Pending Ticket'),
+                                        title: AppLocalizations.of(context)!
+                                            .pendingTickets),
                                     context: context,
                                   ),
                                 );
@@ -154,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         );
                       } else {
-                        return Text('Failed to load ticket counts');
+                        return const Text('Failed to load ticket counts');
                       }
                     },
                   ),
@@ -185,8 +187,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             CupertinoDialogRoute(
-                              builder: (context) =>
-                                  TicketViewScreen(title: 'All Ticket'),
+                              builder: (context) => TicketViewScreen(
+                                  title:
+                                      AppLocalizations.of(context)!.allTickets),
                               context: context,
                             ),
                           );
@@ -203,14 +206,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   builderDelegate: PagedChildBuilderDelegate<TicketModel>(
                     itemBuilder: (context, item, index) =>
                         TicketCard(ticket: item),
-                    firstPageErrorIndicatorBuilder: (context) => Center(
+                    firstPageErrorIndicatorBuilder: (context) => const Center(
                       child: Text('Error loading tickets. Tap to retry.'),
                     ),
                     firstPageProgressIndicatorBuilder: (context) => Column(
-                      children: List.generate(3, (index) => TicketShimmer()),
+                      children:
+                          List.generate(3, (index) => const TicketShimmer()),
                     ),
                     newPageProgressIndicatorBuilder: (context) =>
-                        TicketShimmer(),
+                        const TicketShimmer(),
                     noItemsFoundIndicatorBuilder: (context) =>
                         noDataView(context),
                   ),

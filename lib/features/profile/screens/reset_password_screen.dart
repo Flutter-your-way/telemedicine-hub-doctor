@@ -32,6 +32,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     });
   }
 
+  // Password validation function
+  String? _passwordValidator(String? value) {
+    final trimmedValue = value?.trim() ?? '';
+    if (trimmedValue.isEmpty) {
+      return "Password cannot be empty";
+    } else if (trimmedValue.length < 6) {
+      return "Password must be at least 6 characters long";
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     var profileProvider = Provider.of<ProfileProvider>(context);
@@ -108,30 +119,36 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     ),
                   ),
                   onPressed: () async {
-                    if (oldPassword.text.trim().isNotEmpty ||
-                        oldPassword.text.trim() != null) {
-                      if (newPassword.text.trim().isNotEmpty ||
-                          newPassword.text.trim() != null) {
-                        var res = await profileProvider.resetPassword(
-                            email: Provider.of<AuthProvider>(context,
-                                    listen: false)
-                                .usermodel!
-                                .email
-                                .toString(),
-                            oldPassword: oldPassword.text,
-                            newPassword: newPassword.text);
-                        if (res.success) {
-                          Fluttertoast.showToast(msg: res.msg);
-                          clearcontroller();
-                        } else {
-                          Fluttertoast.showToast(msg: res.msg);
-                        }
-                      } else {
-                        Fluttertoast.showToast(
-                            msg: "Please enter new password");
-                      }
+                    // Trimmed passwords for validation and submission
+                    final trimmedOldPassword = oldPassword.text.trim();
+                    final trimmedNewPassword = newPassword.text.trim();
+
+                    // Validate each password field individually and show specific messages
+                    String? oldPasswordError =
+                        _passwordValidator(trimmedOldPassword);
+                    String? newPasswordError =
+                        _passwordValidator(trimmedNewPassword);
+
+                    if (oldPasswordError != null) {
+                      Fluttertoast.showToast(msg: oldPasswordError);
+                    } else if (newPasswordError != null) {
+                      Fluttertoast.showToast(msg: newPasswordError);
                     } else {
-                      Fluttertoast.showToast(msg: "Please enter old password");
+                      // If both passwords are valid, proceed with password reset
+                      var res = await profileProvider.resetPassword(
+                        email: Provider.of<AuthProvider>(context, listen: false)
+                            .usermodel!
+                            .email
+                            .toString(),
+                        oldPassword: trimmedOldPassword,
+                        newPassword: trimmedNewPassword,
+                      );
+                      if (res.success) {
+                        Fluttertoast.showToast(msg: res.msg);
+                        clearcontroller();
+                      } else {
+                        Fluttertoast.showToast(msg: res.msg);
+                      }
                     }
                   },
                   child: Text(AppLocalizations.of(context)!.setPassword,
