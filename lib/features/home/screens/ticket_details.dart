@@ -12,7 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/models/comment_model.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
@@ -160,7 +160,9 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: Text(
-            ticket?.name != null ? "Ticket No.${ticket!.name}" : "Loading...",
+            ticket?.name != null
+                ? "${AppLocalizations.of(context)!.ticketNo}.${ticket!.name}"
+                : "${AppLocalizations.of(context)!.ticketNo}...",
             style: GoogleFonts.openSans(
                 textStyle:
                     TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -282,7 +284,9 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                                           .toString());
                                                                 },
                                                                 child: Text(
-                                                                  "Patient Profile",
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .patientProfile,
                                                                   style: GoogleFonts.openSans(
                                                                       textStyle: TextStyle(
                                                                           fontSize: 14
@@ -505,7 +509,8 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                         )
                                       else
                                         Text(
-                                          "No questions and answers available",
+                                          AppLocalizations.of(context)!
+                                              .noQuestionsAndAnswersAvailable,
                                           style: TextStyle(
                                               fontSize: 14.sp,
                                               color: Colors.grey),
@@ -629,7 +634,9 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                     }
                                                   },
                                                   label: Text(
-                                                    "Prescription",
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .prescription,
                                                     style: TextStyle(
                                                       fontSize: 16.sp,
                                                       fontWeight:
@@ -678,7 +685,9 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                     }
                                                   },
                                                   label: Text(
-                                                    "Notes",
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .notes,
                                                     style: TextStyle(
                                                       fontSize: 16.sp,
                                                       fontWeight:
@@ -697,7 +706,9 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                             controller: _controller,
                                             decoration: InputDecoration(
                                               fillColor: Colors.white,
-                                              hintText: "Add Comment",
+                                              hintText:
+                                                  AppLocalizations.of(context)!
+                                                      .addComment,
                                               hintStyle: GoogleFonts.openSans(
                                                 textStyle: TextStyle(
                                                   color:
@@ -835,7 +846,8 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                     ));
                                               },
                                               child: Text(
-                                                "Forward Case",
+                                                AppLocalizations.of(context)!
+                                                    .forwardCase,
                                                 style: TextStyle(
                                                   fontSize: 16.sp,
                                                 ),
@@ -870,7 +882,8 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                 );
                                               },
                                               child: Text(
-                                                "Prescribe",
+                                                AppLocalizations.of(context)!
+                                                    .prescribe,
                                                 style: TextStyle(
                                                   fontSize: 16.sp,
                                                 ),
@@ -1045,7 +1058,7 @@ void _showNotesBottomSheet({
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "Prescription Notes",
+                    "${AppLocalizations.of(context)!.prescription} ${AppLocalizations.of(context)!.notes}",
                     style: GoogleFonts.openSans(
                         textStyle: TextStyle(
                             fontSize: 12.sp, fontWeight: FontWeight.w600)),
@@ -1088,7 +1101,7 @@ void _showNotesBottomSheet({
                         Navigator.pop(context);
                       },
                       child: Text(
-                        "Close",
+                        AppLocalizations.of(context)!.close,
                         style: TextStyle(
                           fontSize: 16.sp,
                         ),
@@ -1160,7 +1173,8 @@ void _buildPrescribeFeild({
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "Prescribe the patient by adding notes ",
+                        AppLocalizations.of(context)!
+                            .prescribeThePatientByAddingNotes,
                         style: GoogleFonts.openSans(
                             textStyle: TextStyle(
                                 fontSize: 12.sp, fontWeight: FontWeight.w600)),
@@ -1175,7 +1189,8 @@ void _buildPrescribeFeild({
                       },
                       autocorrect: true,
                       decoration: InputDecoration(
-                          hintText: "Prescribe the patient",
+                          hintText:
+                              AppLocalizations.of(context)!.prescribeThePatient,
                           hintFadeDuration: const Duration(milliseconds: 350),
                           hintStyle: GoogleFonts.openSans(
                               textStyle: TextStyle(
@@ -1248,7 +1263,7 @@ void _buildPrescribeFeild({
                                       }
                                     },
                                     child: Text(
-                                      "Attach File",
+                                      AppLocalizations.of(context)!.attachFile,
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                       ),
@@ -1331,7 +1346,7 @@ void _buildPrescribeFeild({
                                 }
                               },
                               child: Text(
-                                "Continue",
+                                AppLocalizations.of(context)!.continueButton,
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                 ),
@@ -1396,21 +1411,50 @@ void _buildPatientProfile(
     {required BuildContext context,
     required Patient? patient,
     required String disease}) {
-  String formattedDate = '';
+  // // Ensure patient and patient.age are not null before parsing
+  // if (patient != null && patient.age != null) {
+  //   try {
+  //     print("Dob${patient.age.toString()}");
+  //     // Assuming patient.age is in a proper date format. Adjust as necessary.
+  //     formattedDate = DateTime.parse(patient.age.toString())
+  //         .toIso8601String()
+  //         .substring(0, 10);
+  //   } catch (e) {
+  //     print('Error parsing date: $e');
+  //     formattedDate = 'Invalid date'; // Default value or handle it accordingly
+  //   }
+  // } else {
+  //   formattedDate = 'N/A'; // Handle the case when patient or age is null
+  // }
 
-  // Ensure patient and patient.age are not null before parsing
-  if (patient != null && patient.age != null) {
-    try {
-      // Assuming patient.age is in a proper date format. Adjust as necessary.
-      formattedDate = DateTime.parse(patient.age.toString())
-          .toIso8601String()
-          .substring(0, 10);
-    } catch (e) {
-      print('Error parsing date: $e');
-      formattedDate = 'Invalid date'; // Default value or handle it accordingly
+  String calculateAge(DateTime? birthDate) {
+    if (birthDate == null) {
+      return 'N/A'; // Handle null birthdate case
     }
-  } else {
-    formattedDate = 'N/A'; // Handle the case when patient or age is null
+
+    DateTime currentDate = DateTime.now();
+    int years = currentDate.year - birthDate.year;
+    int months = currentDate.month - birthDate.month;
+    int days = currentDate.day - birthDate.day;
+
+    // Adjust for cases where the month/day hasn’t occurred yet this year/month
+    if (days < 0) {
+      months -= 1;
+      days += DateTime(currentDate.year, currentDate.month, 0)
+          .day; // days in previous month
+    }
+    if (months < 0) {
+      years -= 1;
+      months += 12;
+    }
+
+    if (years > 0) {
+      return "$years ${years == 1 ? 'year' : 'years'}";
+    } else if (months > 0) {
+      return "$months ${months == 1 ? 'month' : 'months'}";
+    } else {
+      return "$days ${days == 1 ? 'day' : 'days'}";
+    }
   }
 
   showModalBottomSheet(
@@ -1455,7 +1499,7 @@ void _buildPatientProfile(
                       children: [
                         SizedBox(height: 20.h),
                         Text(
-                          "Patient’s Profile",
+                          AppLocalizations.of(context)!.patientsProfile,
                           style: GoogleFonts.openSans(
                               textStyle: TextStyle(
                                   fontSize: 20.sp,
@@ -1463,7 +1507,8 @@ void _buildPatientProfile(
                         ),
                         SizedBox(height: 10.h),
                         Text(
-                          "Here’s all required information that you need in order to provide medication to the patient.",
+                          AppLocalizations.of(context)!
+                              .heresAllRequiredInformationThatYouNeedInOrderToProvideMedicationToThePatient,
                           style: GoogleFonts.openSans(
                               textStyle: TextStyle(
                                   fontSize: 14.sp,
@@ -1471,55 +1516,60 @@ void _buildPatientProfile(
                         ),
                         SizedBox(height: 20.h),
                         infoRow(
-                            key: 'Patient Name:',
-                            value: patient!.name.toString()),
+                            key: AppLocalizations.of(context)!.patientName,
+                            value: patient?.name.toString() ?? "N/A"),
                         SizedBox(height: 20.h),
                         Row(
                           children: [
                             infoBox(
-                                key: "Gender",
-                                value: patient.gender.toString()),
+                                key: AppLocalizations.of(context)!.gender,
+                                value: patient?.gender.toString() ?? "N/A"),
                             SizedBox(
                               width: 10.w,
                             ),
                             infoBox(
-                                key: "Blood Group",
-                                value: patient.bloodGroup.toString()),
+                                key: AppLocalizations.of(context)!.bloodGroup,
+                                value: patient?.bloodGroup.toString() ?? "N/A"),
                           ],
                         ),
                         SizedBox(height: 20.h),
                         Row(
                           children: [
                             infoBox(
-                                key: "Height",
-                                value: patient.height.toString()),
+                                key: AppLocalizations.of(context)!.height,
+                                value: patient?.height.toString() ?? "N/A"),
                             SizedBox(
                               width: 10.w,
                             ),
                             infoBox(
-                                key: "Weight",
-                                value: "${patient.weight.toString()}kg"),
+                                key: AppLocalizations.of(context)!.weight,
+                                value:
+                                    "${patient?.weight.toString() ?? 'N/A '}kg"),
                             SizedBox(
                               width: 10.w,
                             ),
-                            infoBox(key: "Age", value: formattedDate),
+                            infoBox(
+                                key: AppLocalizations.of(context)!.dob,
+                                value: calculateAge(patient?.age)),
                           ],
                         ),
                         SizedBox(height: 20.h),
                         infoRow(
-                            key: "Father's Name:",
-                            value: patient.fatherName.toString()),
+                            key: AppLocalizations.of(context)!.fathersName,
+                            value: patient?.fatherName.toString() ?? "N/A"),
                         SizedBox(height: 20.h),
                         infoRow(
-                            key: "Grandfather’s Name:",
-                            value: patient.grandFatherName.toString()),
-                        SizedBox(height: 20.h),
-                        infoRow(key: 'Chronic Disease:', value: disease),
-                        SizedBox(height: 20.h),
-                        infoRow(
-                            key: 'Address:',
+                            key: AppLocalizations.of(context)!.grandfathersName,
                             value:
-                                "Mollit mollit id quis adipisicing minim amet tempor enim. Cillum nisi enim ea nisi aute. Sunt veniam quis eu fugiat ipsum."),
+                                patient?.grandFatherName.toString() ?? "N/A"),
+                        SizedBox(height: 20.h),
+                        infoRow(
+                            key: AppLocalizations.of(context)!.chronicDisease,
+                            value: disease),
+                        SizedBox(height: 20.h),
+                        infoRow(
+                            key: AppLocalizations.of(context)!.address,
+                            value: patient?.address.toString() ?? 'N/A'),
                         SizedBox(height: 20.h),
                         SizedBox(
                           height: MediaQuery.paddingOf(context).bottom,

@@ -165,7 +165,9 @@ class _PsychologyTicketDetailsScreenState
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: Text(
-            ticket?.name != null ? "Ticket No.${ticket!.name}" : "Loading...",
+            ticket?.name != null
+                ? "${AppLocalizations.of(context)!.ticketNo}.${ticket!.name}"
+                : "${AppLocalizations.of(context)!.loading}...",
             style: GoogleFonts.openSans(
                 textStyle:
                     TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600)),
@@ -282,7 +284,9 @@ class _PsychologyTicketDetailsScreenState
                                                                         .toString());
                                                               },
                                                               child: Text(
-                                                                "Patient Profile",
+                                                                AppLocalizations.of(
+                                                                        context)!
+                                                                    .patientProfile,
                                                                 style: GoogleFonts.openSans(
                                                                     textStyle: TextStyle(
                                                                         fontSize: 14
@@ -491,7 +495,7 @@ class _PsychologyTicketDetailsScreenState
                                           width: 6.h,
                                         ),
                                         Text(
-                                          "Notes",
+                                          AppLocalizations.of(context)!.notes,
                                           style: GoogleFonts.openSans(
                                               textStyle: TextStyle(
                                             fontSize: 18.h,
@@ -563,7 +567,8 @@ class _PsychologyTicketDetailsScreenState
                                       )
                                     else
                                       Text(
-                                        "No questions and answers available",
+                                        AppLocalizations.of(context)!
+                                            .noQuestionsAndAnswersAvailable,
                                         style: TextStyle(
                                             fontSize: 14.sp,
                                             color: Colors.grey),
@@ -687,7 +692,9 @@ class _PsychologyTicketDetailsScreenState
                                                     }
                                                   },
                                                   label: Text(
-                                                    "Prescription",
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .prescription,
                                                     style: TextStyle(
                                                       fontSize: 16.sp,
                                                       fontWeight:
@@ -736,7 +743,9 @@ class _PsychologyTicketDetailsScreenState
                                                     }
                                                   },
                                                   label: Text(
-                                                    "Notes",
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .notes,
                                                     style: TextStyle(
                                                       fontSize: 16.sp,
                                                       fontWeight:
@@ -755,7 +764,9 @@ class _PsychologyTicketDetailsScreenState
                                             controller: _controller,
                                             decoration: InputDecoration(
                                               fillColor: Colors.white,
-                                              hintText: "Add Comment",
+                                              hintText:
+                                                  AppLocalizations.of(context)!
+                                                      .addComment,
                                               hintStyle: GoogleFonts.openSans(
                                                 textStyle: TextStyle(
                                                   color:
@@ -990,7 +1001,7 @@ void _showNotesBottomSheet({
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "Prescription Notes",
+                    "${AppLocalizations.of(context)!.prescription} ${AppLocalizations.of(context)!.notes}",
                     style: GoogleFonts.openSans(
                         textStyle: TextStyle(
                             fontSize: 12.sp, fontWeight: FontWeight.w600)),
@@ -1033,7 +1044,7 @@ void _showNotesBottomSheet({
                         Navigator.pop(context);
                       },
                       child: Text(
-                        "Close",
+                        AppLocalizations.of(context)!.close,
                         style: TextStyle(
                           fontSize: 16.sp,
                         ),
@@ -1435,11 +1446,15 @@ void _buildPrescribeFeild({
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title:  Text(AppLocalizations.of(context)!.quickReminder),
-                                      content:  Text(AppLocalizations.of(context)!.haveYouAttendedTheMeetingWithPatient),
+                                      title: Text(AppLocalizations.of(context)!
+                                          .quickReminder),
+                                      content: Text(AppLocalizations.of(
+                                              context)!
+                                          .haveYouAttendedTheMeetingWithPatient),
                                       actions: <Widget>[
                                         TextButton(
-                                          child:  Text(AppLocalizations.of(context)!.no),
+                                          child: Text(
+                                              AppLocalizations.of(context)!.no),
                                           onPressed: () {
                                             Navigator.of(context).pop(false);
                                             Navigator.of(context).pop(false);
@@ -1449,7 +1464,9 @@ void _buildPrescribeFeild({
                                           },
                                         ),
                                         TextButton(
-                                          child:  Text(AppLocalizations.of(context)!.yes),
+                                          child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .yes),
                                           onPressed: () {
                                             Navigator.of(context).pop(true);
                                           },
@@ -1471,8 +1488,12 @@ void _buildPrescribeFeild({
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: Text(AppLocalizations.of(context)!.actionRestricted),
-                                        content:  Text(AppLocalizations.of(context)!.thisTicketCanOnlyBeMarkedAsCompleteAfterTheAttendingMeeting),
+                                        title: Text(
+                                            AppLocalizations.of(context)!
+                                                .actionRestricted),
+                                        content: Text(AppLocalizations.of(
+                                                context)!
+                                            .thisTicketCanOnlyBeMarkedAsCompleteAfterTheAttendingMeeting),
                                         actions: <Widget>[
                                           TextButton(
                                             child: const Text('OK'),
@@ -1492,18 +1513,22 @@ void _buildPrescribeFeild({
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title:  Text('Confirm Submission'),
-                                      content:  Text(
+                                      title: const Text('Confirm Submission'),
+                                      content: const Text(
                                           'Are you sure you want to submit this prescription?'),
                                       actions: <Widget>[
                                         TextButton(
-                                          child: Text(AppLocalizations.of(context)!.cancel),
+                                          child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .cancel),
                                           onPressed: () {
                                             Navigator.of(context).pop(false);
                                           },
                                         ),
                                         TextButton(
-                                          child:  Text(AppLocalizations.of(context)!.submit),
+                                          child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .submit),
                                           onPressed: () {
                                             Navigator.of(context).pop(true);
                                           },
