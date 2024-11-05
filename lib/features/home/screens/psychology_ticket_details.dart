@@ -503,50 +503,60 @@ class _PsychologyTicketDetailsScreenState
                                           )),
                                         ),
                                         const Spacer(),
-                                        GestureDetector(
-                                          onTap: () {
-                                            _buildPrescribeFeild(
-                                              context: context,
-                                              id: ticket!.id.toString(),
-                                              refreshTicketDetails: () async {
-                                                await _fetchTicketDetails();
-                                                setState(
-                                                    () {}); // This will rebuild the widget with the new data
-                                              },
-                                              meetTime: ticket!.scheduleDate,
-                                            );
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.all(8.h),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.h),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Iconsax.add_square,
-                                                  size: 24.h,
-                                                  color: AppColors.primaryBlue,
+                                        ticket!.status.toString() != "completed"
+                                            ? GestureDetector(
+                                                onTap: () {
+                                                  _buildPrescribeFeild(
+                                                    context: context,
+                                                    id: ticket!.id.toString(),
+                                                    refreshTicketDetails:
+                                                        () async {
+                                                      await _fetchTicketDetails();
+                                                      setState(
+                                                          () {}); // This will rebuild the widget with the new data
+                                                    },
+                                                    meetTime:
+                                                        ticket!.scheduleDate,
+                                                  );
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.all(8.h),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.h),
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Iconsax.add_square,
+                                                        size: 24.h,
+                                                        color: AppColors
+                                                            .primaryBlue,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 6.h,
+                                                      ),
+                                                      Text(
+                                                        AppLocalizations.of(
+                                                                context)!
+                                                            .addNote,
+                                                        style: GoogleFonts
+                                                            .openSans(
+                                                                textStyle:
+                                                                    TextStyle(
+                                                          color: AppColors
+                                                              .primaryBlue,
+                                                          fontSize: 18.h,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        )),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                                SizedBox(
-                                                  width: 6.h,
-                                                ),
-                                                Text(
-                                                  AppLocalizations.of(context)!
-                                                      .addNote,
-                                                  style: GoogleFonts.openSans(
-                                                      textStyle: TextStyle(
-                                                    color:
-                                                        AppColors.primaryBlue,
-                                                    fontSize: 18.h,
-                                                    fontWeight: FontWeight.w600,
-                                                  )),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
+                                              )
+                                            : const SizedBox.shrink()
                                       ],
                                     ),
                                     SizedBox(

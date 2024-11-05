@@ -19,6 +19,7 @@ import 'package:telemedicine_hub_doctor/features/profile/widget/loading_dialog.d
 
 class HomeProvider extends ChangeNotifier {
   bool isLoading = false;
+  bool commentLoading = false;
   final int _completedTickets = 0;
   final int _pendingTickets = 0;
   TicketCountsModel? ticketCounts;
@@ -508,7 +509,7 @@ class HomeProvider extends ChangeNotifier {
     required String message,
   }) async {
     String? accessToken = await LocalDataManager.getToken();
-    isLoading = true;
+    commentLoading = true;
     notifyListeners();
 
     Map<String, dynamic> data = {
@@ -547,12 +548,12 @@ class HomeProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      isLoading = false;
+      commentLoading = false;
       notifyListeners();
       return CustomResponse(
           success: false, msg: "Failed to fetch diseases", code: 400);
     } finally {
-      isLoading = false;
+      commentLoading = false;
       notifyListeners();
     }
   }

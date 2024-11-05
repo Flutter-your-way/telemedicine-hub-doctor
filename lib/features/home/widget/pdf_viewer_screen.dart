@@ -7,7 +7,7 @@ import 'dart:io';
 class PDFViewerPage extends StatefulWidget {
   final String url;
 
-  PDFViewerPage({required this.url});
+  const PDFViewerPage({super.key, required this.url});
 
   @override
   _PDFViewerPageState createState() => _PDFViewerPageState();
@@ -25,6 +25,7 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
   }
 
   Future<void> loadPdf() async {
+    print(widget.url);
     final directory = await getTemporaryDirectory();
     final filePath = '${directory.path}/temp_prescription.pdf';
     final response = await http.get(Uri.parse(widget.url));
@@ -67,17 +68,17 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('PDF Viewer'),
+        title: const Text('PDF Viewer'),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : PDFView(
               filePath: localPath!,
               enableSwipe: true,
               swipeHorizontal: true,
               autoSpacing: false,
               pageFling: false,
-              onRender: (_pages) {
+              onRender: (pages) {
                 setState(() {});
               },
               onError: (error) {
@@ -95,10 +96,10 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: isDownloading ? null : downloadPdf,
-        child: isDownloading
-            ? CircularProgressIndicator(color: Colors.white)
-            : Icon(Icons.download),
         tooltip: 'Download PDF',
+        child: isDownloading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : const Icon(Icons.download),
       ),
     );
   }

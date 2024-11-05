@@ -544,7 +544,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                       if (commentList.isNotEmpty)
                                         Consumer<HomeProvider>(builder:
                                             (context, provider, child) {
-                                          if (provider.isLoading) {
+                                          if (provider.commentLoading) {
                                             return const Center(
                                                 child:
                                                     CircularProgressIndicator());
@@ -742,7 +742,27 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                     if (r.success) {
                                                       Fluttertoast.showToast(
                                                           msg: r.msg);
-                                                      getComment();
+                                                      CommentModel cm =
+                                                          CommentModel(
+                                                              doctor: ticket!
+                                                                  .doctor!.id
+                                                                  .toString(),
+                                                              fileKey: "",
+                                                              fileUrl: "",
+                                                              id: "",
+                                                              message:
+                                                                  _controller
+                                                                      .text,
+                                                              patient: ticket!
+                                                                  .patient!.id
+                                                                  .toString(),
+                                                              ticket: ticket!.id
+                                                                  .toString(),
+                                                              user: ticket!
+                                                                  .patient!.id
+                                                                  .toString());
+                                                      commentList.add(cm);
+                                                      // getComment();
                                                       setState(() {
                                                         _controller.text = "";
                                                       });
