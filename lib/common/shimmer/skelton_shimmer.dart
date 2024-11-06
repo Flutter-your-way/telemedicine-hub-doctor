@@ -1,7 +1,8 @@
+// ignore_for_file: sort_child_properties_last, use_super_parameters
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:telemedicine_hub_doctor/common/button/custom_button.dart';
 
 const Color grayColor = Color(0xFF8D8D8E);
 
@@ -14,7 +15,7 @@ class ImagesShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Color.fromARGB(255, 0, 0, 0),
+      baseColor: const Color.fromARGB(255, 0, 0, 0),
       highlightColor: Colors.grey[300]!,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -30,7 +31,7 @@ class ImagesShimmer extends StatelessWidget {
                     borderRadius: const BorderRadius.all(
                         Radius.circular(defaultPadding))),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
             ],
@@ -46,13 +47,10 @@ class StatusStatsShimmer extends StatelessWidget {
   final Widget? childd;
 
   @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth =
-        (screenWidth - 48) / 2; // Subtracting 48 for padding (16 * 3)
+  Widget build(BuildContext context) {// Subtracting 48 for padding (16 * 3)
 
     return Shimmer.fromColors(
-      baseColor: Color.fromARGB(255, 0, 0, 0),
+      baseColor: const Color.fromARGB(255, 0, 0, 0),
       highlightColor: Colors.grey[300]!,
       child: SingleChildScrollView(
         child: Row(
@@ -69,7 +67,7 @@ class StatusStatsShimmer extends StatelessWidget {
                     const BorderRadius.all(Radius.circular(defaultPadding)),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 16,
             ),
             Container(
@@ -97,7 +95,7 @@ class TicketShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Color.fromARGB(255, 0, 0, 0),
+      baseColor: const Color.fromARGB(255, 0, 0, 0),
       highlightColor: Colors.grey[300]!,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -113,7 +111,7 @@ class TicketShimmer extends StatelessWidget {
                     borderRadius: const BorderRadius.all(
                         Radius.circular(defaultPadding))),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               Container(
@@ -125,7 +123,7 @@ class TicketShimmer extends StatelessWidget {
                     borderRadius: const BorderRadius.all(
                         Radius.circular(defaultPadding))),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               Container(
@@ -137,7 +135,7 @@ class TicketShimmer extends StatelessWidget {
                     borderRadius: const BorderRadius.all(
                         Radius.circular(defaultPadding))),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               Container(
@@ -149,7 +147,7 @@ class TicketShimmer extends StatelessWidget {
                     borderRadius: const BorderRadius.all(
                         Radius.circular(defaultPadding))),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
             ],

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:http/http.dart' as http;
@@ -25,7 +27,6 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
   }
 
   Future<void> loadPdf() async {
-    print(widget.url);
     final directory = await getTemporaryDirectory();
     final filePath = '${directory.path}/temp_prescription.pdf';
     final response = await http.get(Uri.parse(widget.url));
@@ -82,16 +83,13 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
                 setState(() {});
               },
               onError: (error) {
-                print(error.toString());
               },
               onPageError: (page, error) {
-                print('$page: ${error.toString()}');
               },
               onViewCreated: (PDFViewController pdfViewController) {
                 // You can save the controller for further use
               },
               onPageChanged: (int? page, int? total) {
-                print('page change: $page/$total');
               },
             ),
       floatingActionButton: FloatingActionButton(

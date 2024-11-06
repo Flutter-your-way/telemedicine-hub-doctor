@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, use_build_context_synchronously, library_private_types_in_public_api, curly_braces_in_flow_control_structures, empty_catches, must_be_immutable
 import 'dart:io';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
@@ -60,7 +60,6 @@ class _PsychologyTicketDetailsScreenState
             .usermodel!
             .id
             .toString();
-        print("Current ID :  + $currentUserId");
         getComment();
       },
     );
@@ -78,9 +77,7 @@ class _PsychologyTicketDetailsScreenState
         commentList = [];
         Fluttertoast.showToast(msg: "No Comment till now !");
       }
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   Future<void> _fetchTicketDetails() async {
@@ -104,7 +101,7 @@ class _PsychologyTicketDetailsScreenState
       } else {
         setState(() {
           isLoading = false;
-          errorMessage = response.msg ?? "Failed to fetch ticket details";
+          errorMessage = response.msg;
         });
       }
     } catch (e) {
@@ -155,7 +152,6 @@ class _PsychologyTicketDetailsScreenState
 
   @override
   Widget build(BuildContext context) {
-    print('Questions and Answers: ${ticket?.questionsAndAnswers}');
     return Container(
       decoration: BoxDecoration(
         gradient:
@@ -678,7 +674,6 @@ class _PsychologyTicketDetailsScreenState
                                                               .extension(
                                                                   fileUrl)
                                                               .toLowerCase();
-                                                      print(fileExtension);
                                                       if (fileExtension ==
                                                           '.pdf') {
                                                         Navigator.of(context)
@@ -691,7 +686,6 @@ class _PsychologyTicketDetailsScreenState
                                                           ),
                                                         );
                                                       } else {
-                                                        print(fileExtension);
                                                         showImageDialog(
                                                             context, fileUrl);
                                                       }
@@ -1192,9 +1186,6 @@ void _buildPrescribeFeild({
 }) {
   var homeProvider = Provider.of<HomeProvider>(context, listen: false);
   TextEditingController controller = TextEditingController();
-  print(
-    meetTime.toString(),
-  );
   PlatformFile? selectedFile;
   showModalBottomSheet(
     context: context,
@@ -1425,7 +1416,7 @@ void _buildPrescribeFeild({
                               //         ? "No note added"
                               //         : controller.text;
 
-                              //     var r = await homeProvider.MarkAsComplete(
+                              //     var r = await homeProvider.markAsComplete(
                               //       id: id,
                               //       note: noteText,
                               //       file: fileToUpload,
@@ -1569,7 +1560,7 @@ void _buildPrescribeFeild({
                                       ? "No note added"
                                       : controller.text;
 
-                                  var r = await homeProvider.MarkAsComplete(
+                                  var r = await homeProvider.markAsComplete(
                                     id: id,
                                     note: noteText,
                                     file: fileToUpload,
@@ -1942,7 +1933,7 @@ void _buildPatientProfile(
                               width: 10.w,
                             ),
                             infoBox(
-                                key: AppLocalizations.of(context)!.dob,
+                                key: AppLocalizations.of(context)!.age,
                                 value: calculateAge(patient?.age)),
                           ],
                         ),
@@ -2054,14 +2045,11 @@ class ImagePickerHelper {
       final XFile? pickedFile =
           await picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
-        print('Selected image: ${pickedFile.name} at ${pickedFile.path}');
         return pickedFile;
       } else {
-        print('No image selected');
         return null;
       }
     } catch (e) {
-      print('Error picking image: $e');
       // Show an error dialog
       await showDialog(
         context: context,

@@ -1,3 +1,5 @@
+// ignore_for_file: use_super_parameters
+
 import 'package:flutter/material.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 

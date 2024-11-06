@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
-import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
 import 'package:telemedicine_hub_doctor/features/appointment/provider/appointment_provider.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
@@ -153,7 +152,7 @@ class _RecentTapViewState extends State<RecentTapView> {
     if (res.success) {
       return res.data['tickets'];
     } else {
-      throw Exception(res.msg ?? 'Failed to fetch tickets');
+      throw Exception(res.msg);
     }
   }
 
@@ -256,7 +255,7 @@ class _ForwardedCasesViewState extends State<ForwardedCasesView> {
     if (res.success) {
       return res.data;
     } else {
-      throw Exception(res.msg ?? 'Failed to fetch tickets');
+      throw Exception(res.msg);
     }
   }
 

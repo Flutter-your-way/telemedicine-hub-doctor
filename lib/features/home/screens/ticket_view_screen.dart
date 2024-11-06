@@ -1,15 +1,14 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
-import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
@@ -20,9 +19,11 @@ import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 
 class TicketViewScreen extends StatefulWidget {
   String title;
+  String? value;
   TicketViewScreen({
     super.key,
     required this.title,
+    this.value,
   });
 
   @override
@@ -49,13 +50,12 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
       PagingController(firstPageKey: 1);
   int completedTickets = 0;
   int pendingTickets = 0;
-  late Future<CustomResponse> _ticketCountsFuture;
 
   @override
   void initState() {
-    if (widget.title == "Completed Ticket") {
+    if (widget.title == "Completed Tickets") {
       status = 'completed';
-    } else if (widget.title == "Pending Ticket") {
+    } else if (widget.title == "Pending Tickets") {
       status = 'pending';
     } else {
       status = '';
@@ -89,7 +89,6 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
       [String search = '']) async {
     var homeProvider = Provider.of<HomeProvider>(context, listen: false);
     var authProvider = Provider.of<AuthProvider>(context, listen: false);
-    print("server searching 0");
     var res = await homeProvider.getTickets(
       doctorId: authProvider.usermodel!.id.toString(),
       status: status,
@@ -101,7 +100,7 @@ class _TicketViewScreenState extends State<TicketViewScreen> {
     if (res.success) {
       return res.data['tickets'];
     } else {
-      throw Exception(res.msg ?? 'Failed to fetch tickets');
+      throw Exception(res.msg);
     }
   }
 

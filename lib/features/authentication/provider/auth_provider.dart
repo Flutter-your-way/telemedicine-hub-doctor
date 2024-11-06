@@ -1,5 +1,6 @@
+// ignore_for_file: empty_catches, use_build_context_synchronously
+
 import 'dart:convert';
-import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -57,9 +58,6 @@ class AuthProvider extends ChangeNotifier {
         String userId = responseBody['data']['doctor']['_id'];
 
         String refreshToken = responseBody['data']['accessToken'];
-        print("refreshToken $refreshToken");
-        print("token $token");
-        print("token $userId");
 
         await LocalDataManager.storeToken(token);
         await LocalDataManager.storeRefreshToken(refreshToken);
@@ -89,7 +87,6 @@ class AuthProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      print(e.toString());
       isLoading = false;
       notifyListeners();
       return CustomResponse(success: false, msg: "Failed to verify", code: 400);
@@ -223,11 +220,9 @@ class AuthProvider extends ChangeNotifier {
 
       var responseBody = jsonDecode(r.body);
       bool success = responseBody['success'] ?? false;
-      print(responseBody);
 
       if (success) {
         DoctorModel u = DoctorModel.fromJson(responseBody['data']['doctor']);
-        print(u.email);
 
         handleFCMTokenRefresh(u.id.toString());
 
@@ -241,7 +236,6 @@ class AuthProvider extends ChangeNotifier {
           data: responseBody,
         );
       } else {
-        print("Failed to get User");
         return CustomResponse(
           success: false,
           msg: responseBody['msg'] ?? 'Failed to get User',
@@ -250,7 +244,6 @@ class AuthProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      print(e.toString());
       return CustomResponse(
           success: false, msg: "Failed to get User", code: 400);
     }
@@ -355,23 +348,11 @@ class AuthProvider extends ChangeNotifier {
         "deviceToken": deviceToken,
       };
 
-      var r = await NetworkDataManger(client: http.Client()).putResponseFromUrl(
+      await NetworkDataManger(client: http.Client()).putResponseFromUrl(
         "${baseAuthUrl}doctor/update-device-token/$id",
         data: data,
       );
-
-      var responseBody = jsonDecode(r.body);
-
-      bool success = responseBody['success'] ?? false;
-
-      if (success) {
-        print("Token Upated");
-      } else {
-        print("Token Upated Failed");
-      }
-    } catch (e) {
-      print("Token Upated Failed with reason $e");
-    }
+    } catch (e) {}
   }
 
   Future<CustomResponse> forgetPassword({

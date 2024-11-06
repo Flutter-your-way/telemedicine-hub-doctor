@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -94,7 +96,6 @@ class ProfileProvider extends ChangeNotifier {
       var response = await request.send();
       var responseBody = await response.stream.bytesToString();
       var resBody = jsonDecode(responseBody);
-      print(resBody);
 
       int statusCode = response.statusCode;
       bool success = resBody['success'] ?? false;
@@ -113,7 +114,7 @@ class ProfileProvider extends ChangeNotifier {
           data: {},
         );
       }
-    } catch (e, stacktrace) {
+    } catch (e) {
       return CustomResponse(success: false, msg: "Failed to Upload", code: 400);
     } finally {
       isLoading = false;

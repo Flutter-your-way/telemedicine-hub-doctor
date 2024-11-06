@@ -41,7 +41,7 @@ class CustomOutlineButton extends StatelessWidget {
             width: 20.w,
           ),
           title: Text(
-            "      ${text}",
+            "      $text",
             style: TextStyle(
                 color: AppColors.black,
                 fontSize: 16.sp,

@@ -1,10 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:telemedicine_hub_doctor/common/constants/app_constants.dart';
 import 'package:telemedicine_hub_doctor/common/managers/local_manager.dart';
 import 'package:telemedicine_hub_doctor/common/managers/network_manager.dart';
@@ -30,29 +31,24 @@ class HomeProvider extends ChangeNotifier {
     required String doctorId,
     required String status,
     int page = 1,
-    String search = '', // Add search parameter
-
+    String search = '',
     int limit = 10,
   }) async {
-    String currentLang =
-        LanguageProvider.getCurrentLanguage; // Get language directly
-    print(currentLang);
+    String currentLang = LanguageProvider.getCurrentLanguage;
     String? accessToken = await LocalDataManager.getToken();
     isLoading = true;
     notifyListeners();
 
     try {
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
-        "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=$status&page=$page&limit=$limit&search=$search",
+        "${baseAuthUrl}ticket/get-all-tickets?doctorId=$doctorId&status=$status&page=$page&limit=$limit&search=$search&type=doctor",
         headers: {
           "Authorization": "Bearer $accessToken",
           "type": "doctor",
           "Language": currentLang,
         },
       );
-      log(r.body);
       var responseBody = jsonDecode(r.body);
-      print(responseBody);
 
       bool success = responseBody['success'] ?? false;
 
@@ -61,7 +57,6 @@ class HomeProvider extends ChangeNotifier {
             .map<TicketModel>((json) => TicketModel.fromJson(json))
             .toList();
 
-        // Extract pagination information
         var paginationInfo = {
           'currentPage':
               responseBody['data']['pagination']['currentPage'] ?? page,
@@ -87,7 +82,6 @@ class HomeProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      print('Error fetching tickets: $e');
       return CustomResponse(
         success: false,
         msg: "Failed to fetch tickets: $e",
@@ -104,16 +98,13 @@ class HomeProvider extends ChangeNotifier {
     String? accessToken = await LocalDataManager.getToken();
     String? doctorId = await LocalDataManager
         .getUserId(); // Assuming you have a method to get the doctor's ID
-    print(doctorId);
     try {
       var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
         "${baseAuthUrl}ticket/get-all-tickets-count/$doctorId",
         headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
       );
 
-      print("API Response Body: ${r.body}");
       var responseBody = jsonDecode(r.body);
-      print("Decoded Response Body: $responseBody");
 
       bool success = responseBody['success'] ?? false;
 
@@ -137,7 +128,6 @@ class HomeProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      print("Error fetching ticket counts: $e");
       return CustomResponse(
         success: false,
         msg: "Failed to fetch ticket counts: $e",
@@ -151,7 +141,6 @@ class HomeProvider extends ChangeNotifier {
     String? accessToken = await LocalDataManager.getToken();
     isLoading = true;
     notifyListeners();
-    print(ticketId);
     String currentLang =
         LanguageProvider.getCurrentLanguage; // Get language directly
     try {
@@ -165,16 +154,11 @@ class HomeProvider extends ChangeNotifier {
       );
       log(r.body);
       var responseBody = jsonDecode(r.body);
-      print(responseBody);
-
       bool success = responseBody['success'] ?? false;
 
       if (success) {
         TicketModel ticket =
             TicketModel.fromJson(responseBody['data']['ticket']);
-        print('Parsed Ticket: $ticket'); // For debugging
-        print(
-            'Questions and Answers: ${ticket.questionsAndAnswers}'); // For debugging
         return CustomResponse(
           success: true,
           msg: responseBody['msg'],
@@ -278,7 +262,6 @@ class HomeProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      print("Error: $e");
       return CustomResponse(
         success: false,
         msg: "Error occurred during file download: $e",
@@ -287,7 +270,7 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  Future<CustomResponse> MarkAsComplete({
+  Future<CustomResponse> markAsComplete({
     required String id,
     required String note,
     File? file,
@@ -340,9 +323,7 @@ class HomeProvider extends ChangeNotifier {
           data: {},
         );
       }
-    } catch (e, stacktrace) {
-      print("Error in MarkAsComplete: $e");
-      print("Stacktrace: $stacktrace");
+    } catch (e) {
       return CustomResponse(
           success: false, msg: "Failed to mark as complete", code: 400);
     } finally {
@@ -445,7 +426,7 @@ class HomeProvider extends ChangeNotifier {
           data: {},
         );
       }
-    } catch (e, stacktrace) {
+    } catch (e) {
       return CustomResponse(success: false, msg: "Failed to Upload", code: 400);
     } finally {
       isLoading = false;
@@ -527,7 +508,6 @@ class HomeProvider extends ChangeNotifier {
         headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
       );
 
-      print(r.body);
       var responseBody = jsonDecode(r.body);
 
       bool success = responseBody['success'] ?? false;

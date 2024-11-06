@@ -223,12 +223,9 @@ class QuestionsAndAnswers {
   QuestionsAndAnswers({this.question, this.answer, this.id});
 
   QuestionsAndAnswers.fromJson(Map<String, dynamic> json) {
-    print('Parsing QuestionsAndAnswers from JSON: $json'); // Debug print
     question = json['question'];
     answer = json['answer'];
     id = json['_id'];
-    print(
-        'Parsed QuestionsAndAnswers: question=$question, answer=$answer, id=$id'); // Debug print
   }
 }
 

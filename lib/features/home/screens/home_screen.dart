@@ -11,14 +11,12 @@ import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_count_model.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
-import 'package:telemedicine_hub_doctor/common/util/loading_view.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/notification_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/ticket_view_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/ticker_view.dart';
-import 'package:telemedicine_hub_doctor/features/profile/provider/language_provider.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
@@ -80,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (res.success) {
       return res.data['tickets'];
     } else {
-      throw Exception(res.msg ?? 'Failed to fetch tickets');
+      throw Exception(res.msg);
     }
   }
 
@@ -129,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   CupertinoDialogRoute(
                                     builder: (context) => TicketViewScreen(
                                         title: AppLocalizations.of(context)!
-                                            .completedTickets),
+                                            .completedTickets, value: 'Completed Tickets',),
                                     context: context,
                                   ),
                                 );
@@ -146,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   CupertinoDialogRoute(
                                     builder: (context) => TicketViewScreen(
                                         title: AppLocalizations.of(context)!
-                                            .pendingTickets),
+                                            .pendingTickets, value: 'Pending Tickets',),
                                     context: context,
                                   ),
                                 );
@@ -235,80 +233,74 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 Widget noDataView(BuildContext context) {
-  return Container(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(
-          height: 100.h,
-        ),
-        Text(
-          AppLocalizations.of(context)!.noTicketFound,
-          style: GoogleFonts.openSans(
-              textStyle:
-                  TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
-        ),
-        SizedBox(
-          height: 40.h,
-        ),
-        SizedBox(
-            height: 160.h,
-            width: 160.w,
-            child: SvgPicture.asset(AppImages.no_data)),
-      ],
-    ),
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      SizedBox(
+        height: 100.h,
+      ),
+      Text(
+        AppLocalizations.of(context)!.noTicketFound,
+        style: GoogleFonts.openSans(
+            textStyle:
+                TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
+      ),
+      SizedBox(
+        height: 40.h,
+      ),
+      SizedBox(
+          height: 160.h,
+          width: 160.w,
+          child: SvgPicture.asset(AppImages.no_data)),
+    ],
   );
 }
 
 Widget noDataViewForwardCase(BuildContext context) {
-  return Container(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(
-          height: 100.h,
-        ),
-        Text(
-          AppLocalizations.of(context)!.noDoctorFound,
-          style: GoogleFonts.openSans(
-              textStyle:
-                  TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
-        ),
-        SizedBox(
-          height: 40.h,
-        ),
-        SizedBox(
-            height: 160.h,
-            width: 160.w,
-            child: SvgPicture.asset(AppImages.no_data)),
-      ],
-    ),
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      SizedBox(
+        height: 100.h,
+      ),
+      Text(
+        AppLocalizations.of(context)!.noDoctorFound,
+        style: GoogleFonts.openSans(
+            textStyle:
+                TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
+      ),
+      SizedBox(
+        height: 40.h,
+      ),
+      SizedBox(
+          height: 160.h,
+          width: 160.w,
+          child: SvgPicture.asset(AppImages.no_data)),
+    ],
   );
 }
 
 Widget noNotificationsAvailable(BuildContext context) {
-  return Container(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          AppLocalizations.of(context)!.noNotificationsAvailable,
-          style: GoogleFonts.openSans(
-              textStyle:
-                  TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
-        ),
-        SizedBox(
-          height: 40.h,
-        ),
-        SizedBox(
-            height: 160.h,
-            width: 160.w,
-            child: SvgPicture.asset(AppImages.no_data)),
-      ],
-    ),
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Text(
+        AppLocalizations.of(context)!.noNotificationsAvailable,
+        style: GoogleFonts.openSans(
+            textStyle:
+                TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
+      ),
+      SizedBox(
+        height: 40.h,
+      ),
+      SizedBox(
+          height: 160.h,
+          width: 160.w,
+          child: SvgPicture.asset(AppImages.no_data)),
+    ],
   );
 }
 
@@ -331,8 +323,6 @@ class HomeAppBar extends StatelessWidget {
     }
 
     var authProvider = Provider.of<AuthProvider>(context);
-    var selectedLanguage =
-        Provider.of<LanguageProvider>(context, listen: false).selectedLanguage;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Column(

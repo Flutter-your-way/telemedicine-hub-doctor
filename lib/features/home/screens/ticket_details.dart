@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, library_private_types_in_public_api, use_build_context_synchronously, curly_braces_in_flow_control_structures, empty_catches, must_be_immutable
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -55,7 +55,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
             .usermodel!
             .id
             .toString();
-        print("Current ID :  + $currentUserId");
+
         getComment();
       },
     );
@@ -73,9 +73,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
         commentList = [];
         Fluttertoast.showToast(msg: "No Comment till now !");
       }
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   Future<void> _fetchTicketDetails() async {
@@ -100,7 +98,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
       } else {
         setState(() {
           isLoading = false;
-          errorMessage = response.msg ?? "Failed to fetch ticket details";
+          errorMessage = response.msg;
         });
       }
     } catch (e) {
@@ -610,7 +608,6 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                               .extension(
                                                                   fileUrl)
                                                               .toLowerCase();
-                                                      print(fileExtension);
                                                       if (fileExtension ==
                                                           '.pdf') {
                                                         Navigator.of(context)
@@ -623,7 +620,6 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                           ),
                                                         );
                                                       } else {
-                                                        print(fileExtension);
                                                         showImageDialog(
                                                             context, fileUrl);
                                                       }
@@ -1348,7 +1344,7 @@ void _buildPrescribeFeild({
                                         : 'pdf';
                                   }
 
-                                  var r = await homeProvider.MarkAsComplete(
+                                  var r = await homeProvider.markAsComplete(
                                     id: id,
                                     note: controller.text,
                                     file: fileToUpload,
@@ -1431,22 +1427,6 @@ void _buildPatientProfile(
     {required BuildContext context,
     required Patient? patient,
     required String disease}) {
-  // // Ensure patient and patient.age are not null before parsing
-  // if (patient != null && patient.age != null) {
-  //   try {
-  //     print("Dob${patient.age.toString()}");
-  //     // Assuming patient.age is in a proper date format. Adjust as necessary.
-  //     formattedDate = DateTime.parse(patient.age.toString())
-  //         .toIso8601String()
-  //         .substring(0, 10);
-  //   } catch (e) {
-  //     print('Error parsing date: $e');
-  //     formattedDate = 'Invalid date'; // Default value or handle it accordingly
-  //   }
-  // } else {
-  //   formattedDate = 'N/A'; // Handle the case when patient or age is null
-  // }
-
   String calculateAge(DateTime? birthDate) {
     if (birthDate == null) {
       return 'N/A'; // Handle null birthdate case
@@ -1569,7 +1549,7 @@ void _buildPatientProfile(
                               width: 10.w,
                             ),
                             infoBox(
-                                key: AppLocalizations.of(context)!.dob,
+                                key: AppLocalizations.of(context)!.age,
                                 value: calculateAge(patient?.age)),
                           ],
                         ),
@@ -1681,14 +1661,11 @@ class ImagePickerHelper {
       final XFile? pickedFile =
           await picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
-        print('Selected image: ${pickedFile.name} at ${pickedFile.path}');
         return pickedFile;
       } else {
-        print('No image selected');
         return null;
       }
     } catch (e) {
-      print('Error picking image: $e');
       // Show an error dialog
       await showDialog(
         context: context,

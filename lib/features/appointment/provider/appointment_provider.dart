@@ -90,7 +90,7 @@ class AppointmentProvider extends ChangeNotifier {
       );
 
       var responseBody = jsonDecode(r.body);
-      print("Bodt: ${r.body}");
+
 
       bool success = responseBody['success'] ?? false;
 

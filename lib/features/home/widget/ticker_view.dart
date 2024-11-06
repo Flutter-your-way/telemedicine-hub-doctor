@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -62,7 +62,7 @@ class _TicketCardState extends State<TicketCard> {
     }
 
     DateTime dateTime = DateTime.parse(
-        widget.ticket.scheduleDate.toString() ?? DateTime.now().toString());
+        widget.ticket.scheduleDate.toString());
     String formattedDate = DateFormat('d MMM yyyy').format(dateTime);
 
     String formattedTime = DateFormat('h:mm a').format(dateTime);
