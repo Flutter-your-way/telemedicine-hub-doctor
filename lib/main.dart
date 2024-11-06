@@ -26,6 +26,7 @@ import 'package:telemedicine_hub_doctor/routes/app_routes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
+    name: "telemedicine-hub-afa78",
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final languageProvider = LanguageProvider();
@@ -64,7 +65,6 @@ class MyApp extends StatelessWidget {
             MaterialApp(
           useInheritedMediaQuery: true,
           locale: languageProvider.locale,
-          // builder: DevicePreview.appBuilder,
           debugShowCheckedModeBanner: false,
 
           localizationsDelegates: const [

@@ -666,8 +666,6 @@ class _PsychologyTicketDetailsScreenState
                                                             .doctorPrescriptionAndNotes!
                                                             .prescriptionUrls!
                                                             .isNotEmpty) {
-                                                      print(
-                                                          "PDF: ${ticket!.doctorPrescriptionAndNotes!.prescriptionUrls!}");
                                                       final String fileUrl = ticket!
                                                           .doctorPrescriptionAndNotes!
                                                           .prescriptionUrls![0];
@@ -678,7 +676,6 @@ class _PsychologyTicketDetailsScreenState
                                                               .toLowerCase();
                                                       if (fileExtension ==
                                                           '.pdf') {
-                                                        print("PDF");
                                                         Navigator.of(context)
                                                             .push(
                                                           MaterialPageRoute(
@@ -689,7 +686,6 @@ class _PsychologyTicketDetailsScreenState
                                                           ),
                                                         );
                                                       } else {
-                                                        print("URL");
                                                         showImageDialog(
                                                             context, fileUrl);
                                                       }

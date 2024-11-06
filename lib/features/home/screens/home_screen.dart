@@ -126,8 +126,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context,
                                   CupertinoDialogRoute(
                                     builder: (context) => TicketViewScreen(
-                                        title: AppLocalizations.of(context)!
-                                            .completedTickets, value: 'Completed Tickets',),
+                                      title: AppLocalizations.of(context)!
+                                          .completedTickets,
+                                      value: 'Completed Tickets',
+                                    ),
                                     context: context,
                                   ),
                                 );
@@ -143,8 +145,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context,
                                   CupertinoDialogRoute(
                                     builder: (context) => TicketViewScreen(
-                                        title: AppLocalizations.of(context)!
-                                            .pendingTickets, value: 'Pending Tickets',),
+                                      title: AppLocalizations.of(context)!
+                                          .pendingTickets,
+                                      value: 'Pending Tickets',
+                                    ),
                                     context: context,
                                   ),
                                 );
@@ -243,8 +247,7 @@ Widget noDataView(BuildContext context) {
       Text(
         AppLocalizations.of(context)!.noTicketFound,
         style: GoogleFonts.openSans(
-            textStyle:
-                TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
+            textStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
       ),
       SizedBox(
         height: 40.h,
@@ -268,8 +271,7 @@ Widget noDataViewForwardCase(BuildContext context) {
       Text(
         AppLocalizations.of(context)!.noDoctorFound,
         style: GoogleFonts.openSans(
-            textStyle:
-                TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
+            textStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
       ),
       SizedBox(
         height: 40.h,
@@ -290,8 +292,7 @@ Widget noNotificationsAvailable(BuildContext context) {
       Text(
         AppLocalizations.of(context)!.noNotificationsAvailable,
         style: GoogleFonts.openSans(
-            textStyle:
-                TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
+            textStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 18.sp)),
       ),
       SizedBox(
         height: 40.h,

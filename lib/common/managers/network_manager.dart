@@ -101,20 +101,14 @@ class NetworkDataManger {
       var r =
           await NetworkDataManger(client: http.Client()).postResponseFromUrl(
         "${baseAuthUrl}doctor/refresh-access-token",
-        data: {"refreshToken": refreshToken},
-        // headers: {
-        //   "Content-Type": "application/json",
-        //   "Connection": "keep-alive",
-        //   "Accept-Encoding": "gzip, deflate, br",
-        //   "Accept": "*/*",
-        //   "User-Agent": "PostmanRuntime/7.40.0",
-        //   "Authorization": "Bearer ${accessToken.toString()}",
-        // },
+        data: {"refreshToken": refreshToken.toString()},
       );
 
       if (r.statusCode == 200) {
-        String newToken = jsonDecode(r.body)['accessToken'];
+        String newToken = jsonDecode(r.body)['data']['accessToken'];
+        String refreshToken = jsonDecode(r.body)['data']['refreshToken'];
         await LocalDataManager.storeToken(newToken);
+        await LocalDataManager.storeRefreshToken(refreshToken);
         return CustomResponse(
           success: false,
           msg: 'Token refreshed successfully',
