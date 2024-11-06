@@ -740,25 +740,15 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                           msg: r.msg);
                                                       CommentModel cm =
                                                           CommentModel(
-                                                              doctor: ticket!
-                                                                  .doctor!.id
-                                                                  .toString(),
-                                                              fileKey: "",
-                                                              fileUrl: "",
-                                                              id: "",
                                                               message:
                                                                   _controller
                                                                       .text,
-                                                              patient: ticket!
-                                                                  .patient!.id
-                                                                  .toString(),
                                                               ticket: ticket!.id
                                                                   .toString(),
                                                               user: ticket!
-                                                                  .patient!.id
+                                                                  .doctor!.id
                                                                   .toString());
                                                       commentList.add(cm);
-                                                      // getComment();
                                                       setState(() {
                                                         _controller.text = "";
                                                       });

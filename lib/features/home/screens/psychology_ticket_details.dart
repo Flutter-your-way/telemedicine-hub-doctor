@@ -609,7 +609,7 @@ class _PsychologyTicketDetailsScreenState
                                     if (commentList.isNotEmpty)
                                       Consumer<HomeProvider>(
                                           builder: (context, provider, child) {
-                                        if (provider.isLoading) {
+                                        if (provider.commentLoading) {
                                           return const Center(
                                               child:
                                                   CircularProgressIndicator());
@@ -666,6 +666,8 @@ class _PsychologyTicketDetailsScreenState
                                                             .doctorPrescriptionAndNotes!
                                                             .prescriptionUrls!
                                                             .isNotEmpty) {
+                                                      print(
+                                                          "PDF: ${ticket!.doctorPrescriptionAndNotes!.prescriptionUrls!}");
                                                       final String fileUrl = ticket!
                                                           .doctorPrescriptionAndNotes!
                                                           .prescriptionUrls![0];
@@ -676,6 +678,7 @@ class _PsychologyTicketDetailsScreenState
                                                               .toLowerCase();
                                                       if (fileExtension ==
                                                           '.pdf') {
+                                                        print("PDF");
                                                         Navigator.of(context)
                                                             .push(
                                                           MaterialPageRoute(
@@ -686,6 +689,7 @@ class _PsychologyTicketDetailsScreenState
                                                           ),
                                                         );
                                                       } else {
+                                                        print("URL");
                                                         showImageDialog(
                                                             context, fileUrl);
                                                       }
@@ -804,7 +808,18 @@ class _PsychologyTicketDetailsScreenState
                                                     if (r.success) {
                                                       Fluttertoast.showToast(
                                                           msg: r.msg);
-                                                      getComment();
+
+                                                      CommentModel cm =
+                                                          CommentModel(
+                                                              message:
+                                                                  _controller
+                                                                      .text,
+                                                              ticket: ticket!.id
+                                                                  .toString(),
+                                                              user: ticket!
+                                                                  .doctor!.id
+                                                                  .toString());
+                                                      commentList.add(cm);
                                                       setState(() {
                                                         _controller.text = "";
                                                       });

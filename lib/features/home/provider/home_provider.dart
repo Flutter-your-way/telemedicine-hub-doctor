@@ -439,7 +439,7 @@ class HomeProvider extends ChangeNotifier {
     required String ticketid,
   }) async {
     String? accessToken = await LocalDataManager.getToken();
-    isLoading = true;
+    commentLoading = true;
     notifyListeners();
 
     try {
@@ -458,6 +458,12 @@ class HomeProvider extends ChangeNotifier {
         List<CommentModel> commentList = responseBody['data']['comments']
             .map<CommentModel>((json) => CommentModel.fromJson(json))
             .toList();
+
+        commentList.sort((a, b) {
+          if (a.createdAt == null || b.createdAt == null) return 0;
+          return a.createdAt!.compareTo(b.createdAt!);
+        });
+
         return CustomResponse(
           success: true,
           msg: responseBody['msg'],
@@ -473,12 +479,12 @@ class HomeProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      isLoading = false;
+      commentLoading = false;
       notifyListeners();
       return CustomResponse(
           success: false, msg: "Failed to fetch diseases", code: 400);
     } finally {
-      isLoading = false;
+      commentLoading = false;
       notifyListeners();
     }
   }
@@ -490,7 +496,7 @@ class HomeProvider extends ChangeNotifier {
     required String message,
   }) async {
     String? accessToken = await LocalDataManager.getToken();
-    commentLoading = true;
+    isLoading = true;
     notifyListeners();
 
     Map<String, dynamic> data = {
@@ -528,12 +534,12 @@ class HomeProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      commentLoading = false;
+      isLoading = false;
       notifyListeners();
       return CustomResponse(
           success: false, msg: "Failed to fetch diseases", code: 400);
     } finally {
-      commentLoading = false;
+      isLoading = false;
       notifyListeners();
     }
   }
