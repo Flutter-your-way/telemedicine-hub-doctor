@@ -543,4 +543,55 @@ class HomeProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<CustomResponse> getAgoraAccessToken({
+    required String channelName,
+  }) async {
+    String? accessToken = await LocalDataManager.getToken();
+    isLoading = true;
+    notifyListeners();
+
+    Map<String, dynamic> data = {"channelName": channelName};
+
+    try {
+      var r =
+          await NetworkDataManger(client: http.Client()).postResponseFromUrl(
+        "${baseAuthUrl}agora/generate-token",
+        data: data,
+        headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
+      );
+
+      print(r.body);
+      var responseBody = jsonDecode(r.body);
+
+      bool success = responseBody['success'] ?? false;
+
+      if (success) {
+        String agoraAccessToken = responseBody['data']['agoraAccessToken'];
+        return CustomResponse(
+          success: true,
+          msg: responseBody['msg'],
+          code: r.statusCode,
+          data: {
+            "agoraAccessToken": agoraAccessToken,
+          },
+        );
+      } else {
+        return CustomResponse(
+          success: false,
+          msg: responseBody['msg'] ?? 'Failed to get Access token',
+          code: r.statusCode,
+          data: {},
+        );
+      }
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+      return CustomResponse(
+          success: false, msg: "Failed to fetch diseases", code: 400);
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 }

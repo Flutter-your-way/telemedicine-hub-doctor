@@ -23,6 +23,7 @@ import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/forward_case.dart';
+import 'package:telemedicine_hub_doctor/features/home/screens/meeting_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/pdf_viewer_screen.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -943,9 +944,19 @@ class _PsychologyTicketDetailsScreenState
                                                             12),
                                                   )),
                                               onPressed: () {
-                                                _buildJoinSessionFeild(
+                                                buildJoinSessionFeild(
                                                   context: context,
-                                                  meetLink: ticket!.meetLink
+                                                  meetLink: ticket!.meetingLink
+                                                      .toString(),
+                                                  doctorId:
+                                                      ticket?.doctor?.id ?? ' ',
+                                                  patientId:
+                                                      ticket?.patient?.id ??
+                                                          ' ',
+                                                  appointmentId:
+                                                      ticket?.id ?? ' ',
+                                                  channelName: ticket!
+                                                      .meetingLink!.agora
                                                       .toString(),
                                                 );
                                               },
@@ -1614,10 +1625,13 @@ void _buildPrescribeFeild({
   );
 }
 
-void _buildJoinSessionFeild({
-  required BuildContext context,
-  required String meetLink,
-}) {
+void buildJoinSessionFeild(
+    {required BuildContext context,
+    required String meetLink,
+    required String doctorId,
+    required String patientId,
+    required String appointmentId,
+    required String channelName}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -1628,9 +1642,9 @@ void _buildJoinSessionFeild({
     ),
     builder: (BuildContext context) {
       return DraggableScrollableSheet(
-        initialChildSize: 0.4,
-        minChildSize: 0.4,
-        maxChildSize: 0.4,
+        initialChildSize: 0.3,
+        minChildSize: 0.3,
+        maxChildSize: 0.3,
         expand: false,
         snap: true,
         builder: (BuildContext context, ScrollController scrollController) {
@@ -1673,15 +1687,14 @@ void _buildJoinSessionFeild({
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    AppLocalizations.of(context)!.meetingLink,
+                                    "Join Meeting",
                                     style: TextStyle(
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Text(
-                                    AppLocalizations.of(context)!
-                                        .useThisLinkInOrderToJoinTheMeeting,
+                                    "Click below to join session",
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                     ),
@@ -1691,38 +1704,36 @@ void _buildJoinSessionFeild({
                             ],
                           ),
                           SizedBox(height: 24.h),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12.w, vertical: 8.h),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    meetLink.isNotEmpty
-                                        ? meetLink
-                                        : "Not Assigned Yet",
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 14.sp),
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.copy, size: 20),
-                                  onPressed: () {
-                                    Clipboard.setData(
-                                        ClipboardData(text: meetLink));
+                          // Container(
+                          //   padding: EdgeInsets.symmetric(
+                          //       horizontal: 12.w, vertical: 8.h),
+                          //   decoration: BoxDecoration(
+                          //     border: Border.all(color: Colors.grey[300]!),
+                          //     borderRadius: BorderRadius.circular(8),
+                          //   ),
+                          //   child: Row(
+                          //     children: [
+                          //       Expanded(
+                          //         child: Text(
+                          //           meetLink,
+                          //           maxLines: 1,
+                          //           overflow: TextOverflow.ellipsis,
+                          //           style: TextStyle(fontSize: 14.sp),
+                          //         ),
+                          //       ),
+                          //       IconButton(
+                          //         icon: const Icon(Icons.copy, size: 20),
+                          //         onPressed: () {
+                          //           Clipboard.setData(
+                          //               ClipboardData(text: meetLink));
 
-                                    Fluttertoast.showToast(
-                                        msg: "Link copied to clipboard");
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+                          //           Fluttertoast.showToast(
+                          //               msg: "Link copied to clipboard");
+                          //         },
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                           SizedBox(height: 24.h),
                         ],
                       ),
@@ -1741,7 +1752,17 @@ void _buildJoinSessionFeild({
                               borderRadius: BorderRadius.circular(12),
                             )),
                         onPressed: () async {
-                          launchUrl(Uri.parse(meetLink));
+                          // launchUrl(Uri.parse(meetLink));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MeetingScreen(
+                                  doctorId: doctorId,
+                                  patientId: patientId,
+                                  appointmentId: appointmentId,
+                                  channelName: channelName,
+                                ),
+                              ));
                         },
                         child: Text(
                           AppLocalizations.of(context)!.joinSession,
