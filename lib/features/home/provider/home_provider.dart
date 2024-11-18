@@ -48,21 +48,41 @@ class HomeProvider extends ChangeNotifier {
           "Language": currentLang,
         },
       );
+
+      log("Get ALl Tickets : ${r.body}");
       var responseBody = jsonDecode(r.body);
 
       bool success = responseBody['success'] ?? false;
 
       if (success) {
-        List<TicketModel> tickets = (responseBody['data']['tickets'] as List)
-            .map<TicketModel>((json) => TicketModel.fromJson(json))
-            .toList();
+        print("success");
+        // final List<dynamic> ticketsJson = responseBody['data']['tickets'] ?? [];
+        // final List<TicketModel> tickets = ticketsJson
+        //     .map((ticketJson) => TicketModel.fromJson(ticketJson))
+        //     .toList();
 
-        var paginationInfo = {
-          'currentPage':
-              responseBody['data']['pagination']['currentPage'] ?? page,
-          'totalPages': responseBody['data']['pagination']['totalPages'] ?? 1,
-          'totalTickets': tickets.length,
-        };
+        final List<dynamic> ticketsJson =
+            responseBody['data']?['tickets'] ?? [];
+        final List<TicketModel> tickets = [];
+
+        for (var ticketJson in ticketsJson) {
+          try {
+            tickets.add(TicketModel.fromJson(ticketJson));
+          } catch (e) {
+            print('Error parsing ticket: $e');
+            print('Problematic ticket JSON: $ticketJson');
+          }
+        }
+
+        log("Get All Tickets in list  : $tickets");
+
+        var paginationInfo = responseBody['data']['pagination'] ??
+            {
+              'currentPage': page,
+              'totalPages': 1,
+              'totalItems': tickets.length,
+              'itemsPerPage': limit
+            };
 
         return CustomResponse(
           success: true,

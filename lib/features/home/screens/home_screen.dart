@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
@@ -47,40 +48,59 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await getTickets(pageKey);
-      final isLastPage = newItems.length < _pageSize;
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
+      final CustomResponse response = await getTickets(pageKey);
+      if (response.success && response.data != null) {
+        final List<TicketModel> newItems = response.data['tickets'];
+        final paginationData = response.data['pagination'];
+        final bool isLastPage = pageKey >= (paginationData['totalPages'] ?? 1);
+
+        if (isLastPage) {
+          _pagingController.appendLastPage(newItems);
+        } else {
+          final nextPageKey = pageKey + 1;
+          _pagingController.appendPage(newItems, nextPageKey);
+        }
       } else {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems, nextPageKey);
+        throw Exception(response.msg);
       }
     } catch (error) {
       _pagingController.error = error;
     }
   }
 
-  Future<CustomResponse> _fetchTicketCounts() {
-    return Provider.of<HomeProvider>(context, listen: false).getTicketCounts();
-  }
-
-  Future<List<TicketModel>> getTickets(int pageKey) async {
+  Future<CustomResponse> getTickets(int pageKey) async {
     var homeProvider = Provider.of<HomeProvider>(context, listen: false);
     var authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    var res = await homeProvider.getTickets(
+    return await homeProvider.getTickets(
       doctorId: authProvider.usermodel!.id.toString(),
       status: '',
       page: pageKey,
       limit: _pageSize,
     );
-
-    if (res.success) {
-      return res.data['tickets'];
-    } else {
-      throw Exception(res.msg);
-    }
   }
+
+  Future<CustomResponse> _fetchTicketCounts() {
+    return Provider.of<HomeProvider>(context, listen: false).getTicketCounts();
+  }
+
+  // Future<List<TicketModel>> getTickets(int pageKey) async {
+  //   var homeProvider = Provider.of<HomeProvider>(context, listen: false);
+  //   var authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+  //   var res = await homeProvider.getTickets(
+  //     doctorId: authProvider.usermodel!.id.toString(),
+  //     status: '',
+  //     page: pageKey,
+  //     limit: _pageSize,
+  //   );
+
+  //   if (res.success) {
+  //     return res.data['tickets'];
+  //   } else {
+  //     throw Exception(res.msg);
+  //   }
+  // }
 
   Future<void> _refreshData() async {
     // Refresh both the paging controller and the ticket counts
@@ -324,57 +344,60 @@ class HomeAppBar extends StatelessWidget {
     }
 
     var authProvider = Provider.of<AuthProvider>(context);
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: MediaQuery.paddingOf(context).top + 8.h),
-          Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    getGreeting(context),
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: AppColors.captionColor,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: MediaQuery.paddingOf(context).top + 8.h),
+            Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      getGreeting(context),
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: AppColors.captionColor,
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(authProvider.usermodel?.name.toString() ?? '',
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ],
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () async {
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => const NotificationScreen()));
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColors.primaryBlue,
+                        )),
+                    child: const Icon(
+                      Iconsax.notification,
+                      size: 24,
                     ),
                   ),
-                  SizedBox(height: 8.h),
-                  Text(authProvider.usermodel?.name.toString() ?? '',
-                      style: TextStyle(
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.bold,
-                      )),
-                ],
-              ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () async {
-                  Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                          builder: (context) => const NotificationScreen()));
-                },
-                child: Container(
-                  padding: EdgeInsets.all(12.w),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColors.primaryBlue,
-                      )),
-                  child: const Icon(
-                    Iconsax.notification,
-                    size: 24,
-                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-        ],
+              ],
+            ),
+            SizedBox(height: 16.h),
+          ],
+        ),
       ),
     );
   }

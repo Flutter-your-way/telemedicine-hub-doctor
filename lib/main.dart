@@ -66,7 +66,6 @@ class MyApp extends StatelessWidget {
           useInheritedMediaQuery: true,
           locale: languageProvider.locale,
           debugShowCheckedModeBanner: false,
-
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -83,6 +82,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             scaffoldBackgroundColor: Colors.transparent,
             appBarTheme: const AppBarTheme(
+              systemOverlayStyle: SystemUiOverlayStyle.dark,
               backgroundColor: Colors.transparent, // Make app bar transparent
               elevation: 0, // Remove shadow
               scrolledUnderElevation: 0,

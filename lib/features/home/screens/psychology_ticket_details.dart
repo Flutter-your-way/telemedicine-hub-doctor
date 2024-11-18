@@ -946,8 +946,6 @@ class _PsychologyTicketDetailsScreenState
                                               onPressed: () {
                                                 buildJoinSessionFeild(
                                                   context: context,
-                                                  meetLink: ticket!.meetingLink
-                                                      .toString(),
                                                   doctorId:
                                                       ticket?.doctor?.id ?? ' ',
                                                   patientId:
@@ -1627,7 +1625,6 @@ void _buildPrescribeFeild({
 
 void buildJoinSessionFeild(
     {required BuildContext context,
-    required String meetLink,
     required String doctorId,
     required String patientId,
     required String appointmentId,
