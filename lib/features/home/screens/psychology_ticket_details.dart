@@ -941,7 +941,7 @@ class _PsychologyTicketDetailsScreenState
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            12),
+                                                          12),
                                                   )),
                                               onPressed: () {
                                                 buildJoinSessionFeild(
@@ -951,8 +951,6 @@ class _PsychologyTicketDetailsScreenState
                                                   patientId:
                                                       ticket?.patient?.id ??
                                                           ' ',
-                                                  appointmentId:
-                                                      ticket?.id ?? ' ',
                                                   channelName: ticket!
                                                       .meetingLink!.agora
                                                       .toString(),
@@ -1627,7 +1625,6 @@ void buildJoinSessionFeild(
     {required BuildContext context,
     required String doctorId,
     required String patientId,
-    required String appointmentId,
     required String channelName}) {
   showModalBottomSheet(
     context: context,
@@ -1756,7 +1753,6 @@ void buildJoinSessionFeild(
                                 builder: (context) => MeetingScreen(
                                   doctorId: doctorId,
                                   patientId: patientId,
-                                  appointmentId: appointmentId,
                                   channelName: channelName,
                                 ),
                               ));

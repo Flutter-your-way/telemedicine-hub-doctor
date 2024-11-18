@@ -10,17 +10,16 @@ import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dar
 class MeetingScreen extends StatefulWidget {
   final String doctorId;
   final String patientId;
-  final String appointmentId;
   final String channelName;
 
   const MeetingScreen({
     super.key,
     required this.doctorId,
     required this.patientId,
-    required this.appointmentId,
     required this.channelName,
   });
 
+//   @override
   @override
   State<MeetingScreen> createState() => _MeetingScreenState();
 }
