@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:agora_rtm/agora_rtm.dart';
+import 'package:agora_token_service/agora_token_service.dart';
 import 'package:agora_uikit/agora_uikit.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -49,61 +50,39 @@ class _MeetingScreenState extends State<MeetingScreen> {
   }
 
   Future<void> initializeAgora() async {
-    try {
-      setState(() {
-        isLoading = true;
-        error = null;
-      });
+    setState(() {
+      isLoading = true;
+      error = null;
+    });
 
-      var res = await Provider.of<HomeProvider>(context, listen: false)
-          .getAgoraAccessToken(channelName: channelName);
+    const expirationInSeconds = 3600;
+    final currentTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final expireTimestamp = currentTimestamp + expirationInSeconds;
 
-      if (!mounted) return;
+    var tok = RtcTokenBuilder.build(
+      appId: '9b6433f0a0b6467da1416c44a6c576ae',
+      appCertificate: 'cbd0fc3390c8461bbcf949066288670e',
+      channelName: channelName,
+      uid: '',
+      role: RtcRole.publisher,
+      expireTimestamp: expireTimestamp,
+    );
 
-      if (res.success && res.data['agoraAccessToken'] != null) {
-        final token = res.data['agoraAccessToken'] as String;
-        log("Token Name: $token");
+    client = AgoraClient(
+      agoraConnectionData: AgoraConnectionData(
+        username: Provider.of<AuthProvider>(context, listen: false)
+            .usermodel!
+            .name
+            .toString(),
+        appId: appId,
+        channelName: channelName,
+        tempToken: tok,
+        rtmEnabled: false, // Disable RTM to avoid conflicts
+      ),
+      enabledPermission: [Permission.microphone, Permission.camera],
+    );
 
-        final newClient = AgoraClient(
-          agoraConnectionData: AgoraConnectionData(
-            username: Provider.of<AuthProvider>(context, listen: false)
-                .usermodel!
-                .name
-                .toString(),
-            appId: appId,
-            channelName: channelName,
-            tempToken: token,
-            rtmEnabled: false, // Disable RTM to avoid conflicts
-          ),
-          enabledPermission: [Permission.microphone, Permission.camera],
-        );
-
-        try {
-          await newClient.initialize();
-
-          if (mounted) {
-            setState(() {
-              client = newClient;
-              isLoading = false;
-            });
-          }
-        } catch (e) {
-          log("Initialize error: $e");
-          throw Exception("Failed to initialize Agora client: $e");
-        }
-      } else {
-        throw Exception(res.msg ?? 'Failed to get Agora token');
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          error = 'Failed to initialize video call: $e';
-          isLoading = false;
-        });
-      }
-      log("Agora Error: $e");
-      Fluttertoast.showToast(msg: 'Failed to initialize video call');
-    }
+    await client?.initialize();
   }
 
   Future<void> cleanupCall() async {

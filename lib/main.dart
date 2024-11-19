@@ -3,14 +3,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_kurdish_localization/kurdish_material_localization_delegate.dart';
 import 'package:flutter_kurdish_localization/kurdish_widget_localization_delegate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:telemedicine_hub_doctor/common/color/app_colors.dart';
 import 'package:telemedicine_hub_doctor/features/appointment/provider/appointment_provider.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
