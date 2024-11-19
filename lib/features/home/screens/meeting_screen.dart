@@ -1,12 +1,10 @@
 import 'dart:developer';
-import 'package:agora_rtm/agora_rtm.dart';
+
 import 'package:agora_token_service/agora_token_service.dart';
 import 'package:agora_uikit/agora_uikit.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
-import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 
 class MeetingScreen extends StatefulWidget {
   final String doctorId;
