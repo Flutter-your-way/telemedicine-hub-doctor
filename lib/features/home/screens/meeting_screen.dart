@@ -81,6 +81,11 @@ class _MeetingScreenState extends State<MeetingScreen> {
     );
 
     await client?.initialize();
+
+    setState(() {
+      isLoading = false;
+      error = null;
+    });
   }
 
   Future<void> cleanupCall() async {
