@@ -93,7 +93,6 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
         setState(() {
           ticket = response.data;
           isLoading = false;
-          // currentUserId = response.data;
         });
       } else {
         setState(() {
@@ -421,7 +420,6 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                           ),
                                         ),
                                       ),
-
                                       SizedBox(height: 16.h),
                                       ticket!.prescriptions != null &&
                                               ticket!.prescriptions!.isNotEmpty
@@ -506,36 +504,11 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                           }).toList(),
                                         )
                                       else
-                                        Text(
-                                          AppLocalizations.of(context)!
-                                              .noQuestionsAndAnswersAvailable,
+                                        const Text(
+                                          'No Questions and Answers Available',
                                           style: TextStyle(
-                                              fontSize: 14.sp,
-                                              color: Colors.grey),
+                                              fontSize: 14, color: Colors.grey),
                                         ),
-                                      // if (commentList.isNotEmpty)
-                                      //   Consumer<HomeProvider>(
-                                      //     builder: (context, provider, child) {
-                                      //       if (provider.isLoading) {
-                                      //         return const Center(
-                                      //             child: CircularProgressIndicator());
-                                      //       }
-                                      //       return ListView.builder(
-                                      //         physics:
-                                      //             const NeverScrollableScrollPhysics(),
-                                      //         itemCount: commentList.length,
-                                      //         shrinkWrap: true,
-                                      //         itemBuilder: (context, index) {
-                                      //           return CommentBubble(
-                                      //             comment: commentList[index],
-                                      //             isCurrentUser:
-                                      //                 commentList[index].user ==
-                                      //                     currentUserId,
-                                      //           );
-                                      //         },
-                                      //       );
-                                      //     },
-                                      //   ),
                                       SizedBox(
                                         height: 20.h,
                                       ),
@@ -956,9 +929,10 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget>
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.bluishWhite,
-        borderRadius: BorderRadius.circular(8.h),
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
@@ -970,14 +944,13 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget>
               children: [
                 Expanded(
                   child: Text(
-                    widget.questionAnswer.question ?? '',
-                    textAlign: TextAlign.start,
+                    widget.questionAnswer.question ?? 'No Question',
+                    style: GoogleFonts.openSans(
+                      textStyle: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.openSans(
-                      textStyle: TextStyle(
-                          fontSize: 12.sp, fontWeight: FontWeight.w600),
-                    ),
                   ),
                 ),
                 IconButton(
@@ -994,22 +967,18 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget>
               sizeFactor: _animation,
               axis: Axis.vertical,
               child: Container(
-                height: 44.h,
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 12.h),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.h)),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    widget.questionAnswer.answer ?? '',
-                    textAlign: TextAlign.start,
-                    maxLines: 2,
-                    style: GoogleFonts.openSans(
-                      textStyle: TextStyle(
-                          fontSize: 12.sp, fontWeight: FontWeight.w600),
-                    ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  widget.questionAnswer.getFirstAnswer(),
+                  style: GoogleFonts.openSans(
+                    textStyle: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w500),
                   ),
                 ),
               ),

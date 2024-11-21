@@ -112,9 +112,9 @@ class TicketModel {
           json['patient'] != null ? Patient.fromJson(json['patient']) : null,
       disease:
           json['disease'] != null ? Disease.fromJson(json['disease']) : null,
-      questionsAndAnswers: (json['QuestionsAndAnswers'] as List?)
+      questionsAndAnswers: (json['questionsAndAnswers'] as List?)
           ?.map((e) => QuestionsAndAnswers.fromJson(e))
-          .toList(),
+          .toList(), // Corrected key
       prescriptions:
           (json['prescriptions'] as List?)?.map((e) => e.toString()).toList() ??
               [],
@@ -367,7 +367,7 @@ class Feedback {
 
 class QuestionsAndAnswers {
   final String? question;
-  final dynamic answer;
+  final List<String>? answer;
   final String? id;
 
   QuestionsAndAnswers({
@@ -379,9 +379,9 @@ class QuestionsAndAnswers {
   factory QuestionsAndAnswers.fromJson(Map<String, dynamic> json) {
     return QuestionsAndAnswers(
       question: json['question']?.toString(),
-      answer: json['answer'] is List
-          ? json['answer'].map((e) => e.toString()).toList()
-          : json['answer']?.toString(),
+      answer: (json['answer'] is List)
+          ? (json['answer'] as List).map((e) => e.toString()).toList()
+          : [json['answer']?.toString()].whereType<String>().toList(),
       id: json['_id']?.toString(),
     );
   }
@@ -392,6 +392,11 @@ class QuestionsAndAnswers {
       'answer': answer,
       '_id': id,
     };
+  }
+
+  // Add a method to get the first answer or a default message
+  String getFirstAnswer() {
+    return answer?.isNotEmpty == true ? answer!.first : 'No answer available';
   }
 }
 

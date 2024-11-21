@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, empty_catches
 
 import 'dart:convert';
 import 'dart:developer';
@@ -55,7 +55,6 @@ class HomeProvider extends ChangeNotifier {
       bool success = responseBody['success'] ?? false;
 
       if (success) {
-        print("success");
         // final List<dynamic> ticketsJson = responseBody['data']['tickets'] ?? [];
         // final List<TicketModel> tickets = ticketsJson
         //     .map((ticketJson) => TicketModel.fromJson(ticketJson))
@@ -68,10 +67,7 @@ class HomeProvider extends ChangeNotifier {
         for (var ticketJson in ticketsJson) {
           try {
             tickets.add(TicketModel.fromJson(ticketJson));
-          } catch (e) {
-            print('Error parsing ticket: $e');
-            print('Problematic ticket JSON: $ticketJson');
-          }
+          } catch (e) {}
         }
 
         log("Get All Tickets in list  : $tickets");
@@ -581,7 +577,6 @@ class HomeProvider extends ChangeNotifier {
         headers: {"Authorization": "Bearer $accessToken", "type": "doctor"},
       );
 
-      print(r.body);
       var responseBody = jsonDecode(r.body);
 
       bool success = responseBody['success'] ?? false;

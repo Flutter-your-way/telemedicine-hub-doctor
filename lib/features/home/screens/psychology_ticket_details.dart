@@ -4,7 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,7 +25,6 @@ import 'package:telemedicine_hub_doctor/features/home/screens/forward_case.dart'
 import 'package:telemedicine_hub_doctor/features/home/screens/meeting_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/pdf_viewer_screen.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class PsychologyTicketDetailsScreen extends StatefulWidget {
   String? id;
@@ -941,7 +939,7 @@ class _PsychologyTicketDetailsScreenState
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                          12),
+                                                            12),
                                                   )),
                                               onPressed: () {
                                                 buildJoinSessionFeild(
@@ -1178,7 +1176,7 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget>
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    widget.questionAnswer.answer ?? '',
+                    widget.questionAnswer.answer?.join('\n') ?? '',
                     textAlign: TextAlign.start,
                     maxLines: 2,
                     style: GoogleFonts.openSans(
