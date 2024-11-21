@@ -51,7 +51,7 @@ class AuthProvider extends ChangeNotifier {
       bool success = responseBody['success'] ?? false;
 
       if (success) {
-        String? fcmToken = "await FirebaseMessaging.instance.getToken()";
+        String? fcmToken = await FirebaseMessaging.instance.getToken();
         String token = responseBody['data']['accessToken'];
         String userId = responseBody['data']['doctor']['_id'];
 
