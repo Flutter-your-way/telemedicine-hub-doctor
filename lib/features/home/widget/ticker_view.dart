@@ -61,15 +61,14 @@ class _TicketCardState extends State<TicketCard> {
       }
     }
 
-    DateTime dateTime = DateTime.parse(
-        widget.ticket.scheduleDate.toString());
+    DateTime dateTime = DateTime.parse(widget.ticket.scheduleDate.toString());
     String formattedDate = DateFormat('d MMM yyyy').format(dateTime);
 
     String formattedTime = DateFormat('h:mm a').format(dateTime);
     String timeUntilAppointment = getTimeUntilAppointment(dateTime);
     return GestureDetector(
       onTap: () {
-        if (widget.ticket.disease?.name == "mental") {
+        if (widget.ticket.ticketType == "psychology") {
           Navigator.push(
               context,
               CupertinoPageRoute(

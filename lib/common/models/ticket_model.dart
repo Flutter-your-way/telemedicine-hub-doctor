@@ -24,10 +24,10 @@ class TicketModel {
   final DateTime? updatedAt;
   final DoctorPrescriptionAndNotes? doctorPrescriptionAndNotes;
   final String? forwardedNote;
-  final String? paymentLink;
   final MeetingLink? meetingLink;
   final Feedback? feedback;
   final Amount? amount;
+  final String? ticketType;
 
   TicketModel({
     this.id,
@@ -43,66 +43,12 @@ class TicketModel {
     this.updatedAt,
     this.doctorPrescriptionAndNotes,
     this.forwardedNote,
-    this.paymentLink,
     this.meetingLink,
     this.feedback,
     this.amount,
+    this.ticketType,
   });
 
-  // factory TicketModel.fromJson(Map<String, dynamic> json) {
-  //   return TicketModel(
-  //     id: json['_id'] as String?,
-  //     name: json['name'] as String?,
-  //     doctor: json['doctor'] != null && json['doctor'] is Map<String, dynamic>
-  //         ? Doctor.fromJson(json['doctor'] as Map<String, dynamic>)
-  //         : null,
-  //     patient:
-  //         json['patient'] != null && json['patient'] is Map<String, dynamic>
-  //             ? Patient.fromJson(json['patient'] as Map<String, dynamic>)
-  //             : null,
-  //     disease:
-  //         json['disease'] != null && json['disease'] is Map<String, dynamic>
-  //             ? Disease.fromJson(json['disease'] as Map<String, dynamic>)
-  //             : null,
-  //     questionsAndAnswers: (json['questionsAndAnswers'] as List<dynamic>?)
-  //         ?.map((e) => e is Map<String, dynamic>
-  //             ? QuestionsAndAnswers.fromJson(e)
-  //             : null)
-  //         .whereType<QuestionsAndAnswers>()
-  //         .toList(),
-  //     prescriptions: (json['prescriptions'] as List<dynamic>?)
-  //         ?.map((e) => e.toString())
-  //         .toList(),
-  //     scheduleDate: json['scheduleDate'] != null
-  //         ? DateTime.tryParse(json['scheduleDate'] as String)
-  //         : null,
-  //     status: json['status'] as String?,
-  //     createdAt: json['createdAt'] != null
-  //         ? DateTime.tryParse(json['createdAt'] as String)
-  //         : null,
-  //     updatedAt: json['updatedAt'] != null
-  //         ? DateTime.tryParse(json['updatedAt'] as String)
-  //         : null,
-  //     doctorPrescriptionAndNotes: json['doctorPrescriptionAndNotes'] != null &&
-  //             json['doctorPrescriptionAndNotes'] is Map<String, dynamic>
-  //         ? DoctorPrescriptionAndNotes.fromJson(
-  //             json['doctorPrescriptionAndNotes'] as Map<String, dynamic>)
-  //         : null,
-  //     forwardedNote: json['forwardedNote'] as String?,
-  //     paymentLink: json['paymentLink'] as String?,
-  //     meetingLink: json['meetingLink'] != null &&
-  //             json['meetingLink'] is Map<String, dynamic>
-  //         ? MeetingLink.fromJson(json['meetingLink'] as Map<String, dynamic>)
-  //         : null,
-  //     feedback:
-  //         json['feedback'] != null && json['feedback'] is Map<String, dynamic>
-  //             ? Feedback.fromJson(json['feedback'] as Map<String, dynamic>)
-  //             : null,
-  //     amount: json['amount'] != null && json['amount'] is Map<String, dynamic>
-  //         ? Amount.fromJson(json['amount'] as Map<String, dynamic>)
-  //         : null,
-  //   );
-  // }
   factory TicketModel.fromJson(Map<String, dynamic> json) {
     return TicketModel(
       id: json['_id']?.toString(),
@@ -112,28 +58,32 @@ class TicketModel {
           json['patient'] != null ? Patient.fromJson(json['patient']) : null,
       disease:
           json['disease'] != null ? Disease.fromJson(json['disease']) : null,
-      questionsAndAnswers: (json['questionsAndAnswers'] as List?)
-          ?.map((e) => QuestionsAndAnswers.fromJson(e))
-          .toList(), // Corrected key
-      prescriptions:
-          (json['prescriptions'] as List?)?.map((e) => e.toString()).toList() ??
-              [],
+      questionsAndAnswers: (json['questionsAndAnswers'] as List<dynamic>?)
+          ?.map((e) => QuestionsAndAnswers.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      prescriptions: (json['prescriptions'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
       scheduleDate: tryParseDateTime(json['scheduleDate']),
       status: json['status']?.toString(),
       createdAt: tryParseDateTime(json['createdAt']),
       updatedAt: tryParseDateTime(json['updatedAt']),
       doctorPrescriptionAndNotes: json['doctorPrescriptionAndNotes'] != null
           ? DoctorPrescriptionAndNotes.fromJson(
-              json['doctorPrescriptionAndNotes'])
+              json['doctorPrescriptionAndNotes'] as Map<String, dynamic>)
           : null,
-      forwardedNote: json['forwardedNote']?.toString() ?? '',
-      paymentLink: json['paymentLink']?.toString(),
+      forwardedNote: json['forwardedNote']?.toString(),
       meetingLink: json['meetingLink'] != null
-          ? MeetingLink.fromJson(json['meetingLink'])
+          ? MeetingLink.fromJson(json['meetingLink'] as Map<String, dynamic>)
           : null,
-      feedback:
-          json['feedback'] != null ? Feedback.fromJson(json['feedback']) : null,
-      amount: json['amount'] != null ? Amount.fromJson(json['amount']) : null,
+      feedback: json['feedback'] != null
+          ? Feedback.fromJson(json['feedback'] as Map<String, dynamic>)
+          : null,
+      amount: json['amount'] != null
+          ? Amount.fromJson(json['amount'] as Map<String, dynamic>)
+          : null,
+      ticketType: json['ticketType']?.toString(),
     );
   }
 
@@ -144,7 +94,7 @@ class TicketModel {
       'doctor': doctor?.toJson(),
       'patient': patient?.toJson(),
       'disease': disease?.toJson(),
-      'QuestionsAndAnswers':
+      'questionsAndAnswers':
           questionsAndAnswers?.map((e) => e.toJson()).toList(),
       'prescriptions': prescriptions,
       'scheduleDate': scheduleDate?.toIso8601String(),
@@ -153,10 +103,10 @@ class TicketModel {
       'updatedAt': updatedAt?.toIso8601String(),
       'doctorPrescriptionAndNotes': doctorPrescriptionAndNotes?.toJson(),
       'forwardedNote': forwardedNote,
-      'paymentLink': paymentLink,
       'meetingLink': meetingLink?.toJson(),
       'feedback': feedback?.toJson(),
       'amount': amount?.toJson(),
+      'ticketType': ticketType,
     };
   }
 }
@@ -165,10 +115,8 @@ class Amount {
   final int? value;
   final String? currency;
 
-  Amount({
-    this.value,
-    this.currency,
-  });
+  Amount({this.value, this.currency});
+
   factory Amount.fromJson(Map<String, dynamic> json) {
     return Amount(
       value: json['value'] as int?,
@@ -176,12 +124,7 @@ class Amount {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'value': value,
-      'currency': currency,
-    };
-  }
+  Map<String, dynamic> toJson() => {'value': value, 'currency': currency};
 }
 
 class Doctor {
@@ -190,32 +133,246 @@ class Doctor {
   final String? price;
   final String? currencyType;
 
-  Doctor({
-    this.id,
-    this.nameEnglish,
-    this.price,
-    this.currencyType,
-  });
+  Doctor({this.id, this.nameEnglish, this.price, this.currencyType});
 
-  factory Doctor.fromJson(dynamic json) {
-    if (json is String) return Doctor(id: json);
+  factory Doctor.fromJson(Map<String, dynamic> json) {
     return Doctor(
-      id: json['_id'] as String?,
-      nameEnglish: json['name_english'] as String?,
-      price: json['price'] as String?,
-      currencyType: json['currencyType'] as String?,
+      id: json['_id']?.toString(),
+      nameEnglish: json['nameEnglish']?.toString(),
+      price: json['price']?.toString(),
+      currencyType: json['currencyType']?.toString(),
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'name_english': nameEnglish,
-      'price': price,
-      'currencyType': currencyType
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        '_id': id,
+        'nameEnglish': nameEnglish,
+        'price': price,
+        'currencyType': currencyType,
+      };
 }
+
+// Similar refactoring for Patient, Disease, FeedbackModel, MeetingLink,
+// QuestionsAndAnswers, DoctorPrescriptionAndNotes
+
+// DateTime? tryParseDateTime(dynamic value) {
+//   if (value == null) return null;
+//   try {
+//     if (value is String) {
+//       return DateTime.parse(value);
+//     }
+//     return null;
+//   } catch (e) {
+//     return null;
+//   }
+// }
+
+// class TicketModel {
+//   final String? id;
+//   final String? name;
+//   final Doctor? doctor;
+//   final Patient? patient;
+//   final Disease? disease;
+//   final List<QuestionsAndAnswers>? questionsAndAnswers;
+//   final List<String>? prescriptions;
+//   final DateTime? scheduleDate;
+//   final String? status;
+//   final DateTime? createdAt;
+//   final DateTime? updatedAt;
+//   final DoctorPrescriptionAndNotes? doctorPrescriptionAndNotes;
+//   final String? forwardedNote;
+//   final String? paymentLink;
+//   final MeetingLink? meetingLink;
+// final Feedback? feedback;
+//   final Amount? amount;
+
+//   TicketModel({
+//     this.id,
+//     this.name,
+//     this.doctor,
+//     this.patient,
+//     this.disease,
+//     this.questionsAndAnswers,
+//     this.prescriptions,
+//     this.scheduleDate,
+//     this.status,
+//     this.createdAt,
+//     this.updatedAt,
+//     this.doctorPrescriptionAndNotes,
+//     this.forwardedNote,
+//     this.paymentLink,
+//     this.meetingLink,
+//     this.feedback,
+//     this.amount,
+//   });
+
+//   // factory TicketModel.fromJson(Map<String, dynamic> json) {
+//   //   return TicketModel(
+//   //     id: json['_id'] as String?,
+//   //     name: json['name'] as String?,
+//   //     doctor: json['doctor'] != null && json['doctor'] is Map<String, dynamic>
+//   //         ? Doctor.fromJson(json['doctor'] as Map<String, dynamic>)
+//   //         : null,
+//   //     patient:
+//   //         json['patient'] != null && json['patient'] is Map<String, dynamic>
+//   //             ? Patient.fromJson(json['patient'] as Map<String, dynamic>)
+//   //             : null,
+//   //     disease:
+//   //         json['disease'] != null && json['disease'] is Map<String, dynamic>
+//   //             ? Disease.fromJson(json['disease'] as Map<String, dynamic>)
+//   //             : null,
+//   //     questionsAndAnswers: (json['questionsAndAnswers'] as List<dynamic>?)
+//   //         ?.map((e) => e is Map<String, dynamic>
+//   //             ? QuestionsAndAnswers.fromJson(e)
+//   //             : null)
+//   //         .whereType<QuestionsAndAnswers>()
+//   //         .toList(),
+//   //     prescriptions: (json['prescriptions'] as List<dynamic>?)
+//   //         ?.map((e) => e.toString())
+//   //         .toList(),
+//   //     scheduleDate: json['scheduleDate'] != null
+//   //         ? DateTime.tryParse(json['scheduleDate'] as String)
+//   //         : null,
+//   //     status: json['status'] as String?,
+//   //     createdAt: json['createdAt'] != null
+//   //         ? DateTime.tryParse(json['createdAt'] as String)
+//   //         : null,
+//   //     updatedAt: json['updatedAt'] != null
+//   //         ? DateTime.tryParse(json['updatedAt'] as String)
+//   //         : null,
+//   //     doctorPrescriptionAndNotes: json['doctorPrescriptionAndNotes'] != null &&
+//   //             json['doctorPrescriptionAndNotes'] is Map<String, dynamic>
+//   //         ? DoctorPrescriptionAndNotes.fromJson(
+//   //             json['doctorPrescriptionAndNotes'] as Map<String, dynamic>)
+//   //         : null,
+//   //     forwardedNote: json['forwardedNote'] as String?,
+//   //     paymentLink: json['paymentLink'] as String?,
+//   //     meetingLink: json['meetingLink'] != null &&
+//   //             json['meetingLink'] is Map<String, dynamic>
+//   //         ? MeetingLink.fromJson(json['meetingLink'] as Map<String, dynamic>)
+//   //         : null,
+//   //     feedback:
+//   //         json['feedback'] != null && json['feedback'] is Map<String, dynamic>
+//   //             ? Feedback.fromJson(json['feedback'] as Map<String, dynamic>)
+//   //             : null,
+//   //     amount: json['amount'] != null && json['amount'] is Map<String, dynamic>
+//   //         ? Amount.fromJson(json['amount'] as Map<String, dynamic>)
+//   //         : null,
+//   //   );
+//   // }
+//   factory TicketModel.fromJson(Map<String, dynamic> json) {
+//     return TicketModel(
+//       id: json['_id']?.toString(),
+//       name: json['name']?.toString(),
+//       doctor: json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null,
+//       patient:
+//           json['patient'] != null ? Patient.fromJson(json['patient']) : null,
+//       disease:
+//           json['disease'] != null ? Disease.fromJson(json['disease']) : null,
+//       questionsAndAnswers: (json['questionsAndAnswers'] as List?)
+//           ?.map((e) => QuestionsAndAnswers.fromJson(e))
+//           .toList(), // Corrected key
+//       prescriptions:
+//           (json['prescriptions'] as List?)?.map((e) => e.toString()).toList() ??
+//               [],
+//       scheduleDate: tryParseDateTime(json['scheduleDate']),
+//       status: json['status']?.toString(),
+//       createdAt: tryParseDateTime(json['createdAt']),
+//       updatedAt: tryParseDateTime(json['updatedAt']),
+//       doctorPrescriptionAndNotes: json['doctorPrescriptionAndNotes'] != null
+//           ? DoctorPrescriptionAndNotes.fromJson(
+//               json['doctorPrescriptionAndNotes'])
+//           : null,
+//       forwardedNote: json['forwardedNote']?.toString() ?? '',
+//       paymentLink: json['paymentLink']?.toString(),
+//       meetingLink: json['meetingLink'] != null
+//           ? MeetingLink.fromJson(json['meetingLink'])
+//           : null,
+//       feedback:
+//           json['feedback'] != null ? Feedback.fromJson(json['feedback']) : null,
+//       amount: json['amount'] != null ? Amount.fromJson(json['amount']) : null,
+//     );
+//   }
+
+//   Map<String, dynamic> toJson() {
+//     return {
+//       '_id': id,
+//       'name': name,
+//       'doctor': doctor?.toJson(),
+//       'patient': patient?.toJson(),
+//       'disease': disease?.toJson(),
+//       'QuestionsAndAnswers':
+//           questionsAndAnswers?.map((e) => e.toJson()).toList(),
+//       'prescriptions': prescriptions,
+//       'scheduleDate': scheduleDate?.toIso8601String(),
+//       'status': status,
+//       'createdAt': createdAt?.toIso8601String(),
+//       'updatedAt': updatedAt?.toIso8601String(),
+//       'doctorPrescriptionAndNotes': doctorPrescriptionAndNotes?.toJson(),
+//       'forwardedNote': forwardedNote,
+//       'paymentLink': paymentLink,
+//       'meetingLink': meetingLink?.toJson(),
+//       'feedback': feedback?.toJson(),
+//       'amount': amount?.toJson(),
+//     };
+//   }
+// }
+
+// class Amount {
+//   final int? value;
+//   final String? currency;
+
+//   Amount({
+//     this.value,
+//     this.currency,
+//   });
+//   factory Amount.fromJson(Map<String, dynamic> json) {
+//     return Amount(
+//       value: json['value'] as int?,
+//       currency: json['currency'] as String?,
+//     );
+//   }
+
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'value': value,
+//       'currency': currency,
+//     };
+//   }
+// }
+
+// class Doctor {
+//   final String? id;
+//   final String? nameEnglish;
+//   final String? price;
+//   final String? currencyType;
+
+//   Doctor({
+//     this.id,
+//     this.nameEnglish,
+//     this.price,
+//     this.currencyType,
+//   });
+
+//   factory Doctor.fromJson(dynamic json) {
+//     if (json is String) return Doctor(id: json);
+//     return Doctor(
+//       id: json['_id'] as String?,
+//       nameEnglish: json['name_english'] as String?,
+//       price: json['price'] as String?,
+//       currencyType: json['currencyType'] as String?,
+//     );
+//   }
+
+//   Map<String, dynamic> toJson() {
+//     return {
+//       '_id': id,
+//       'name_english': nameEnglish,
+//       'price': price,
+//       'currencyType': currencyType
+//     };
+//   }
+// }
 
 class Patient {
   final String? id;
@@ -407,9 +564,10 @@ class DoctorPrescriptionAndNotes {
   DoctorPrescriptionAndNotes({this.note, this.prescriptionUrls});
   DoctorPrescriptionAndNotes.fromJson(Map<String, dynamic> json) {
     note = json['note']?.toString() ?? '';
-    prescriptionUrls =
-        (json['prescriptions'] as List?)?.map((e) => e.toString()).toList() ??
-            [];
+    prescriptionUrls = (json['prescriptionUrls'] as List?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        [];
   }
 
   Map<String, dynamic> toJson() {

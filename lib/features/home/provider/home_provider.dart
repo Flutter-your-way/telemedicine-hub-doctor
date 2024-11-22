@@ -49,17 +49,10 @@ class HomeProvider extends ChangeNotifier {
         },
       );
 
-      log("Get ALl Tickets : ${r.body}");
       var responseBody = jsonDecode(r.body);
-
       bool success = responseBody['success'] ?? false;
 
       if (success) {
-        // final List<dynamic> ticketsJson = responseBody['data']['tickets'] ?? [];
-        // final List<TicketModel> tickets = ticketsJson
-        //     .map((ticketJson) => TicketModel.fromJson(ticketJson))
-        //     .toList();
-
         final List<dynamic> ticketsJson =
             responseBody['data']?['tickets'] ?? [];
         final List<TicketModel> tickets = [];
