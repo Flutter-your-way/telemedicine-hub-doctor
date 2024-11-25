@@ -11,6 +11,7 @@ import 'package:telemedicine_hub_doctor/common/managers/local_manager.dart';
 import 'package:telemedicine_hub_doctor/common/managers/network_manager.dart';
 import 'package:telemedicine_hub_doctor/common/models/comment_model.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
+import 'package:telemedicine_hub_doctor/common/models/medical_history_model.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_count_model.dart';
 import 'package:telemedicine_hub_doctor/common/models/ticket_model.dart';
 import 'package:http/http.dart' as http;
@@ -62,8 +63,6 @@ class HomeProvider extends ChangeNotifier {
             tickets.add(TicketModel.fromJson(ticketJson));
           } catch (e) {}
         }
-
-        log("Get All Tickets in list  : $tickets");
 
         var paginationInfo = responseBody['data']['pagination'] ??
             {
@@ -597,6 +596,126 @@ class HomeProvider extends ChangeNotifier {
       notifyListeners();
       return CustomResponse(
           success: false, msg: "Failed to fetch diseases", code: 400);
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Future<CustomResponse> getMedicalHistory(
+  //     {required String userID, required String language}) async {
+  //   String? accessToken = await LocalDataManager.getToken();
+  //   String? lang;
+  //   switch (language) {
+  //     case 'en':
+  //       lang = 'english';
+  //       break;
+  //     case 'ar':
+  //       lang = 'arabic';
+  //       break;
+  //     default:
+  //       lang = 'english';
+  //   }
+
+  //   try {
+  //     isLoading = true;
+  //     notifyListeners();
+
+  //     var r = await NetworkDataManger(client: http.Client()).getResponseFromUrl(
+  //       "${baseAuthUrl}medical-history/get-medical-history/$userID",
+  //       headers: {
+  //         "Authorization": "Bearer $accessToken",
+  //         "type": "doctor",
+  //         "language": lang.toString(),
+  //       },
+  //     );
+
+  //     var responseBody = jsonDecode(r.body);
+
+  //     bool success = responseBody['success'] ?? false;
+
+  //     if (success) {
+  //       List<dynamic> questionsList = responseBody['data']['questions'];
+  //       List<MedicalHistoryModel> questions = questionsList
+  //           .map((json) => MedicalHistoryModel.fromJson(json))
+  //           .toList();
+
+  //       return CustomResponse(
+  //         success: true,
+  //         msg: responseBody['msg'],
+  //         code: r.statusCode,
+  //         data: {"questions": questions},
+  //       );
+  //     } else {
+  //       return CustomResponse(
+  //         success: false,
+  //         msg: responseBody['msg'] ?? 'Failed to fetch questions',
+  //         code: r.statusCode,
+  //         data: {},
+  //       );
+  //     }
+  //   } catch (e) {
+  //     return CustomResponse(
+  //       success: false,
+  //       msg: "Failed to fetch questions",
+  //       code: 400,
+  //     );
+  //   } finally {
+  //     isLoading = false;
+
+  //     notifyListeners();
+  //   }
+  // }
+  Future<CustomResponse> getMedicalHistory({
+    required String userID,
+  }) async {
+    try {
+      String? accessToken = await LocalDataManager.getToken();
+
+      isLoading = true;
+      notifyListeners();
+
+      final response =
+          await NetworkDataManger(client: http.Client()).getResponseFromUrl(
+        "${baseAuthUrl}medical-history/get-medical-history/$userID",
+        headers: {
+          "Authorization": "Bearer $accessToken",
+          "type": "doctor",
+        },
+      );
+
+      print(response.body);
+
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      print(responseBody);
+      // Validate success
+      if (responseBody['success'] == true) {
+        return CustomResponse(
+          success: true,
+          msg: responseBody['msg'],
+          code: response.statusCode,
+          data: responseBody['data'],
+        );
+      } else {
+        return CustomResponse(
+          success: false,
+          msg: responseBody['msg'] ?? 'Failed to fetch questions',
+          code: response.statusCode,
+          data: {},
+        );
+      }
+    } on FormatException catch (_) {
+      return CustomResponse(
+        success: false,
+        msg: "Invalid response format",
+        code: 500,
+      );
+    } on Exception catch (e) {
+      return CustomResponse(
+        success: false,
+        msg: "An error occurred: ${e.toString()}",
+        code: 400,
+      );
     } finally {
       isLoading = false;
       notifyListeners();

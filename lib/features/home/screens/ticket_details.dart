@@ -21,6 +21,7 @@ import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/forward_case.dart';
+import 'package:telemedicine_hub_doctor/features/home/screens/medical_history_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/pdf_viewer_screen.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
 import 'package:path/path.dart' as path;
@@ -303,15 +304,46 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                             ],
                                                           ),
                                                           SizedBox(height: 8.h),
-                                                          Text(
-                                                            ticket!.name
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                              fontSize: 20.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
+                                                          Row(
+                                                            children: [
+                                                              Text(
+                                                                ticket!.name
+                                                                    .toString(),
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize:
+                                                                      20.sp,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                              const Spacer(),
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                MedicalHistoryScreen(userId: ticket?.patient?.id.toString() ?? " "),
+                                                                      ));
+                                                                },
+                                                                child: Text(
+                                                                  "Patient History",
+                                                                  style: GoogleFonts.openSans(
+                                                                      textStyle: TextStyle(
+                                                                          fontSize: 14
+                                                                              .sp,
+                                                                          color: AppColors
+                                                                              .primaryBlue,
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          decoration:
+                                                                              TextDecoration.underline)),
+                                                                ),
+                                                              )
+                                                            ],
                                                           ),
                                                           SizedBox(height: 8.h),
                                                           Row(
@@ -549,7 +581,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                 ),
                 ),
               ),
-              ticket!.status.toString() == "completed"
+              ticket?.status.toString() == "completed"
                   ? Column(
                       children: [
                         Padding(

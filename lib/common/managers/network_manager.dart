@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:developer';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,6 +6,8 @@ import 'package:telemedicine_hub_doctor/common/constants/app_constants.dart';
 import 'package:telemedicine_hub_doctor/common/managers/local_manager.dart';
 import 'package:telemedicine_hub_doctor/common/models/custom_response.dart';
 
+/// The `NetworkDataManager` class in Dart handles HTTP requests, including GET, POST, PUT, and DELETE
+/// methods, with token refresh functionality to manage authentication errors.
 class NetworkDataManger {
   final http.Client client;
   bool _isRefreshing = false; // Flag to prevent multiple refresh attempts
@@ -99,6 +100,11 @@ class NetworkDataManger {
     }
   }
 
+  /// The `_refreshToken` function handles the process of refreshing an access token using a refresh
+  /// token in Dart.
+  ///
+  /// Returns:
+  ///   The `_refreshToken` function returns a `Future<CustomResponse>`.
   Future<CustomResponse> _refreshToken() async {
     if (_isRefreshing) {
       return CustomResponse(
@@ -113,6 +119,8 @@ class NetworkDataManger {
       log("Starting token refresh");
 
       String? refreshToken = await LocalDataManager.getRefreshToken();
+
+      String? token = await LocalDataManager.getToken();
       if (refreshToken == null) {
         log("No refresh token available");
         return CustomResponse(
@@ -122,6 +130,7 @@ class NetworkDataManger {
         );
       }
 
+      print(token);
       final refreshClient = http.Client();
       try {
         final response = await refreshClient.post(
@@ -147,7 +156,7 @@ class NetworkDataManger {
             data: response.body,
           );
         } else {
-          log("Failed to refresh token: ${response.statusCode}");
+          log("Failed to refresh token: ${response.body}");
           return CustomResponse(
             success: false,
             msg: 'Failed to refresh token',
@@ -170,7 +179,6 @@ class NetworkDataManger {
     }
   }
 }
-
 
 // // ignore_for_file: depend_on_referenced_packages
 

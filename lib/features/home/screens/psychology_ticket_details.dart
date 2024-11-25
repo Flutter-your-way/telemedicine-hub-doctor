@@ -22,6 +22,7 @@ import 'package:telemedicine_hub_doctor/common/shimmer/skelton_shimmer.dart';
 import 'package:telemedicine_hub_doctor/features/authentication/provider/auth_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/provider/home_provider.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/forward_case.dart';
+import 'package:telemedicine_hub_doctor/features/home/screens/medical_history_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/screens/meeting_screen.dart';
 import 'package:telemedicine_hub_doctor/features/home/widget/pdf_viewer_screen.dart';
 import 'package:telemedicine_hub_doctor/gradient_theme.dart';
@@ -298,14 +299,45 @@ class _PsychologyTicketDetailsScreenState
                                                           ],
                                                         ),
                                                         SizedBox(height: 8.h),
-                                                        Text(
-                                                          ticket!.name
-                                                              .toString(),
-                                                          style: TextStyle(
-                                                            fontSize: 20.sp,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              ticket!.name
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                fontSize: 20.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            const Spacer(),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          MedicalHistoryScreen(
+                                                                              userId: ticket?.patient?.id.toString() ?? " "),
+                                                                    ));
+                                                              },
+                                                              child: Text(
+                                                                "Patient History",
+                                                                style: GoogleFonts.openSans(
+                                                                    textStyle: TextStyle(
+                                                                        fontSize: 14
+                                                                            .sp,
+                                                                        color: AppColors
+                                                                            .primaryBlue,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w600,
+                                                                        decoration:
+                                                                            TextDecoration.underline)),
+                                                              ),
+                                                            )
+                                                          ],
                                                         ),
                                                         SizedBox(height: 12.h),
                                                         Row(
@@ -657,7 +689,47 @@ class _PsychologyTicketDetailsScreenState
                                                   ),
                                                   icon: const Icon(
                                                       Iconsax.document_1),
+                                                  // onPressed: () {
+                                                  //   if (ticket?.doctorPrescriptionAndNotes
+                                                  //               ?.prescriptionUrls !=
+                                                  //           null &&
+                                                  //       ticket!
+                                                  //           .doctorPrescriptionAndNotes!
+                                                  //           .prescriptionUrls!
+                                                  //           .isNotEmpty) {
+                                                  //     final String fileUrl = ticket!
+                                                  //         .doctorPrescriptionAndNotes!
+                                                  //         .prescriptionUrls![0];
+                                                  //     print(fileUrl);
+                                                  //     final String
+                                                  //         fileExtension = path
+                                                  //             .extension(
+                                                  //                 fileUrl)
+                                                  //             .toLowerCase();
+                                                  //     print(fileExtension);
+                                                  //     if (fileExtension ==
+                                                  //         '.pdf') {
+                                                  //       Navigator.of(context)
+                                                  //           .push(
+                                                  //         MaterialPageRoute(
+                                                  //           builder: (context) =>
+                                                  //               PDFViewerPage(
+                                                  //             url: fileUrl,
+                                                  //           ),
+                                                  //         ),
+                                                  //       );
+                                                  //     } else {
+                                                  //       showImageDialog(
+                                                  //           context, fileUrl);
+                                                  //     }
+                                                  //   } else {
+                                                  //     Fluttertoast.showToast(
+                                                  //         msg:
+                                                  //             "No prescription uploaded");
+                                                  //   }
+                                                  // },
                                                   onPressed: () {
+                                                    // Check if prescription URLs exist and are not empty
                                                     if (ticket?.doctorPrescriptionAndNotes
                                                                 ?.prescriptionUrls !=
                                                             null &&
@@ -668,13 +740,26 @@ class _PsychologyTicketDetailsScreenState
                                                       final String fileUrl = ticket!
                                                           .doctorPrescriptionAndNotes!
                                                           .prescriptionUrls![0];
+
+                                                      // Extract the extension without query parameters
+                                                      final Uri fileUri =
+                                                          Uri.parse(fileUrl);
                                                       final String
                                                           fileExtension = path
                                                               .extension(
-                                                                  fileUrl)
+                                                                  fileUri.path)
                                                               .toLowerCase();
+
+                                                      // Debugging logs (optional)
+                                                      print(
+                                                          "File URL: $fileUrl");
+                                                      print(
+                                                          "Cleaned File Extension: $fileExtension");
+
+                                                      // Handle file types based on extension
                                                       if (fileExtension ==
                                                           '.pdf') {
+                                                        // Open PDF Viewer
                                                         Navigator.of(context)
                                                             .push(
                                                           MaterialPageRoute(
@@ -684,11 +769,23 @@ class _PsychologyTicketDetailsScreenState
                                                             ),
                                                           ),
                                                         );
-                                                      } else {
+                                                      } else if (fileExtension ==
+                                                              '.jpg' ||
+                                                          fileExtension ==
+                                                              '.jpeg' ||
+                                                          fileExtension ==
+                                                              '.png') {
+                                                        // Show Image Viewer
                                                         showImageDialog(
                                                             context, fileUrl);
+                                                      } else {
+                                                        // Show error for unsupported file types
+                                                        Fluttertoast.showToast(
+                                                            msg:
+                                                                "Unsupported file type");
                                                       }
                                                     } else {
+                                                      // Show toast if no prescription is uploaded
                                                       Fluttertoast.showToast(
                                                           msg:
                                                               "No prescription uploaded");
